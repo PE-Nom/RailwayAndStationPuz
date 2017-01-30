@@ -1,0 +1,6 @@
+{"type":"FeatureCollection","features":[
+{"type":"Feature","geometry":{"type":"LineString","coordinates":[[131.44029,31.87243],[131.43875,31.87259]]},"properties":{"N02_001":"11","N02_002":"2","N02_003":"?????","N02_004":"??????"}},
+{"type":"Feature","geometry":{"type":"LineString","coordinates":[[131.43875,31.87259],[131.43729,31.8728],[131.43374,31.87265],[131.43158,31.87432]]},"properties":{"N02_001":"11","N02_002":"2","N02_003":"?????","N02_004":"??????"}},
+{"type":"Feature","geometry":{"type":"LineString","coordinates":[[131.43057,31.87841],[131.43025,31.87942]]},"properties":{"N02_001":"11","N02_002":"2","N02_003":"?????","N02_004":"??????"}},
+{"type":"Feature","geometry":{"type":"LineString","coordinates":[[131.43158,31.87432],[131.43057,31.87841]]},"properties":{"N02_001":"11","N02_002":"2","N02_003":"?????","N02_004":"??????"}}
+]}
