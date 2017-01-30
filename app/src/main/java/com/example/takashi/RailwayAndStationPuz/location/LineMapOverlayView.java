@@ -21,7 +21,7 @@ public class LineMapOverlayView extends ImageView {
     private static final boolean DEBUG = true;	// TODO for debugging
     private static String TAG = "RailwayLineImageView";
     private static final float EPS = 0.1f;
-    private static final int MOVE_LIMIT = 250; //limit value to prevent the image disappearing from the view when moving
+    private static final int MOVE_LIMIT = 300; //limit value to prevent the image disappearing from the view when moving
     private static final float DEFAULT_MAX_SCALE = 8.f;
     private static final float DEFAULT_MIN_SCALE = 0.1f;
 
