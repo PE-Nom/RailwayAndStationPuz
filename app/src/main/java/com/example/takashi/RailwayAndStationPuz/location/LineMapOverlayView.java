@@ -528,5 +528,5 @@ public class LineMapOverlayView extends ImageView {
         }
         super.onDraw(canvas);
     }
-
+//
 }
