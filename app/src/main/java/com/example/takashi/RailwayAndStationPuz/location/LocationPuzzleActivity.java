@@ -108,6 +108,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
 
         mImageView = (LineMapOverlayView)findViewById(R.id.imageview);
         mImageView.setOnScrollEndListener(this);
+        mImageView.setLine(this.line);
         views.add(mImageView);
 
         this.mMapView.addFocusables(views,View.FOCUS_FORWARD);
@@ -142,6 +143,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                         this.line.getInitZoomLevel())
                         );
 
+        mImageView.setMap(this.mMap);
     }
 
     // GeoJsonLayerの生成とColorの指定、Mapへの登録
