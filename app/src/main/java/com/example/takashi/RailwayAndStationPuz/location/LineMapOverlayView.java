@@ -1,7 +1,11 @@
 package com.example.takashi.RailwayAndStationPuz.location;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
@@ -11,6 +15,10 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.ImageView;
+
+import com.example.takashi.RailwayAndStationPuz.database.Line;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by takashi on 2016/11/12.
@@ -455,5 +463,70 @@ public class LineMapOverlayView extends ImageView {
         return true;
     }
 
+    // 正解座標近辺での色変更
+
+    /**
+     * ColorMatrix data for reversing image
+     */
+    private static final float[] REVERSE = {
+            -1.0f,   0.0f,   0.0f,  0.0f,  255.0f,
+            0.0f,  -1.0f,   0.0f,  0.0f,  255.0f,
+            0.0f,   0.0f,  -1.0f,  0.0f,  255.0f,
+            0.0f,   0.0f,   0.0f,  1.0f,    0.0f,
+    };
+    private static final float[] NORMAL = {
+            1.0f,   0.0f,   0.0f,  0.0f,  0.0f,
+            0.0f,   1.0f,   0.0f,  0.0f,  0.0f,
+            0.0f,   0.0f,   1.0f,  0.0f,  0.0f,
+            0.0f,   0.0f,   0.0f,  1.0f,  0.0f,
+    };
+    boolean colorSw = false;
+    int colorCount = 0;
+    Line line;
+    GoogleMap map;
+    LatLng point1,point2;
+    Point screenPoint1,screenPoint2;
+
+    public void setLine(Line line){
+        this.line = line;
+    }
+    public void setMap(GoogleMap map){
+        this.map = map;
+    }
+    private void computeLocationError(){
+        RectF railwayImageRect = getCurrentImageRect();
+        Log.d(TAG,String.format("RailwayLine Image : left=%f,top=%f,right=%f,bottom=%f",
+                railwayImageRect.left,railwayImageRect.top,railwayImageRect.right,railwayImageRect.bottom));
+        screenPoint1 = new Point((int)railwayImageRect.left,(int)railwayImageRect.top);
+        screenPoint2 = new Point((int)railwayImageRect.right,(int)railwayImageRect.bottom);
+        point1 = map.getProjection().fromScreenLocation(screenPoint1);
+        point2 = map.getProjection().fromScreenLocation(screenPoint2);
+        Log.d(TAG,String.format("answer = %f,%f, point1 = %f,%f",
+                this.line.getCorrectTopLat(),this.line.getCorrectLeftLng(),point1.latitude,point1.longitude));
+        Log.d(TAG,String.format("answer = %f,%f, point2 = %f,%f",
+                this.line.getCorrectBottomLat(),this.line.getCorrectRightLng(),point2.latitude,point2.longitude));
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        computeLocationError();
+        if (point2.latitude < 35.0f || 37.0f < point2.latitude) {
+            super.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(NORMAL)));
+            colorCount++;
+            if( colorCount == 100 ){
+                colorSw = true;
+                colorCount = 0;
+            }
+        }
+        else{
+            super.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(REVERSE)));
+            colorCount++;
+            if( colorCount == 100 ){
+                colorSw = false;
+                colorCount = 0;
+            }
+        }
+        super.onDraw(canvas);
+    }
 
 }
