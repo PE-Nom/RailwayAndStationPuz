@@ -13,9 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Toast;
 
-import com.example.takashi.RailwayAndStationPuz.MainActivity;
+import com.example.takashi.RailwayAndStationPuz.piecegarally.PieceGarallyActivity;
 import com.example.takashi.RailwayAndStationPuz.R;
 import com.example.takashi.RailwayAndStationPuz.database.DBAdapter;
 import com.example.takashi.RailwayAndStationPuz.database.Line;
@@ -24,12 +23,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.Projection;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.maps.android.geojson.GeoJsonLayer;
 import com.google.maps.android.geojson.GeoJsonLineStringStyle;
@@ -61,7 +58,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location_puzzle);
+        setContentView(R.layout.activity_line_location_puzzle);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.location_toolbar);
         setSupportActionBar(toolbar);
@@ -91,7 +88,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
      */
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(this.getApplicationContext(), PieceGarallyActivity.class);
         startActivityForResult(intent, 1);
         // アニメーションの設定
         overridePendingTransition(R.anim.in_left, R.anim.out_right);

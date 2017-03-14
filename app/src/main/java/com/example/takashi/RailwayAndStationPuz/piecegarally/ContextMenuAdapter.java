@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.takashi.RailwayAndStationPuz.MainActivity;
 import com.example.takashi.RailwayAndStationPuz.R;
 import com.example.takashi.RailwayAndStationPuz.database.Line;
 
@@ -29,12 +28,12 @@ public class ContextMenuAdapter extends BaseAdapter {
         R.drawable.ic_railwayselector,
         R.drawable.ic_stationselector,
     };
-    private MainActivity context;
+    private PieceGarallyActivity context;
     private Line line;
     private int id;
 
     public ContextMenuAdapter(Activity context, Line line, int id) {
-        this.context = (MainActivity)context;
+        this.context = (PieceGarallyActivity)context;
         this.line = line;
         this.id = id;
     }

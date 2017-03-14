@@ -17,12 +17,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.takashi.RailwayAndStationPuz.piecegarally.CompanyExpandableListActivity" />
-        <activity android:name="com.example.takashi.RailwayAndStationPuz.piecegarally.CompanyListActivity" />
+        <activity
+            android:name="com.example.takashi.RailwayAndStationPuz.piecegarally.PieceGarallyActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.example.takashi.RailwayAndStationPuz.location.LocationPuzzleActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name="com.example.takashi.RailwayAndStationPuz.station.StationPuzzleActivity"
             android:theme="@style/AppTheme.NoActionBar" />

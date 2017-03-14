@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class DBAdapter {
     static final String DATABASE_NAME = "Railway.db";
-    static final int DATABASE_VERSION = 19;
+    static final int DATABASE_VERSION = 20;
 
     private String TAG = "DBAdapter";
 
@@ -213,14 +213,9 @@ public class DBAdapter {
         double max_zoom_level = c.getDouble(c.getColumnIndex("max_zoom_level"));
         double min_zoom_level = c.getDouble(c.getColumnIndex("min_zoom_level"));
         double init_zoom_level = c.getDouble(c.getColumnIndex("init_zoom_level"));
-        boolean locationPlayingStatus = (c.getInt(c.getColumnIndex("locationPlayingStatus"))==1);
-        int locationPlayingTime = c.getInt(c.getColumnIndex("locationPlayingTime"));
+        boolean nameAnswerStatus = (c.getInt(c.getColumnIndex("nameAnswerStatus"))==1);
         boolean locationAnswerStatus = (c.getInt(c.getColumnIndex("locationAnswerStatus"))==1);
-        int locationAnswerTime = c.getInt(c.getColumnIndex("locationAnswerTime"));
-        boolean stationPlayingStatus = (c.getInt(c.getColumnIndex("stationPlayingStatus"))==1);
-        int stationPlayingTime = c.getInt(c.getColumnIndex("stationPlayingTime"));
         boolean stationAnswerStatus = (c.getInt(c.getColumnIndex("stationAnswerStatus"))==1);
-        int stationAnswerTime = c.getInt(c.getColumnIndex("stationAnswerTime"));
         int totalStations = c.getInt(c.getColumnIndex("totalStationCount"));
         int answeredStations = c.getInt(c.getColumnIndex("answeredStationCount"));
         Line line = new Line(this.context,
@@ -230,8 +225,7 @@ public class DBAdapter {
                 correct_leftLng,correct_topLat,correct_rightLng,correct_bottomLat,
                 scroll_max_lat,scroll_min_lat,scroll_max_lng,scroll_min_lng,init_campos_lat,init_campos_lng,
                 max_zoom_level,min_zoom_level,init_zoom_level,
-                locationPlayingStatus,locationPlayingTime,locationAnswerStatus,locationAnswerTime,
-                stationPlayingStatus,stationPlayingTime,stationAnswerStatus,stationAnswerTime,
+                nameAnswerStatus,locationAnswerStatus,stationAnswerStatus,
                 totalStations,answeredStations);
         Log.d(TAG,String.format("lines: %d,%d,%d," +
                         "%s,%s," +
@@ -241,8 +235,7 @@ public class DBAdapter {
                         "%f,%f,%f,%f," +
                         "%f,%f," +
                         "%f,%f,%f," +
-                        "%b,%d,%b,%d," +
-                        "%b,%d,%b,%d," +
+                        "%b,%b,%b," +
                         "%d,%d",
                 lineId,areaCode,companyId,
                 lineName,lineKana,
@@ -252,8 +245,7 @@ public class DBAdapter {
                 scroll_max_lat,scroll_min_lat,scroll_max_lng,scroll_min_lng,
                 init_campos_lat,init_campos_lng,
                 max_zoom_level,min_zoom_level,init_zoom_level,
-                locationPlayingStatus,locationPlayingTime,locationAnswerStatus,locationAnswerTime,
-                stationPlayingStatus,stationPlayingTime,stationAnswerStatus,stationAnswerTime,
+                nameAnswerStatus,locationAnswerStatus,stationAnswerStatus,
                 totalStations,answeredStations
         ));
         return line;

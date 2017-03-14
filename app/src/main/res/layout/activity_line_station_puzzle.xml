@@ -66,13 +66,13 @@
                 android:layoutMode="clipBounds" />
 
             <ImageView
+                android:id="@+id/separatorView"
                 android:layout_width="match_parent"
                 android:layout_height="6dp"
-                app:srcCompat="@color/cast_expanded_controller_progress_text_color"
-                android:id="@+id/separatorView"
-                android:src="@drawable/ic_separator"
                 android:layout_marginBottom="2dp"
-                android:layout_marginTop="2dp" />
+                android:layout_marginTop="2dp"
+                android:src="@drawable/ic_separator"
+                app:srcCompat="?attr/colorPrimary" />
 
             <LinearLayout
                 android:orientation="vertical"

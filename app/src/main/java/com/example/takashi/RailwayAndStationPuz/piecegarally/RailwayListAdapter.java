@@ -76,10 +76,15 @@ public class RailwayListAdapter extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag();
         }
 
-        Line railway = lines.get(position);
-        Drawable drawable = ResourcesCompat.getDrawable(this.context.getResources(),railway.getDrawableResourceId(),null);
+        Line line = lines.get(position);
+        Drawable drawable = ResourcesCompat.getDrawable(this.context.getResources(),line.getDrawableResourceId(),null);
         holder.railwayLineImage.setImageDrawable(drawable);
-        holder.railwayLineName.setText(railway.getName()+"("+railway.getLineKana()+")");
+        if(line.isNameCompleted()){
+            holder.railwayLineName.setText(line.getName()+"("+line.getLineKana()+")");
+        }
+        else{
+            holder.railwayLineName.setText("*****");
+        }
         holder.railwayLineName.setTextColor(Color.parseColor("#142d81"));
 
         Drawable locationStatusImage = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.location_notyet_image,null);

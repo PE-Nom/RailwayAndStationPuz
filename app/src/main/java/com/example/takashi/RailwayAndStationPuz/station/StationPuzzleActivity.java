@@ -22,7 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.takashi.RailwayAndStationPuz.MainActivity;
+import com.example.takashi.RailwayAndStationPuz.piecegarally.PieceGarallyActivity;
 import com.example.takashi.RailwayAndStationPuz.R;
 import com.example.takashi.RailwayAndStationPuz.database.DBAdapter;
 import com.example.takashi.RailwayAndStationPuz.database.Line;
@@ -34,8 +34,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.geojson.GeoJsonLayer;
 import com.google.maps.android.geojson.GeoJsonLineStringStyle;
 
@@ -43,7 +41,6 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -71,7 +68,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_station_puzzle);
+        setContentView(R.layout.activity_line_station_puzzle);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.station_toolbar);
         setSupportActionBar(toolbar);
@@ -127,7 +124,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
      */
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(this.getApplicationContext(), PieceGarallyActivity.class);
         startActivityForResult(intent, 1);
         // アニメーションの設定
         overridePendingTransition(R.anim.in_left, R.anim.out_right);

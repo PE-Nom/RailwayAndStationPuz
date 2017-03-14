@@ -82,11 +82,14 @@ public class RailwayGridAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Line railway = this.lines.get(position);
-        Drawable lineDrawable = ResourcesCompat.getDrawable(this.context.getResources(), railway.getDrawableResourceId(), null);
+        Line line = this.lines.get(position);
+        Drawable lineDrawable = ResourcesCompat.getDrawable(this.context.getResources(), line.getDrawableResourceId(), null);
         holder.railway_line_image.setImageDrawable(lineDrawable);
 
-        String name = railway.getName();
+        String name = line.getName();
+        if(!line.isNameCompleted()){
+            name = "***";
+        }
         Log.d(TAG,"Line name = " + name);
         holder.line_name.setText(name);
 

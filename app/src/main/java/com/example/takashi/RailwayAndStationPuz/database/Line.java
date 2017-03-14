@@ -35,15 +35,9 @@ public class Line {
     private double min_zoom_level;
     private double init_zoom_level;
 
-    private boolean locationPlayingStatus;
-    private int locationPlayingTime;
+    private boolean nameAnswerStatus;
     private boolean locationAnswerStatus;
-    private int locationAnswerTime;
-
-    private boolean stationPlayingStatus;
-    private int stationPlayingTime;
     private boolean stationAnswerStatus;
-    private int stationAnswerTime;
 
     private int totalStations;
     private int answeredStations;
@@ -70,14 +64,9 @@ public class Line {
                 double max_zoom_level,
                 double min_zoom_level,
                 double init_zoom_level,
-                boolean locationPlayingStatus,
-                int locationPlayingTime,
+                boolean nameAnswerStatus,
                 boolean locationAnswerStatus,
-                int locationAnswerTime,
-                boolean stationPlayingStatus,
-                int stationPlayingTime,
                 boolean stationAnswerStatus,
-                int stationAnswerTime,
                 int totalStations,
                 int answeredStations) {
 
@@ -104,14 +93,9 @@ public class Line {
         this.max_zoom_level = max_zoom_level;
         this.min_zoom_level = min_zoom_level;
         this.init_zoom_level = init_zoom_level;
-        this.locationPlayingStatus = locationPlayingStatus;
-        this.locationPlayingTime = locationPlayingTime;
+        this.nameAnswerStatus = nameAnswerStatus;
         this.locationAnswerStatus = locationAnswerStatus;
-        this.locationAnswerTime = locationAnswerTime;
-        this.stationPlayingStatus = stationPlayingStatus;
-        this.stationPlayingTime = stationPlayingTime;
         this.stationAnswerStatus = stationAnswerStatus;
-        this.stationAnswerTime = stationAnswerTime;
         this.totalStations = totalStations;
         this.answeredStations = answeredStations;
     }
@@ -169,6 +153,10 @@ public class Line {
         return this.init_campos_lng;
     }
 
+    public boolean isNameCompleted() {return this.nameAnswerStatus; }
+    public void setNameAnswerStatus(){ this.nameAnswerStatus=true; }
+    public void resetNameAnswerStatus() { this.nameAnswerStatus=false; }
+
     public boolean isLocationCompleted(){
         return this.locationAnswerStatus;
     }
@@ -182,4 +170,6 @@ public class Line {
     public boolean isStationCompleted(){
         return this.stationAnswerStatus;
     }
+    public void setStationAnswerStatus() { this.stationAnswerStatus=true; }
+    public void resetStationAnswerStatus() { this.stationAnswerStatus=false; }
 }
