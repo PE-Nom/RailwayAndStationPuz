@@ -94,7 +94,7 @@ public class PieceGarallyActivity extends AppCompatActivity
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivityForResult(intent, RESULTCODE);
         // アニメーションの設定
-        overridePendingTransition(R.anim.in_down, R.anim.out_up);
+        overridePendingTransition(R.anim.in_left, R.anim.out_right);
         db.close();
         finish();
     }

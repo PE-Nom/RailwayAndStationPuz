@@ -88,7 +88,8 @@ public class MainActivity extends AppCompatActivity
         this.db.updateSelectedCompany(companyId);
         Intent intent = new Intent(mContext, PieceGarallyActivity.class);
         startActivityForResult(intent, RESULTCODE);
-        overridePendingTransition(R.anim.in_up, R.anim.out_down);
+        overridePendingTransition(R.anim.in_right, R.anim.out_left);
+//        overridePendingTransition(R.anim.in_up, R.anim.out_down);
         finish();
     }
 
