@@ -3,16 +3,23 @@ package com.example.takashi.RailwayAndStationPuz.piecegarally;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.takashi.RailwayAndStationPuz.R;
 import com.example.takashi.RailwayAndStationPuz.database.Line;
+import com.example.takashi.RailwayAndStationPuz.ui.MultiButtonListView;
+import com.example.takashi.RailwayAndStationPuz.ui.SimpleGaugeView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,26 +56,41 @@ public class RailwayListAdapter extends BaseAdapter {
     }
 
     private class ViewHolder {
+        ImageButton mapImageBtn;
         ImageView railwayLineImage;
         ImageView pieceBorderImage;
         TextView railwayLineName;
-        TextView locationStatus;
-        TextView stationStatus;
+//        Button mapBtn;
+        Button staBtn;
+        SimpleGaugeView progGauge;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
         final ViewHolder holder;
+        MultiButtonListView list = null;
+        try{
+            list = (MultiButtonListView)parent;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
         if(convertView == null){
             convertView = this.inflater.inflate(R.layout.railway_list_item,parent,false);
             holder = new ViewHolder();
             holder.pieceBorderImage = (ImageView)convertView.findViewById(R.id.piece_border_list_image_view);
             holder.railwayLineImage = (ImageView)convertView.findViewById(R.id.railway_line_list_image_view);
-            holder.railwayLineName = (TextView)convertView.findViewById(R.id.railway_line_list_name);
-            holder.locationStatus = (TextView)convertView.findViewById(R.id.location_status);
-            holder.stationStatus = (TextView)convertView.findViewById(R.id.station_status);
+            holder.railwayLineName = (TextView) convertView.findViewById(R.id.linename);
+//            holder.mapBtn = (Button)convertView.findViewById(R.id.location);
+            holder.mapImageBtn = (ImageButton)convertView.findViewById(R.id.mapImageButton);
+            holder.staBtn = (Button)convertView.findViewById(R.id.station);
+            holder.progGauge = (SimpleGaugeView) convertView.findViewById(R.id.stationProgress) ;
+
+            holder.staBtn.setOnClickListener(list);
+//            holder.mapBtn.setOnClickListener(list);
+            holder.mapImageBtn.setOnClickListener(list);
+            holder.progGauge.setData(40,"%", ContextCompat.getColor(this.context, R.color.color_90));
 
             convertView.setTag(holder);
         }
@@ -87,19 +109,12 @@ public class RailwayListAdapter extends BaseAdapter {
         }
         holder.railwayLineName.setTextColor(Color.parseColor("#142d81"));
 
-        Drawable locationStatusImage = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.location_notyet_image,null);
-        locationStatusImage.setBounds(0,0,18,18);
-        holder.locationStatus.setText("ロケーション進捗：");
-        holder.locationStatus.setTextColor(Color.DKGRAY);
-        holder.locationStatus.setCompoundDrawables(null,null,locationStatusImage,null);
-        holder.locationStatus.setCompoundDrawablePadding(5);
-
-        Drawable stationStatusImage = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.station_notyet_image,null);
-        stationStatusImage.setBounds(0,0,18,18);
-        holder.stationStatus.setText("ステーション進捗：");
-        holder.stationStatus.setTextColor(Color.DKGRAY);
-        holder.stationStatus.setCompoundDrawables(null,null,stationStatusImage,null);
-        holder.stationStatus.setCompoundDrawablePadding(5);
+        holder.progGauge.setData(40,"%", ContextCompat.getColor(this.context, R.color.color_90));
+        holder.staBtn.setTag(position);
+//        holder.mapBtn.setTag(position);
+        drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_railwayselector,null);
+        holder.mapImageBtn.setImageDrawable(drawable);
+        holder.mapImageBtn.setTag(position);
 
         return convertView;
     }

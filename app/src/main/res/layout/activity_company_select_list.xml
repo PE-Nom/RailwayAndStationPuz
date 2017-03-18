@@ -7,12 +7,9 @@
     android:fitsSystemWindows="true">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_weight="1">
+        android:orientation="vertical">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -55,13 +52,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.38">
-                <!--
-            <ExpandableListView
-                android:id="@+id/lvExp"
-                android:layout_height="415dp"
-                android:layout_width="match_parent"
-                android:layout_weight="0.44" />
--->
+
+                <ExpandableListView
+                    android:id="@+id/lvExp"
+                    android:layout_width="match_parent"
+                    android:layout_height="415dp"
+                    android:layout_weight="0.44" />
+
                 <ListView
                     android:id="@+id/company_list_view"
                     android:layout_width="match_parent"

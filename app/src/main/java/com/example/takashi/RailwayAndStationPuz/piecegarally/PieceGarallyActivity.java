@@ -3,6 +3,7 @@ package com.example.takashi.RailwayAndStationPuz.piecegarally;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -31,6 +32,8 @@ import com.example.takashi.RailwayAndStationPuz.database.DBAdapter;
 import com.example.takashi.RailwayAndStationPuz.database.Line;
 import com.example.takashi.RailwayAndStationPuz.location.LocationPuzzleActivity;
 import com.example.takashi.RailwayAndStationPuz.station.StationPuzzleActivity;
+import com.example.takashi.RailwayAndStationPuz.ui.GaugeView;
+import com.example.takashi.RailwayAndStationPuz.ui.MultiButtonListView;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
@@ -44,11 +47,12 @@ public class PieceGarallyActivity extends AppCompatActivity
     private static final int RESULTCODE = 1;
     // 要素をArrayListで設定
     private GridView gridView;
-    private ListView listView;
+    private MultiButtonListView listView;
     private BaseAdapter baseAdapter;
     private DBAdapter db;
     private ArrayList<Line> lines = new ArrayList<Line>();
     private CurrentMode currentmode;
+    private GaugeView lineNameProgress,lineMapProgress,stationsProgress;
     private int selectedLineIndex = -1;
 
     private AlertDialog mDialog;
@@ -73,6 +77,13 @@ public class PieceGarallyActivity extends AppCompatActivity
         // GridViewのインスタンスを生成
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_main);
         Log.d(TAG,String.format("GridDisplay is %b",this.currentmode.isGridDisplaied()));
+
+        this.lineNameProgress = (GaugeView) findViewById(R.id.lineNameProgress) ;
+        this.lineNameProgress.setData(10,"%",  ContextCompat.getColor(this, R.color.color_30), 90, true);
+        this.lineMapProgress =(GaugeView) findViewById(R.id.lineMapProgress);
+        this.lineMapProgress.setData(20,"%",  ContextCompat.getColor(this, R.color.color_60), 90, true);
+        this.stationsProgress = (GaugeView) findViewById(R.id.stationsProgress);
+        this.stationsProgress.setData(20,"%",  ContextCompat.getColor(this, R.color.color_90), 90, true);
 
         if(this.currentmode.isGridDisplaied()){
             createPieceGridViewAndAdapter(layout);
@@ -99,8 +110,7 @@ public class PieceGarallyActivity extends AppCompatActivity
         finish();
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+    private void selectLineName(int position){
         // アイコンタップでTextViewにその名前を表示する
         Log.d(TAG, String.format("onItemLongClick position = %d", position));
         Line line = this.lines.get(position);
@@ -145,26 +155,26 @@ public class PieceGarallyActivity extends AppCompatActivity
             ListView remainLinesListView = new ListView(this);
             remainLinesListView.setAdapter(remainLinesAdapter);
             remainLinesListView.setOnItemClickListener(
-                // ダイアログ上の未正解アイテムがクリックされたら答え合わせする
-                new AdapterView.OnItemClickListener(){
-                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                        mDialog.dismiss();
-                        int correctAnswerIdx = PieceGarallyActivity.this.selectedLineIndex;
-                        Line correctLine = (Line)(PieceGarallyActivity.this.baseAdapter.getItem(correctAnswerIdx));
-                        String correctLineName = correctLine.getName()+"("+correctLine.getLineKana()+")";
-                        String selectedLineName = randomizedRemainLines.get(position);
-                        Log.d(TAG,String.format("correct %s, selected %s",correctLineName,selectedLineName));
-                        //正解判定
-                        if(correctLineName.equals(selectedLineName)){
-                            Toast.makeText(PieceGarallyActivity.this,"正解!!! v(￣Д￣)v ", Toast.LENGTH_SHORT).show();
-                            correctLine.setNameAnswerStatus();
-                            PieceGarallyActivity.this.baseAdapter.notifyDataSetChanged();
-                        }
-                        else{
-                            Toast.makeText(PieceGarallyActivity.this,"残念･･･ Σ(￣ロ￣lll)", Toast.LENGTH_SHORT).show();
+                    // ダイアログ上の未正解アイテムがクリックされたら答え合わせする
+                    new AdapterView.OnItemClickListener(){
+                        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                            mDialog.dismiss();
+                            int correctAnswerIdx = PieceGarallyActivity.this.selectedLineIndex;
+                            Line correctLine = (Line)(PieceGarallyActivity.this.baseAdapter.getItem(correctAnswerIdx));
+                            String correctLineName = correctLine.getName()+"("+correctLine.getLineKana()+")";
+                            String selectedLineName = randomizedRemainLines.get(position);
+                            Log.d(TAG,String.format("correct %s, selected %s",correctLineName,selectedLineName));
+                            //正解判定
+                            if(correctLineName.equals(selectedLineName)){
+                                Toast.makeText(PieceGarallyActivity.this,"正解!!! v(￣Д￣)v ", Toast.LENGTH_SHORT).show();
+                                correctLine.setNameAnswerStatus();
+                                PieceGarallyActivity.this.baseAdapter.notifyDataSetChanged();
+                            }
+                            else{
+                                Toast.makeText(PieceGarallyActivity.this,"残念･･･ Σ(￣ロ￣lll)", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
-                }
             );
 
             // ダイアログ表示
@@ -175,6 +185,38 @@ public class PieceGarallyActivity extends AppCompatActivity
                     .create();
             mDialog.show();
 
+        }
+    }
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        Line line = this.lines.get(position);
+        String s = line.getName();
+        Log.d(TAG, String.format("onItemClick 路線：%s", s));
+        switch(view.getId()){
+//            case R.id.location :
+            case R.id.mapImageButton: {
+                    Intent intent = new Intent(PieceGarallyActivity.this, LocationPuzzleActivity.class);
+                    intent.putExtra("SelectedLineId", line.getLineId());
+                    startActivity(intent);
+                    // アニメーションの設定
+                    overridePendingTransition(R.anim.in_right, R.anim.out_left);
+                    db.close();
+                    finish();
+                }
+                break;
+            case R.id.station : {
+                    Intent intent = new Intent(PieceGarallyActivity.this, StationPuzzleActivity.class);
+                    intent.putExtra("SelectedLineId", line.getLineId());
+                    startActivity(intent);
+                    // アニメーションの設定
+                    overridePendingTransition(R.anim.in_right, R.anim.out_left);
+                    db.close();
+                    finish();
+                }
+                break;
+            default:
+                selectLineName(position);
+                break;
         }
     }
 
@@ -289,13 +331,12 @@ public class PieceGarallyActivity extends AppCompatActivity
 
     private void createPieceListViewAndAdapter(RelativeLayout layout){
         getLayoutInflater().inflate(R.layout.activity_line_select_list, layout);
-        this.listView = (ListView) findViewById(R.id.railway_list_view);
+        this.listView = (MultiButtonListView) findViewById(R.id.railway_list_view);
         RailwayListAdapter listadapter = new RailwayListAdapter(this.getApplicationContext(), this.lines);
         this.baseAdapter = listadapter;
         this.listView.setAdapter(listadapter);
         this.listView.setOnItemClickListener(this);
         this.listView.setOnItemLongClickListener(this);
-
     }
 
     @Override
