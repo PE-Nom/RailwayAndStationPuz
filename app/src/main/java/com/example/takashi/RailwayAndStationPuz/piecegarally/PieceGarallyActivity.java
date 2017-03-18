@@ -204,7 +204,7 @@ public class PieceGarallyActivity extends AppCompatActivity
                     finish();
                 }
                 break;
-            case R.id.station : {
+            case R.id.stationImageButton : {
                     Intent intent = new Intent(PieceGarallyActivity.this, StationPuzzleActivity.class);
                     intent.putExtra("SelectedLineId", line.getLineId());
                     startActivity(intent);

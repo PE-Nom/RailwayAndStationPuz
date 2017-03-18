@@ -56,12 +56,12 @@ public class RailwayListAdapter extends BaseAdapter {
     }
 
     private class ViewHolder {
-        ImageButton mapImageBtn;
         ImageView railwayLineImage;
         ImageView pieceBorderImage;
         TextView railwayLineName;
 //        Button mapBtn;
-        Button staBtn;
+        ImageButton mapImageBtn;
+        ImageButton staImageBtn;
         SimpleGaugeView progGauge;
     }
 
@@ -82,14 +82,13 @@ public class RailwayListAdapter extends BaseAdapter {
             holder.pieceBorderImage = (ImageView)convertView.findViewById(R.id.piece_border_list_image_view);
             holder.railwayLineImage = (ImageView)convertView.findViewById(R.id.railway_line_list_image_view);
             holder.railwayLineName = (TextView) convertView.findViewById(R.id.linename);
-//            holder.mapBtn = (Button)convertView.findViewById(R.id.location);
+
             holder.mapImageBtn = (ImageButton)convertView.findViewById(R.id.mapImageButton);
-            holder.staBtn = (Button)convertView.findViewById(R.id.station);
+            holder.staImageBtn = (ImageButton)convertView.findViewById(R.id.stationImageButton);
             holder.progGauge = (SimpleGaugeView) convertView.findViewById(R.id.stationProgress) ;
 
-            holder.staBtn.setOnClickListener(list);
-//            holder.mapBtn.setOnClickListener(list);
             holder.mapImageBtn.setOnClickListener(list);
+            holder.staImageBtn.setOnClickListener(list);
             holder.progGauge.setData(40,"%", ContextCompat.getColor(this.context, R.color.color_90));
 
             convertView.setTag(holder);
@@ -109,12 +108,12 @@ public class RailwayListAdapter extends BaseAdapter {
         }
         holder.railwayLineName.setTextColor(Color.parseColor("#142d81"));
 
-        holder.progGauge.setData(40,"%", ContextCompat.getColor(this.context, R.color.color_90));
-        holder.staBtn.setTag(position);
-//        holder.mapBtn.setTag(position);
-        drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_railwayselector,null);
-        holder.mapImageBtn.setImageDrawable(drawable);
+        holder.mapImageBtn.setImageResource(R.mipmap.ic_tracklaying_complete);
         holder.mapImageBtn.setTag(position);
+        holder.staImageBtn.setImageResource(R.mipmap.ic_station_complete);
+        holder.staImageBtn.setTag(position);
+
+        holder.progGauge.setData(40,"%", ContextCompat.getColor(this.context, R.color.color_90));
 
         return convertView;
     }

@@ -11,17 +11,12 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_height="wrap_content">
 
         <FrameLayout
             android:id="@+id/listImage"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_weight="1">
 
             <ImageView
@@ -43,7 +38,7 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="96dp"
+            android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/listImage"
             android:layout_weight="1"
             android:orientation="vertical">
@@ -51,25 +46,28 @@
             <TextView
                 android:id="@+id/linename"
                 android:layout_width="match_parent"
-                android:layout_height="41dp"
-                android:text="*****" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="monospace"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="*****"
+                android:textSize="18sp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="36dp">
 
                 <ImageButton
                     android:id="@+id/mapImageButton"
-                    android:layout_width="60dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="10dp"
-                    android:adjustViewBounds="true"
-                    android:background="@android:color/holo_green_light"
-                    android:elevation="5dp"
-                    app:srcCompat="@drawable/ic_railwayselector" />
+                    style="@style/Widget.AppCompat.ImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginLeft="20dp"
+                    android:background="#00000000"
+                    android:elevation="0dp"
+                    app:srcCompat="@mipmap/ic_tracklaying" />
 
                 <!--                <Button
                     android:id="@+id/location"
@@ -88,37 +86,42 @@
                     android:text="Map >>"
                     android:textSize="10sp" />
 -->
-                <Button
-                    android:id="@+id/station"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
+
+                <ImageButton
+                    android:id="@+id/stationImageButton"
+                    style="@style/Widget.AppCompat.ImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_alignTop="@+id/mapImageButton"
+                    android:layout_marginLeft="20dp"
+                    android:layout_toEndOf="@+id/mapImageButton"
+                    android:background="#00000000"
+                    android:elevation="0dp"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@mipmap/ic_station" />
+
+                <com.example.takashi.RailwayAndStationPuz.ui.SimpleGaugeView
+                    android:id="@+id/stationProgress"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="0dp"
+                    android:layout_toRightOf="@+id/stationImageButton" />
+
+                <!--                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignBottom="@+id/stationImageButton"
+                    android:layout_toRightOf="@+id/stationImageButton"
+                    android:layout_centerVertical="true"
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_toRightOf="@+id/mapImageButton"
-                    android:background="@android:color/holo_blue_light"
-                    android:elevation="5dp"
-                    android:fontFamily="monospace"
-                    android:gravity="center"
-                    android:singleLine="true"
-                    android:text="Sta >>"
-                    android:textSize="10sp" />
+                    android:layout_marginTop="10dp" >
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_toRightOf="@+id/station">
-
-                    <com.example.takashi.RailwayAndStationPuz.ui.SimpleGaugeView
-                        android:id="@+id/stationProgress"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
 
                 </FrameLayout>
-
+-->
             </RelativeLayout>
 
         </LinearLayout>

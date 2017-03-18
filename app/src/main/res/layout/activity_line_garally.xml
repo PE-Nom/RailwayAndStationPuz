@@ -55,7 +55,7 @@
                     android:layout_weight="1"
                     android:foregroundGravity="center_vertical"
                     android:gravity="right"
-                    android:text="線名" />
+                    android:text="路線名" />
 
                 <com.example.takashi.RailwayAndStationPuz.ui.GaugeView
                     android:id="@+id/lineNameProgress"
