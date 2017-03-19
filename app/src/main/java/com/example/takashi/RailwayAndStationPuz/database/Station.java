@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.Marker;
  */
 
 public class Station {
+    private int companyId;
     private int lineId;
     private int stationOrder;
     private String stationName;
@@ -18,19 +19,19 @@ public class Station {
     private double stationLat;
     private boolean overlaySw = false; // 地図上のマーカーオーバレイ表示
     private boolean answerStatus = false; // false:未回答、true:回答済み
-    private boolean playingStatus;
 
     private Marker mMarker = null;
 
-    public Station(int lineId,
+    public Station(int companyId,
+                   int lineId,
                    int stationOrder,
                    String stationName,
                    String stationKana,
                    double stationLat,
                    double stationLng,
                    boolean overlaySw,
-                   boolean answerStatus,
-                   boolean playingStatus){
+                   boolean answerStatus){
+        this.companyId = companyId;
         this.lineId = lineId;
         this.stationOrder = stationOrder;
         this.stationName = stationName;
@@ -39,7 +40,6 @@ public class Station {
         this.stationLat = stationLat;
         this.overlaySw = overlaySw;
         this.answerStatus=answerStatus;
-        this.playingStatus = playingStatus;
     }
 
     public String getName(){
@@ -54,6 +54,7 @@ public class Station {
         return this.stationLat;
     }
 
+    public int getCompanyId() { return  this.companyId; }
     public int getLineId(){
         return this.lineId;
     }

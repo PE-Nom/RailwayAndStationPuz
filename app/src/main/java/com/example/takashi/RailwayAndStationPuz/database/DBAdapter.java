@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 /**
  * Created by takashi on 2017/01/06.
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 
 public class DBAdapter {
     static final String DATABASE_NAME = "Railway.db";
-    static final int DATABASE_VERSION = 21;
+    static final int DATABASE_VERSION = 22;
 
     private String TAG = "DBAdapter";
 
@@ -176,9 +177,7 @@ public class DBAdapter {
         double init_zoom_level = c.getDouble(c.getColumnIndex("init_zoom_level"));
         boolean nameAnswerStatus = (c.getInt(c.getColumnIndex("nameAnswerStatus"))==1);
         boolean locationAnswerStatus = (c.getInt(c.getColumnIndex("locationAnswerStatus"))==1);
-        boolean stationAnswerStatus = (c.getInt(c.getColumnIndex("stationAnswerStatus"))==1);
-        int totalStations = c.getInt(c.getColumnIndex("totalStationCount"));
-        int answeredStations = c.getInt(c.getColumnIndex("answeredStationCount"));
+        boolean stationAnswerStatus = (c.getInt(c.getColumnIndex("stationAnswerStatus"))==1);;
         Line line = new Line(this.context,
                 lineId,areaCode,companyId,
                 lineName,lineKana,type,
@@ -186,8 +185,7 @@ public class DBAdapter {
                 correct_leftLng,correct_topLat,correct_rightLng,correct_bottomLat,
                 scroll_max_lat,scroll_min_lat,scroll_max_lng,scroll_min_lng,init_campos_lat,init_campos_lng,
                 max_zoom_level,min_zoom_level,init_zoom_level,
-                nameAnswerStatus,locationAnswerStatus,stationAnswerStatus,
-                totalStations,answeredStations);
+                nameAnswerStatus,locationAnswerStatus,stationAnswerStatus);
 /*        Log.d(TAG,String.format("lines: %d,%d,%d," +
                         "%s,%s," +
                         "%d," +
@@ -196,8 +194,7 @@ public class DBAdapter {
                         "%f,%f,%f,%f," +
                         "%f,%f," +
                         "%f,%f,%f," +
-                        "%b,%b,%b," +
-                        "%d,%d",
+                        "%b,%b,%b,"
                 lineId,areaCode,companyId,
                 lineName,lineKana,
                 type,
@@ -206,8 +203,7 @@ public class DBAdapter {
                 scroll_max_lat,scroll_min_lat,scroll_max_lng,scroll_min_lng,
                 init_campos_lat,init_campos_lng,
                 max_zoom_level,min_zoom_level,init_zoom_level,
-                nameAnswerStatus,locationAnswerStatus,stationAnswerStatus,
-                totalStations,answeredStations
+                nameAnswerStatus,locationAnswerStatus,stationAnswerStatus
         ));
 */
         return line;
@@ -283,7 +279,7 @@ public class DBAdapter {
     /*
      * 事業者ごとの路線名完了件数の取得
      */
-    public int countLineNameAnswerdLines(int companyId){
+    public int countLineNameAnsweredLines(int companyId){
         int cnt;
         Cursor cursor = db.rawQuery("SELECT * from lines WHERE companyId=? and nameAnswerStatus = 1",new String[]{String.valueOf(companyId)});
         cnt = cursor.getCount();
@@ -292,7 +288,7 @@ public class DBAdapter {
     /*
      * 事業者ごとの敷設完了路線数の取得
      */
-    public int countLocationAnswerdLines(int companyId){
+    public int countLocationAnsweredLines(int companyId){
         int cnt;
         Cursor cursor = db.rawQuery("SELECT * from lines WHERE companyId=? and locationAnswerStatus = 1", new String[]{String.valueOf(companyId)});
         cnt = cursor.getCount();
@@ -301,6 +297,7 @@ public class DBAdapter {
 
     // stations table
     private Station extractStation(Cursor c){
+        int companyId = c.getInt(c.getColumnIndex("companyId"));
         int lineId = c.getInt(c.getColumnIndex("lineId"));
         int stationOrder = c.getInt(c.getColumnIndex("stationOrder"));
         String stationName = c.getString(c.getColumnIndex("stationName"));
@@ -309,19 +306,18 @@ public class DBAdapter {
         double stationLng = c.getDouble(c.getColumnIndex("stationLng"));
         boolean overlaySw = (c.getInt(c.getColumnIndex("overlaySw"))==1);
         boolean answerStatus = (c.getInt(c.getColumnIndex("answerStatus"))==1);
-        boolean playingStatus = (c.getInt(c.getColumnIndex("playingStatus"))==1);
-        Station station = new Station(lineId,stationOrder,
+        Station station = new Station(companyId,lineId,stationOrder,
                                         stationName,stationKana,
                                         stationLat,stationLng,
-                                        overlaySw,answerStatus,playingStatus);
-        Log.d(TAG,String.format("station: %d,%d," +
+                                        overlaySw,answerStatus);
+        Log.d(TAG,String.format("station: %d,%d,%d," +
                         "%s,%s," +
                         "%f,%f," +
-                        "%b,%b,%b",
-                        lineId,stationOrder,
+                        "%b,%b",
+                        companyId,lineId,stationOrder,
                         stationName,stationKana,
                         stationLat,stationLng,
-                        overlaySw,answerStatus,playingStatus
+                        overlaySw,answerStatus
         ));
         return station;
     }
@@ -367,6 +363,48 @@ public class DBAdapter {
         }
         db.update("stations", cv, "lineId = "+station.getLineId() + " AND stationOrder = " + station.getStationOrder(), null);
         return true;
+    }
+    /*
+     * 総駅数の取得
+     */
+    public int countTotalStations(){
+        Cursor cur = db.rawQuery("SELECT * from stations",null);
+        return cur.getCount();
+    }
+    /*
+     * 事業者ごとの総駅数の取得
+     */
+    public int countTotalStationsInCompany(int companyId){
+        Cursor cur = db.rawQuery("SELECT * from stations WHERE companyId=?", new String[]{String.valueOf(companyId)});
+        return cur.getCount();
+    }
+    /*
+     * 路線ごとの総駅数の取得
+     */
+    public int countTotalStationsInLine(int companyId,int lineId){
+        Cursor cur = db.rawQuery("SELECT * from stations WHERE companyId=? and lineId=?",
+                new String[]{String.valueOf(companyId), String.valueOf(lineId)});
+        return cur.getCount();
+    }
+    /*
+     * 事業者ごとの開設完了駅数の取得
+     */
+    public int countAnsweredStationsInCompany(int companyId){
+        int cnt;
+        Cursor cursor = db.rawQuery("SELECT * from stations WHERE companyId=? and answerStatus = 1",
+                new String[]{String.valueOf(companyId)});
+        cnt = cursor.getCount();
+        return cnt;
+    }
+    /*
+     * 路線ごとの開設完了駅数の取得
+     */
+    public int countAnsweredStationsInLine(int companyId,int lineId){
+        int cnt;
+        Cursor cur = db.rawQuery("SELECT * from stations WHERE companyId=? and lineId=? and answerStatus = 1",
+                new String[]{String.valueOf(companyId),String.valueOf(lineId)});
+        cnt =cur.getCount();
+        return cnt;
     }
 
 }

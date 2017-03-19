@@ -39,9 +39,6 @@ public class Line {
     private boolean locationAnswerStatus;
     private boolean stationAnswerStatus;
 
-    private int totalStations;
-    private int answeredStations;
-
     public Line(Context context,
                 int lineId,
                 int areaCode,
@@ -66,9 +63,7 @@ public class Line {
                 double init_zoom_level,
                 boolean nameAnswerStatus,
                 boolean locationAnswerStatus,
-                boolean stationAnswerStatus,
-                int totalStations,
-                int answeredStations) {
+                boolean stationAnswerStatus) {
 
         this.context = context;
         this.res = this.context.getResources();
@@ -96,8 +91,6 @@ public class Line {
         this.nameAnswerStatus = nameAnswerStatus;
         this.locationAnswerStatus = locationAnswerStatus;
         this.stationAnswerStatus = stationAnswerStatus;
-        this.totalStations = totalStations;
-        this.answeredStations = answeredStations;
     }
 
     public int getCompanyId(){ return this.companyId; }

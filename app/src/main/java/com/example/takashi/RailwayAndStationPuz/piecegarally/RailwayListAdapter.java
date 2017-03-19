@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.takashi.RailwayAndStationPuz.R;
+import com.example.takashi.RailwayAndStationPuz.database.DBAdapter;
 import com.example.takashi.RailwayAndStationPuz.database.Line;
 import com.example.takashi.RailwayAndStationPuz.ui.MultiButtonListView;
 import com.example.takashi.RailwayAndStationPuz.ui.SimpleGaugeView;
@@ -33,11 +34,13 @@ public class RailwayListAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<Line> lines;
+    private DBAdapter dbAdapter;
 
-    public RailwayListAdapter(Context context, ArrayList<Line> lines){
+    public RailwayListAdapter(Context context, ArrayList<Line> lines, DBAdapter dbAdapter){
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.lines = lines;
+        this.dbAdapter = dbAdapter;
     }
 
     @Override
@@ -69,6 +72,11 @@ public class RailwayListAdapter extends BaseAdapter {
 
         final ViewHolder holder;
         MultiButtonListView list = null;
+
+        Line line = lines.get(position);
+        int companyId = line.getCompanyId();
+        int lineId = line.getLineId();
+
         try{
             list = (MultiButtonListView)parent;
         }catch(Exception e){
@@ -88,7 +96,9 @@ public class RailwayListAdapter extends BaseAdapter {
 
             holder.mapImageBtn.setOnClickListener(list);
             holder.staImageBtn.setOnClickListener(list);
-            holder.progGauge.setData(40,"%", ContextCompat.getColor(this.context, R.color.color_90));
+            int progress = 100*dbAdapter.countAnsweredStationsInLine(companyId,lineId)/
+                    dbAdapter.countTotalStationsInLine(companyId,lineId);
+            holder.progGauge.setData(progress,"%", ContextCompat.getColor(this.context, R.color.color_30));
 
             convertView.setTag(holder);
         }
@@ -96,7 +106,6 @@ public class RailwayListAdapter extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag();
         }
 
-        Line line = lines.get(position);
         Drawable drawable = ResourcesCompat.getDrawable(this.context.getResources(),line.getDrawableResourceId(),null);
         holder.railwayLineImage.setImageDrawable(drawable);
 
@@ -127,7 +136,12 @@ public class RailwayListAdapter extends BaseAdapter {
         }
         holder.staImageBtn.setTag(position);
 
-        holder.progGauge.setData(40,"%", ContextCompat.getColor(this.context, R.color.color_90));
+        int totalStationsInLine = dbAdapter.countTotalStationsInLine(companyId,lineId);
+        int answeredStationsInLine = dbAdapter.countAnsweredStationsInLine(companyId,lineId);
+        int progress = 100*dbAdapter.countAnsweredStationsInLine(companyId,lineId)/
+                dbAdapter.countTotalStationsInLine(companyId,lineId);
+        Log.d(TAG,String.format("AnsweredStation %d, %d, %d",progress,totalStationsInLine,answeredStationsInLine));
+        holder.progGauge.setData(progress,"%", ContextCompat.getColor(this.context, R.color.color_30));
 
         return convertView;
     }

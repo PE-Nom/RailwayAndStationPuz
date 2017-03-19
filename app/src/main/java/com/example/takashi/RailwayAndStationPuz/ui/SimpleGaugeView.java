@@ -29,8 +29,10 @@ public class SimpleGaugeView extends View {
 
     private static final int COLOR_RAINBOW_TEXT = Color.rgb(158, 158, 158);
     private static final int COLOR_BASE_RING = Color.rgb(230, 230, 230);
-    private static final int COLOR_SECOND_LOOP_BASE_RING = Color.rgb(242, 89, 12);
-    private static final int COLOR_SECOND_LOOP = Color.rgb(245, 139, 85);
+//    private static final int COLOR_SECOND_LOOP_BASE_RING = Color.rgb(242, 89, 12);
+//    private static final int COLOR_SECOND_LOOP = Color.rgb(245, 139, 85);
+    private static final int COLOR_SECOND_LOOP_BASE_RING = Color.rgb(0, 85, 255);
+    private static final int COLOR_SECOND_LOOP = Color.rgb(0, 85, 255);
 
     private float density;
 
