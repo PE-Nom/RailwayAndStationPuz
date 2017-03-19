@@ -328,6 +328,15 @@ public class DBAdapter {
         cnt = cursor.getCount();
         return cnt;
     }
+    /*
+     * 事業者ごとの敷設完了路線数の取得
+     */
+    public int countLocationAnswerdLines(int companyId){
+        int cnt;
+        Cursor cursor = db.rawQuery("SELECT * from lines WHERE companyId=? and locationAnswerStatus = 1", new String[]{String.valueOf(companyId)});
+        cnt = cursor.getCount();
+        return cnt;
+    }
 
     // stations table
     private Station extractStation(Cursor c){

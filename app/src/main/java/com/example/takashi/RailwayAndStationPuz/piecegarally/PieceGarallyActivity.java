@@ -52,7 +52,7 @@ public class PieceGarallyActivity extends AppCompatActivity
     private DBAdapter db;
     private ArrayList<Line> lines = new ArrayList<Line>();
     private CurrentMode currentmode;
-    private GaugeView lineNameProgress,lineMapProgress,stationsProgress;
+    private GaugeView lineNameProgress, lineLocationProgress,stationsProgress;
     private int selectedLineIndex = -1;
 
     private AlertDialog mDialog;
@@ -81,8 +81,9 @@ public class PieceGarallyActivity extends AppCompatActivity
         this.lineNameProgress = (GaugeView) findViewById(R.id.lineNameProgress) ;
         updateLineNameProgress();
 
-        this.lineMapProgress =(GaugeView) findViewById(R.id.lineMapProgress);
-        this.lineMapProgress.setData(20,"%",  ContextCompat.getColor(this, R.color.color_60), 90, true);
+        this.lineLocationProgress =(GaugeView) findViewById(R.id.lineMapProgress);
+        int locationProgress = 100*db.countLocationAnswerdLines(this.currentmode.getCompanyId())/lines.size();
+        this.lineLocationProgress.setData(locationProgress,"%",  ContextCompat.getColor(this, R.color.color_60), 90, true);
 
         this.stationsProgress = (GaugeView) findViewById(R.id.stationsProgress);
         this.stationsProgress.setData(20,"%",  ContextCompat.getColor(this, R.color.color_90), 90, true);
@@ -203,9 +204,7 @@ public class PieceGarallyActivity extends AppCompatActivity
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         Line line = this.lines.get(position);
         String s = line.getName();
-        Log.d(TAG, String.format("onItemClick 路線：%s", s));
         switch(view.getId()){
-//            case R.id.location :
             case R.id.mapImageButton: {
                     Intent intent = new Intent(PieceGarallyActivity.this, LocationPuzzleActivity.class);
                     intent.putExtra("SelectedLineId", line.getLineId());
@@ -235,88 +234,33 @@ public class PieceGarallyActivity extends AppCompatActivity
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         Line line = lines.get(position);
-        String s = line.getName();
+        String s = line.getName()+"("+line.getLineKana()+")";
         Log.d(TAG, String.format("onItemLongClick 路線：%s", s));
-        ContextMenuAdapter contextMenuAdapter = new ContextMenuAdapter(this, line, position);
+
+        final ArrayList<String> contextMenuList = new ArrayList<String>();
+        contextMenuList.add("回答クリア");
+        contextMenuList.add("回答を見る");
+        contextMenuList.add("最初の位置に戻す");
+        contextMenuList.add("Webを検索する");
+
+        ArrayAdapter<String> contextMenuAdapter
+                = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,contextMenuList);
 
         // 未正解アイテムのリストビュー生成
         ListView contextMenuListView = new ListView(this);
         contextMenuListView.setAdapter(contextMenuAdapter);
         contextMenuListView.setOnItemClickListener(
-            new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    mDialog.dismiss();
-                    Line line = lines.get((int) id);
-                    Log.d(TAG, String.format("lineId = %d, lineName = %s", line.getLineId(), line.getName()));
-                    if (position == 0) {
-                        Intent intent = new Intent(PieceGarallyActivity.this,LocationPuzzleActivity.class);
-                        intent.putExtra("SelectedLineId",line.getLineId());
-                        startActivity(intent);
-                        // アニメーションの設定
-                        overridePendingTransition(R.anim.in_right, R.anim.out_left);
-                        db.close();
-                        finish();
-                    } else if (position == 1) {
-//                        if (line.isLocationCompleted()) {
-                            Intent intent = new Intent(PieceGarallyActivity.this, StationPuzzleActivity.class);
-                            intent.putExtra("SelectedLineId",line.getLineId());
-                            startActivity(intent);
-                            // アニメーションの設定
-                            overridePendingTransition(R.anim.in_right, R.anim.out_left);
-                            db.close();
-                            finish();
-//                        }
+                new AdapterView.OnItemClickListener(){
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                        mDialog.dismiss();
+                        Toast.makeText(PieceGarallyActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
                     }
                 }
-            }
         );
 
-        // AlertDialogのタイトル欄の表示設定
-        // 参考：http://www.android--tutorials.com/2016/10/android-alertdialog-title-custom-view.html
-        // Initialize a new layout parameters
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        // Initialize a new linear layout as alert dialog title custom view
-        // This is the container of alert dialog title contents
-        LinearLayout LLayout = new LinearLayout(this);
-
-        // Set linear layout orientation
-        LLayout.setOrientation(LinearLayout.VERTICAL);
-
-        // Set title view margin
-        params.setMargins(15,15,15,15);
-        LLayout.setLayoutParams(params);
-
-        // Set the padding of title view
-        LLayout.setPadding(15,15,15,15);
-
-        // Initialize a new TextView instance
-        // This will display alert dialog title text
-        TextView tv_title = new TextView(this);
-        tv_title.setLayoutParams(params);
-
-        // Set title text color
-        tv_title.setTextColor(Color.BLUE);
-
-        // Set title text size
-        tv_title.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20);
-
-        // Set title text gravity/text alignment to center
-        tv_title.setGravity(Gravity.CENTER_HORIZONTAL);
-
-        // Set title spannable text
-        tv_title.setText(String.format("路線：%s", s));
-        tv_title.setSingleLine();
-        tv_title.setEllipsize(TextUtils.TruncateAt.END);
-
-        // Add the two views to linear layout
-        LLayout.addView(tv_title);
         // ダイアログ表示
         mDialog = new AlertDialog.Builder(this)
-//                .setTitle(String.format("路線：%s", s))
-                .setCustomTitle(LLayout)
+                .setTitle(String.format("路線：%s", s))
                 .setPositiveButton("Cancel", null)
                 .setView(contextMenuListView)
                 .create();
