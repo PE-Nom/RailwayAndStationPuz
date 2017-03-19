@@ -83,10 +83,11 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        int companyId = this.companies.get(position).getId();
-        Log.d(TAG,String.format("%d: %s is selected",companyId,this.companies.get(position).getName()));
-        this.db.updateSelectedCompany(companyId);
+//        int companyId = this.companies.get(position).getId();
+//        Log.d(TAG,String.format("%d: %s is selected",companyId,this.companies.get(position).getName()));
+//        this.db.updateSelectedCompany(companyId);
         Intent intent = new Intent(mContext, PieceGarallyActivity.class);
+        intent.putExtra("SelectedCompanyId", this.companies.get(position).getId());
         startActivityForResult(intent, RESULTCODE);
         overridePendingTransition(R.anim.in_right, R.anim.out_left);
         finish();

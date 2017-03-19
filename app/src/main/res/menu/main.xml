@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/action_garally"
-        android:title="@string/action_garally"
+    <item android:id="@+id/action_AboutPuzzRail"
+        android:title="パズレールについて"
         android:orderInCategory="100"
         app:showAsAction="never" />
-    <item android:id="@+id/action_list"
-        android:title="@string/action_list"
+    <item android:id="@+id/action_Help"
+        android:title="使い方"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+    <item android:id="@+id/action_Ask"
+        android:title="お問い合わせ"
         android:orderInCategory="100"
         app:showAsAction="never" />
 </menu>

@@ -27,7 +27,6 @@ import android.widget.Toast;
 
 import com.example.takashi.RailwayAndStationPuz.MainActivity;
 import com.example.takashi.RailwayAndStationPuz.R;
-import com.example.takashi.RailwayAndStationPuz.database.CurrentMode;
 import com.example.takashi.RailwayAndStationPuz.database.DBAdapter;
 import com.example.takashi.RailwayAndStationPuz.database.Line;
 import com.example.takashi.RailwayAndStationPuz.location.LocationPuzzleActivity;
@@ -45,15 +44,13 @@ public class PieceGarallyActivity extends AppCompatActivity
 
     private static String TAG = "PieceGarallyActivity";
     private static final int RESULTCODE = 1;
-    // 要素をArrayListで設定
-    private GridView gridView;
     private MultiButtonListView listView;
     private BaseAdapter baseAdapter;
     private DBAdapter db;
     private ArrayList<Line> lines = new ArrayList<Line>();
-    private CurrentMode currentmode;
     private GaugeView lineNameProgress, lineLocationProgress,stationsProgress;
     private int selectedLineIndex = -1;
+    private int companyId;
 
     private AlertDialog mDialog;
     /**
@@ -70,41 +67,43 @@ public class PieceGarallyActivity extends AppCompatActivity
         db = new DBAdapter(this);
         db.open();
 
-        this.currentmode = db.getCurrentMode();
-        this.lines = db.getLineList(this.currentmode.getCompanyId());
+        Intent intent = getIntent();
+        this.companyId = intent.getIntExtra("SelectedCompanyId", 3); // デフォルトを西日本旅客鉄道のIdにしておく
+
+        this.lines = db.getLineList(this.companyId);
         Log.d(TAG,String.format("lines.size() = %d",this.lines.size()));
 
-        // GridViewのインスタンスを生成
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_main);
-        Log.d(TAG,String.format("GridDisplay is %b",this.currentmode.isGridDisplaied()));
 
         this.lineNameProgress = (GaugeView) findViewById(R.id.lineNameProgress) ;
         updateLineNameProgress();
 
         this.lineLocationProgress =(GaugeView) findViewById(R.id.lineMapProgress);
-        int locationProgress = 100*db.countLocationAnswerdLines(this.currentmode.getCompanyId())/lines.size();
+        int locationProgress = 100*db.countLocationAnswerdLines(this.companyId)/lines.size();
         this.lineLocationProgress.setData(locationProgress,"%",  ContextCompat.getColor(this, R.color.color_60), 90, true);
 
         this.stationsProgress = (GaugeView) findViewById(R.id.stationsProgress);
         this.stationsProgress.setData(20,"%",  ContextCompat.getColor(this, R.color.color_90), 90, true);
 
-        if(this.currentmode.isGridDisplaied()){
-            createPieceGridViewAndAdapter(layout);
-        }
-        else{
-            createPieceListViewAndAdapter(layout);
-        }
+        // GridViewのインスタンスを生成
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_main);
+        getLayoutInflater().inflate(R.layout.activity_line_select_list, layout);
+        this.listView = (MultiButtonListView) findViewById(R.id.railway_list_view);
+        RailwayListAdapter listadapter = new RailwayListAdapter(this.getApplicationContext(), this.lines);
+        this.baseAdapter = listadapter;
+        this.listView.setAdapter(listadapter);
+        this.listView.setOnItemClickListener(this);
+        this.listView.setOnItemLongClickListener(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.station_toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Puz-Rail：Select Railway");
-        actionBar.setSubtitle(db.getCompany(this.currentmode.getCompanyId()).getName());
+        actionBar.setSubtitle(db.getCompany(this.companyId).getName());
     }
 
     private void updateLineNameProgress(){
-        int cnt = db.countLineNameAnswerdLines(this.currentmode.getCompanyId());
+        int cnt = db.countLineNameAnswerdLines(this.companyId);
         int lineNameProgress = 100*cnt/this.lines.size();
         Log.d(TAG,String.format("%d,%d/%d",lineNameProgress,cnt,lines.size()));
         this.lineNameProgress.setData(lineNameProgress,"%",  ContextCompat.getColor(this, R.color.color_30), 90, true);
@@ -155,7 +154,6 @@ public class PieceGarallyActivity extends AppCompatActivity
                 if(!already){
                     randomizedRemainLines.add(fromLine.getName()+"("+fromLine.getLineKana()+")");
                 }
-//                Log.d(TAG,String.format("from.size() = %d, to.size() = %d",sortedRemainLines.size(),randomizedRemainLines.size()));
             }
 
             ArrayAdapter<String> remainLinesAdapter
@@ -179,7 +177,7 @@ public class PieceGarallyActivity extends AppCompatActivity
                                 Toast.makeText(PieceGarallyActivity.this,"正解!!! v(￣Д￣)v ", Toast.LENGTH_SHORT).show();
                                 correctLine.setNameAnswerStatus();
                                 PieceGarallyActivity.this.db.updateLineNameAnswerStatus(correctLine);
-                                PieceGarallyActivity.this.lines = PieceGarallyActivity.this.db.getLineList(PieceGarallyActivity.this.currentmode.getCompanyId());
+                                PieceGarallyActivity.this.lines = PieceGarallyActivity.this.db.getLineList(PieceGarallyActivity.this.companyId);
                                 PieceGarallyActivity.this.baseAdapter.notifyDataSetChanged();
                                 PieceGarallyActivity.this.updateLineNameProgress();
                             }
@@ -260,7 +258,7 @@ public class PieceGarallyActivity extends AppCompatActivity
 
         // ダイアログ表示
         mDialog = new AlertDialog.Builder(this)
-                .setTitle(String.format("路線：%s", s))
+                .setTitle(String.format("%s", s))
                 .setPositiveButton("Cancel", null)
                 .setView(contextMenuListView)
                 .create();
@@ -275,26 +273,6 @@ public class PieceGarallyActivity extends AppCompatActivity
         return true;
     }
 
-    private void createPieceGridViewAndAdapter(RelativeLayout layout){
-        getLayoutInflater().inflate(R.layout.activity_line_select_grid, layout);
-        this.gridView = (GridView) findViewById(R.id.railway_grid_view);
-        RailwayGridAdapter gridadapter = new RailwayGridAdapter(this.getApplicationContext(), this.lines);
-        this.baseAdapter = gridadapter;
-        this.gridView.setAdapter(gridadapter);
-        this.gridView.setOnItemClickListener(this);
-        this.gridView.setOnItemLongClickListener(this);
-    }
-
-    private void createPieceListViewAndAdapter(RelativeLayout layout){
-        getLayoutInflater().inflate(R.layout.activity_line_select_list, layout);
-        this.listView = (MultiButtonListView) findViewById(R.id.railway_list_view);
-        RailwayListAdapter listadapter = new RailwayListAdapter(this.getApplicationContext(), this.lines);
-        this.baseAdapter = listadapter;
-        this.listView.setAdapter(listadapter);
-        this.listView.setOnItemClickListener(this);
-        this.listView.setOnItemLongClickListener(this);
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -304,35 +282,17 @@ public class PieceGarallyActivity extends AppCompatActivity
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_main);
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_garally) {
-            Toast.makeText(PieceGarallyActivity.this, "ギャラリー表示が選択されました", Toast.LENGTH_SHORT).show();
-            // ListViewを削除
-            if (this.listView != null) {
-                unregisterForContextMenu(this.listView);
-                layout.removeAllViews();
-                this.listView = null;
-                this.db.updateDisplayMode(true);
-            }
-            // GridViewを再構築
-            if (this.gridView == null) {
-                createPieceGridViewAndAdapter(layout);
-            }
+        if (id == R.id.action_AboutPuzzRail) {
+            Toast.makeText(PieceGarallyActivity.this, "パズレールについて", Toast.LENGTH_SHORT).show();
             return true;
-        } else if (id == R.id.action_list) {
-            Toast.makeText(PieceGarallyActivity.this, "リスト表示が選択されました", Toast.LENGTH_SHORT).show();
-            // GridViewを削除
-            if (this.gridView != null) {
-                unregisterForContextMenu(this.gridView);
-                layout.removeAllViews();
-                this.gridView = null;
-                this.db.updateDisplayMode(false);
-            }
-            // ListViewを再構築
-            if (this.listView == null) {
-                createPieceListViewAndAdapter(layout);
-            }
+        }
+        else if (id == R.id.action_Help) {
+            Toast.makeText(PieceGarallyActivity.this, "使い方", Toast.LENGTH_SHORT).show();
             return true;
-        } else {
+        }
+        else if(id == R.id.action_Ask) {
+            Toast.makeText(PieceGarallyActivity.this, "お問い合わせ", Toast.LENGTH_SHORT).show();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

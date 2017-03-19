@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class DBAdapter {
     static final String DATABASE_NAME = "Railway.db";
-    static final int DATABASE_VERSION = 20;
+    static final int DATABASE_VERSION = 21;
 
     private String TAG = "DBAdapter";
 
@@ -101,45 +101,6 @@ public class DBAdapter {
     //
     // App Methods
     //
-
-    // currentMode table
-    public CurrentMode getCurrentMode(){
-        CurrentMode mode = null;
-        Cursor cursor = db.rawQuery("SELECT * from currentMode",null);
-        try{
-            if(cursor.moveToFirst()){
-                Log.d(TAG,"get currentMode record");
-                int companyId = cursor.getInt(cursor.getColumnIndex("companyId"));
-                boolean displayGrid = (cursor.getInt(cursor.getColumnIndex("displayGrid"))==1);
-                mode = new CurrentMode(companyId,displayGrid);
-            }
-            else{
-                Log.d(TAG,"moveText　終了");
-            }
-        }finally {
-            cursor.close();
-        }
-        return mode;
-    }
-
-    public boolean updateSelectedCompany(int companyId){
-        ContentValues cv = new ContentValues();
-        cv.put("companyId", companyId);
-        db.update("currentMode", cv, "modeId = 1", null);
-        return true;
-    }
-
-    public boolean updateDisplayMode(boolean displayGrid){
-        ContentValues cv = new ContentValues();
-        if(displayGrid){
-            cv.put("displayGrid", 1);
-        }
-        else{
-            cv.put("displayGrid", 0);
-        }
-        db.update("currentMode", cv, "modeId = 1", null);
-        return true;
-    }
 
     // companies table
     private Company extractCompany( Cursor c){
