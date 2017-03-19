@@ -128,7 +128,11 @@ public class RailwayListAdapter extends BaseAdapter {
         holder.mapImageBtn.setTag(position);
 
         // 駅開設のImageButtonの表示Image切り替え
-        if(line.isStationCompleted()){
+        int totalStationsInLine = dbAdapter.countTotalStationsInLine(companyId,lineId);
+        int answeredStationsInLine = dbAdapter.countAnsweredStationsInLine(companyId,lineId);
+//        if(line.isStationCompleted())
+        if(totalStationsInLine==answeredStationsInLine)
+        {
             holder.staImageBtn.setImageResource(R.mipmap.ic_station_complete);
         }
         else{
@@ -136,8 +140,6 @@ public class RailwayListAdapter extends BaseAdapter {
         }
         holder.staImageBtn.setTag(position);
 
-        int totalStationsInLine = dbAdapter.countTotalStationsInLine(companyId,lineId);
-        int answeredStationsInLine = dbAdapter.countAnsweredStationsInLine(companyId,lineId);
         int progress = 100*dbAdapter.countAnsweredStationsInLine(companyId,lineId)/
                 dbAdapter.countTotalStationsInLine(companyId,lineId);
         Log.d(TAG,String.format("AnsweredStation %d, %d, %d",progress,totalStationsInLine,answeredStationsInLine));
