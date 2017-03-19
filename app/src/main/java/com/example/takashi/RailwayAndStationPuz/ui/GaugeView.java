@@ -15,6 +15,7 @@ import android.support.annotation.ColorInt;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -43,6 +44,8 @@ public class GaugeView extends View {
     private static final int COLOR_SECOND_LOOP_BASE_RING = Color.rgb(242, 89, 12);
     private static final int COLOR_SECOND_LOOP = Color.rgb(245, 139, 85);
     private static final int COLOR_CURRENT_POINT = Color.rgb(155, 155, 155);
+
+    private String TAG = "GaugeView";
 
     private float density;
 
@@ -294,24 +297,23 @@ public class GaugeView extends View {
     }
 
     private void startAnimation(int startDelay) {
-        if (animator == null) {
-            animator = ObjectAnimator.ofInt(this, "phase", 0, value).setDuration(Math.min(Math.max(value, 20), 200) * 10);
-            animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        } else if (animator.isRunning()) {
-            animator.end();
-            animator.cancel();
+        if(this.animator != null && this.animator.isRunning()){
+            this.animator.end();
+            this.animator.cancel();
             clearAnimation();
+            this.animator = null;
         }
-
-        animator.setStartDelay(startDelay);
-        animator.start();
+        this.animator = ObjectAnimator.ofInt(this, "phase", 0, this.value).setDuration(Math.min(Math.max(this.value, 20), 200) * 10);
+        this.animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        this.animator.setStartDelay(startDelay);
+        this.animator.start();
     }
 
     public void setData(int value, String unit, @ColorInt int color, int current, boolean animate) {
         this.value = value;
-        text = String.valueOf(value);
-        textSize = 0;
-        unitSize = 0;
+        this.text = String.valueOf(value);
+        this.textSize = 0;
+        this.unitSize = 0;
         this.unit = TextUtils.isEmpty(unit) ? "" : unit;
         this.color = color;
         this.current = current - 90;

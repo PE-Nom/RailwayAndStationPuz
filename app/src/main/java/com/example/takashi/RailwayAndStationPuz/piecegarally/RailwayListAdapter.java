@@ -59,7 +59,6 @@ public class RailwayListAdapter extends BaseAdapter {
         ImageView railwayLineImage;
         ImageView pieceBorderImage;
         TextView railwayLineName;
-//        Button mapBtn;
         ImageButton mapImageBtn;
         ImageButton staImageBtn;
         SimpleGaugeView progGauge;
@@ -100,6 +99,8 @@ public class RailwayListAdapter extends BaseAdapter {
         Line line = lines.get(position);
         Drawable drawable = ResourcesCompat.getDrawable(this.context.getResources(),line.getDrawableResourceId(),null);
         holder.railwayLineImage.setImageDrawable(drawable);
+
+        // 路線名のテキスト表示
         if(line.isNameCompleted()){
             holder.railwayLineName.setText(line.getName()+"("+line.getLineKana()+")");
         }
@@ -108,9 +109,22 @@ public class RailwayListAdapter extends BaseAdapter {
         }
         holder.railwayLineName.setTextColor(Color.parseColor("#142d81"));
 
-        holder.mapImageBtn.setImageResource(R.mipmap.ic_tracklaying_complete);
+        // 敷設工事のImageButtonの表示Image切り替え
+        if(line.isLocationCompleted()){
+            holder.mapImageBtn.setImageResource(R.mipmap.ic_tracklaying_complete);
+        }
+        else{
+            holder.mapImageBtn.setImageResource(R.mipmap.ic_tracklaying);
+        }
         holder.mapImageBtn.setTag(position);
-        holder.staImageBtn.setImageResource(R.mipmap.ic_station_complete);
+
+        // 駅開設のImageButtonの表示Image切り替え
+        if(line.isStationCompleted()){
+            holder.staImageBtn.setImageResource(R.mipmap.ic_station_complete);
+        }
+        else{
+            holder.staImageBtn.setImageResource(R.mipmap.ic_station);
+        }
         holder.staImageBtn.setTag(position);
 
         holder.progGauge.setData(40,"%", ContextCompat.getColor(this.context, R.color.color_90));

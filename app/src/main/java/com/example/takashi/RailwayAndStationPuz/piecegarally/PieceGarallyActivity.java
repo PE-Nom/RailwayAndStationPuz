@@ -79,9 +79,11 @@ public class PieceGarallyActivity extends AppCompatActivity
         Log.d(TAG,String.format("GridDisplay is %b",this.currentmode.isGridDisplaied()));
 
         this.lineNameProgress = (GaugeView) findViewById(R.id.lineNameProgress) ;
-        this.lineNameProgress.setData(10,"%",  ContextCompat.getColor(this, R.color.color_30), 90, true);
+        updateLineNameProgress();
+
         this.lineMapProgress =(GaugeView) findViewById(R.id.lineMapProgress);
         this.lineMapProgress.setData(20,"%",  ContextCompat.getColor(this, R.color.color_60), 90, true);
+
         this.stationsProgress = (GaugeView) findViewById(R.id.stationsProgress);
         this.stationsProgress.setData(20,"%",  ContextCompat.getColor(this, R.color.color_90), 90, true);
 
@@ -98,6 +100,13 @@ public class PieceGarallyActivity extends AppCompatActivity
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Puz-Rail：Select Railway");
         actionBar.setSubtitle(db.getCompany(this.currentmode.getCompanyId()).getName());
+    }
+
+    private void updateLineNameProgress(){
+        int cnt = db.countLineNameAnswerdLines(this.currentmode.getCompanyId());
+        int lineNameProgress = 100*cnt/this.lines.size();
+        Log.d(TAG,String.format("%d,%d/%d",lineNameProgress,cnt,lines.size()));
+        this.lineNameProgress.setData(lineNameProgress,"%",  ContextCompat.getColor(this, R.color.color_30), 90, true);
     }
 
     @Override
@@ -145,7 +154,7 @@ public class PieceGarallyActivity extends AppCompatActivity
                 if(!already){
                     randomizedRemainLines.add(fromLine.getName()+"("+fromLine.getLineKana()+")");
                 }
-                Log.d(TAG,String.format("from.size() = %d, to.size() = %d",sortedRemainLines.size(),randomizedRemainLines.size()));
+//                Log.d(TAG,String.format("from.size() = %d, to.size() = %d",sortedRemainLines.size(),randomizedRemainLines.size()));
             }
 
             ArrayAdapter<String> remainLinesAdapter
@@ -168,7 +177,10 @@ public class PieceGarallyActivity extends AppCompatActivity
                             if(correctLineName.equals(selectedLineName)){
                                 Toast.makeText(PieceGarallyActivity.this,"正解!!! v(￣Д￣)v ", Toast.LENGTH_SHORT).show();
                                 correctLine.setNameAnswerStatus();
+                                PieceGarallyActivity.this.db.updateLineNameAnswerStatus(correctLine);
+                                PieceGarallyActivity.this.lines = PieceGarallyActivity.this.db.getLineList(PieceGarallyActivity.this.currentmode.getCompanyId());
                                 PieceGarallyActivity.this.baseAdapter.notifyDataSetChanged();
+                                PieceGarallyActivity.this.updateLineNameProgress();
                             }
                             else{
                                 Toast.makeText(PieceGarallyActivity.this,"残念･･･ Σ(￣ロ￣lll)", Toast.LENGTH_SHORT).show();
@@ -381,5 +393,4 @@ public class PieceGarallyActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
 }

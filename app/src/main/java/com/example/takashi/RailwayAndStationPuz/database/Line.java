@@ -107,7 +107,6 @@ public class Line {
     }
     public String getLineKana() { return this.lineKana; }
     public int getDrawableResourceId() {
-        Log.d(TAG,String.format("Line drawable resource name : %s", this.drawable_resource_name));
         return this.res.getIdentifier(this.drawable_resource_name, "drawable", this.context.getPackageName());
     }
     public int getRawResourceId() {

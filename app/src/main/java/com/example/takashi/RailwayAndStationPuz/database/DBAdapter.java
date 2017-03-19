@@ -227,7 +227,7 @@ public class DBAdapter {
                 max_zoom_level,min_zoom_level,init_zoom_level,
                 nameAnswerStatus,locationAnswerStatus,stationAnswerStatus,
                 totalStations,answeredStations);
-        Log.d(TAG,String.format("lines: %d,%d,%d," +
+/*        Log.d(TAG,String.format("lines: %d,%d,%d," +
                         "%s,%s," +
                         "%d," +
                         "%s,%s," +
@@ -248,6 +248,7 @@ public class DBAdapter {
                 nameAnswerStatus,locationAnswerStatus,stationAnswerStatus,
                 totalStations,answeredStations
         ));
+*/
         return line;
     }
 
@@ -300,6 +301,32 @@ public class DBAdapter {
         }
         db.update("lines", cv, "lineId = "+lineId, null);
         return true;
+    }
+
+    /*
+     * 路線名のAnswerStatus更新
+     */
+    public boolean updateLineNameAnswerStatus(Line line){
+        int lineId = line.getLineId();
+        ContentValues cv = new ContentValues();
+        if( line.isNameCompleted()){
+            cv.put("nameAnswerStatus",1);
+        }
+        else{
+            cv.put("nameAnswerStatus",0);
+        }
+        db.update("lines",cv,"lineId = "+lineId,null);
+        return true;
+    }
+
+    /*
+     * 事業者ごとの路線名完了件数の取得
+     */
+    public int countLineNameAnswerdLines(int companyId){
+        int cnt;
+        Cursor cursor = db.rawQuery("SELECT * from lines WHERE companyId=? and nameAnswerStatus = 1",new String[]{String.valueOf(companyId)});
+        cnt = cursor.getCount();
+        return cnt;
     }
 
     // stations table
