@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/railwaylistitem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
@@ -64,15 +65,16 @@
                     android:id="@+id/mapImageButton"
                     style="@style/Widget.AppCompat.ImageButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_marginLeft="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
                     android:adjustViewBounds="false"
                     android:background="#00000000"
                     android:cropToPadding="true"
                     android:elevation="10dp"
                     android:scaleType="centerCrop"
                     android:visibility="visible"
-                    app:srcCompat="@mipmap/ic_tracklaying" />
+                    app:srcCompat="@drawable/ic_tracklaying" />
 
                 <!--                <Button
                     android:id="@+id/location"
@@ -96,19 +98,19 @@
                     android:id="@+id/stationImageButton"
                     style="@style/Widget.AppCompat.ImageButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_alignTop="@+id/mapImageButton"
-                    android:layout_marginLeft="40dp"
-                    android:layout_toEndOf="@+id/mapImageButton"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_toRightOf="@+id/mapImageButton"
                     android:background="#00000000"
                     android:elevation="10dp"
                     android:scaleType="centerCrop"
-                    app:srcCompat="@mipmap/ic_station" />
+                    app:srcCompat="@drawable/ic_station_open" />
 
                 <com.example.takashi.RailwayAndStationPuz.ui.SimpleGaugeView
                     android:id="@+id/stationProgress"
                     android:layout_width="match_parent"
-                    android:layout_height="36dp"
+                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="0dp"
                     android:layout_toRightOf="@+id/stationImageButton" />

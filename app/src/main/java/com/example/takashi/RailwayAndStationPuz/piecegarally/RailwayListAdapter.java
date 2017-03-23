@@ -120,11 +120,12 @@ public class RailwayListAdapter extends BaseAdapter {
 
         // 敷設工事のImageButtonの表示Image切り替え
         if(line.isLocationCompleted()){
-            holder.mapImageBtn.setImageResource(R.mipmap.ic_tracklaying_complete);
+            drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_tracklaying_completed,null);
         }
         else{
-            holder.mapImageBtn.setImageResource(R.mipmap.ic_tracklaying);
+            drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_tracklaying,null);
         }
+        holder.mapImageBtn.setImageDrawable(drawable);
         holder.mapImageBtn.setTag(position);
 
         // 駅開設のImageButtonの表示Image切り替え
@@ -133,11 +134,12 @@ public class RailwayListAdapter extends BaseAdapter {
 //        if(line.isStationCompleted())
         if(totalStationsInLine==answeredStationsInLine)
         {
-            holder.staImageBtn.setImageResource(R.mipmap.ic_station_complete);
+            drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_station_open_completed,null);
         }
         else{
-            holder.staImageBtn.setImageResource(R.mipmap.ic_station);
+            drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_station_open,null);
         }
+        holder.staImageBtn.setImageDrawable(drawable);
         holder.staImageBtn.setTag(position);
 
         int progress = 100*dbAdapter.countAnsweredStationsInLine(companyId,lineId)/

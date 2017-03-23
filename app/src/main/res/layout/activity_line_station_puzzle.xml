@@ -38,32 +38,47 @@
         </android.support.design.widget.AppBarLayout>
 
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/linearlayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/backgound_bg"
+            android:orientation="vertical"
             android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:background="@drawable/backgound_bg">
+            android:paddingTop="@dimen/activity_vertical_margin">
 
             <TextView
-                android:text="TextView"
+                android:id="@+id/ProgressTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/ProgressTitle" />
+                android:text="TextView" />
 
             <ProgressBar
+                android:id="@+id/ProgressBar"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/ProgressBar" />
+                android:layout_height="wrap_content" />
 
-            <com.google.android.gms.maps.MapView
+            <FrameLayout
+                android:id="@+id/framelayout"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:id="@+id/mapView"
-                android:layoutMode="clipBounds" />
+                android:layout_height="200dp">
+
+                <com.google.android.gms.maps.MapView
+                    android:id="@+id/mapView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layoutMode="clipBounds" />
+
+                <ImageView
+                    android:id="@+id/separatorMove"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="bottom|right"
+                    app:srcCompat="@drawable/ic_reducemapbutton" />
+
+            </FrameLayout>
 
             <ImageView
                 android:id="@+id/separatorView"
@@ -75,17 +90,17 @@
                 app:srcCompat="?attr/colorPrimary" />
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <ListView
+                    android:id="@+id/StationNameList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/StationNameList"
+                    android:layout_marginTop="10dp"
                     android:divider="#000"
-                    android:dividerHeight="0.5dp"
-                    android:layout_marginTop="10dp" />
+                    android:dividerHeight="0.5dp" />
             </LinearLayout>
         </LinearLayout>
 

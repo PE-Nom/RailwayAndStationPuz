@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -16,7 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -64,6 +67,10 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     private ListView stationListView;
     private AlertDialog mDialog;
     private int selectedStationIndex = -1;
+    private FrameLayout frame;
+    private LinearLayout linear;
+    private ImageView separatorMove;
+    private int mapExpandLimit = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,13 +112,33 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         this.progress.setMax(stations.size());
         this.progress.setProgress(finishedCnt);
 
+        this.frame = (FrameLayout)findViewById(R.id.framelayout);
+
         this.mMapView = (MapView)findViewById(R.id.mapView);
         this.mMapView.onCreate(savedInstanceState);
         this.mMapView.getMapAsync(this);
 
+        this.separatorMove = (ImageView)findViewById(R.id.separatorMove);
+        this.separatorMove.setLongClickable(true);
+        this.separatorMove.setOnTouchListener(new OnTouchListener(this));
+
         this.mSeparator = (ImageView)findViewById(R.id.separatorView);
-        this.mSeparator.setLongClickable(true);
-        this.mSeparator.setOnTouchListener(new OnTouchListener(this));
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+
+//        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+//        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        float dpHeight = displayMetrics.heightPixels;
+        float dpWidth = displayMetrics.widthPixels;
+        Log.d(TAG,"Width->" + dpWidth + ",Height=>" + dpHeight);
+
+//        this.linear = (LinearLayout)findViewById(R.id.linearlayout);
+//        ViewGroup.LayoutParams linearparam = StationPuzzleActivity.this.linear.getLayoutParams();
+//        int limit = linearparam.height*3/4;
+//        Log.d(TAG,String.format("limit = %d,linear.param.height = %d",limit,linearparam.height));
+        int limit = (int)dpHeight;
+        Log.d(TAG,String.format("limit = %d, dpHeight = %f",limit,dpHeight));
+        this.mapExpandLimit = limit;
 
     }
 
@@ -341,14 +368,18 @@ public class StationPuzzleActivity extends AppCompatActivity implements
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            ViewGroup.LayoutParams param = StationPuzzleActivity.this.mMapView.getLayoutParams();
+            ViewGroup.LayoutParams param = StationPuzzleActivity.this.frame.getLayoutParams();
             int height = param.height;
             int change = height+(int)e2.getY();
-            Log.d(TAG, String.format("onScroll mapHeight = %d, change = %d",param.height,change));
-            if(100 < change && change < 500){
-                param.height = change;
-                StationPuzzleActivity.this.mMapView.setLayoutParams(param);
+            if( change < 100 ) {
+                change = 100;
             }
+            else if( StationPuzzleActivity.this.mapExpandLimit < change ) {
+                change = StationPuzzleActivity.this.mapExpandLimit;
+            }
+            Log.d(TAG,String.format("change =%d",change));
+            param.height = change;
+            StationPuzzleActivity.this.frame.setLayoutParams(param);
             return true;
         }
 
