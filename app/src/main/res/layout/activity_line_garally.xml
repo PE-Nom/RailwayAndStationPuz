@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backgound_bg"
     android:fitsSystemWindows="true">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_weight="1">
+        android:layout_alignParentTop="true"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <android.support.design.widget.AppBarLayout
-            android:theme="@style/AppTheme.AppBarOverlay"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/station_toolbar"
@@ -46,6 +46,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
+                android:background="@android:color/transparent"
                 android:orientation="horizontal">
 
                 <TextView
@@ -99,13 +100,16 @@
 
             </LinearLayout>
 
-            <RelativeLayout
-                android:id="@+id/content_main"
+            <com.example.takashi.RailwayAndStationPuz.ui.MultiButtonListView
+                android:id="@+id/railway_list_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/backgound_bg" />
 
-            </RelativeLayout>
         </LinearLayout>
 
     </LinearLayout>

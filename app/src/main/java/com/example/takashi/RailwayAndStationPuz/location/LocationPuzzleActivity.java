@@ -134,7 +134,6 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         mMap.setOnMapLongClickListener(this);
         mMap.setOnCameraIdleListener(this);
         // Add a marker in Sydney and move the camera
-//        mMap.addMarker(new MarkerOptions().position(new LatLng(34.6488082, 134.9928082)).title("Marker"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(this.line.getInitCamposLat(),this.line.getInitCamposLng()),
                         this.line.getInitZoomLevel())
@@ -300,7 +299,6 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
-//        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

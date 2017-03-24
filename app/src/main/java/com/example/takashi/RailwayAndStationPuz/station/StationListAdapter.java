@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.takashi.RailwayAndStationPuz.R;
@@ -60,6 +61,7 @@ public class StationListAdapter extends BaseAdapter {
     }
 
     private class ViewHolder {
+        ImageView iconStation;
         TextView stationName;
         CheckBox mapOverlaySw;
     }
@@ -73,6 +75,7 @@ public class StationListAdapter extends BaseAdapter {
         if(convertView == null){
             convertView = inflater.inflate(R.layout.station_list_item,null);
             holder = new ViewHolder();
+            holder.iconStation = (ImageView)convertView.findViewById(R.id.ic_station);
             holder.stationName = (TextView)convertView.findViewById(R.id.station_name);
             holder.mapOverlaySw = (CheckBox)convertView.findViewById(R.id.mapOverlaySw);
             convertView.setTag(holder);
@@ -84,10 +87,17 @@ public class StationListAdapter extends BaseAdapter {
         Station station = (Station)stations.get(position);
 
         if(station.isFinished()){   // 当該ステーションが正解済み
-            Drawable drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_railway_line_a,null);
-            drawable.setBounds(0,0,30,48);
-            holder.stationName.setCompoundDrawables(drawable,null,null,null);
-            holder.stationName.setCompoundDrawablePadding(0);
+            Drawable drawable;
+            if(position==0){
+                drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_start_terminal_station,null);
+            }
+            else if(position==this.stations.size()-1){
+                drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_arrival_terminal_open_station,null);
+            }
+            else{
+                drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_open_station,null);
+            }
+            holder.iconStation.setImageDrawable(drawable);
             String name = station.getName() + "(" + station.getKana() + ")";
             holder.stationName.setText(name);
             holder.mapOverlaySw.setChecked(station.isOverlaySw());
@@ -103,10 +113,14 @@ public class StationListAdapter extends BaseAdapter {
             }
         }
         else{                       // 当該ステーションが未正解
-            Drawable drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_railway_line_b,null);
-            drawable.setBounds(0,0,30,48);
-            holder.stationName.setCompoundDrawables(drawable,null,null,null);
-            holder.stationName.setCompoundDrawablePadding(0);
+            Drawable drawable;
+            if(position==this.stations.size()-1){
+                drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_arrival_terminal_outofsv_station,null);
+            }
+            else{
+                drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_out_of_sv_station,null);
+            }
+            holder.iconStation.setImageDrawable(drawable);
             holder.stationName.setText("------------");
             holder.mapOverlaySw.setChecked(false);
             holder.mapOverlaySw.setClickable(false);

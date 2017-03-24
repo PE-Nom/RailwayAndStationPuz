@@ -81,8 +81,8 @@ public class PieceGarallyActivity extends AppCompatActivity
         this.stationsProgress.setData(stationAnsweredProgress,"%",  ContextCompat.getColor(this, R.color.color_30), 90, true);
 
         // GridViewのインスタンスを生成
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_main);
-        getLayoutInflater().inflate(R.layout.activity_line_select_list, layout);
+//        RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_main);
+//        getLayoutInflater().inflate(R.layout.activity_line_select_list, layout);
         this.listView = (MultiButtonListView) findViewById(R.id.railway_list_view);
         RailwayListAdapter listadapter = new RailwayListAdapter(this.getApplicationContext(), this.lines, db);
         this.baseAdapter = listadapter;
@@ -275,7 +275,6 @@ public class PieceGarallyActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_main);
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_AboutPuzzRail) {

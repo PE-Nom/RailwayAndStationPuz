@@ -3,15 +3,17 @@ package com.example.takashi.RailwayAndStationPuz.station;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +51,7 @@ import java.util.Random;
 
 public class StationPuzzleActivity extends AppCompatActivity implements
         AdapterView.OnItemClickListener,
+        AdapterView.OnItemLongClickListener,
         OnMapReadyCallback {
 
     private String TAG = "StationPuzzleActivity";
@@ -67,10 +70,11 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     private ListView stationListView;
     private AlertDialog mDialog;
     private int selectedStationIndex = -1;
-    private FrameLayout frame;
-    private LinearLayout linear;
+
     private ImageView separatorMove;
-    private int mapExpandLimit = -1;
+    private FrameLayout mapFrame;
+    private LinearLayout transparentView;
+    private int heightLimit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,12 +111,13 @@ public class StationPuzzleActivity extends AppCompatActivity implements
 
         }
         this.progressTitle = (TextView)findViewById(R.id.ProgressTitle);
-        this.progressTitle.setText(String.format("紀勢線 駅名解答率 : %d/%d",finishedCnt,stations.size()));
+        this.progressTitle.setText(String.format("%s 駅名解答率 : %d/%d",lineName, finishedCnt, stations.size()));
         this.progress = (ProgressBar)findViewById(R.id.ProgressBar);
         this.progress.setMax(stations.size());
         this.progress.setProgress(finishedCnt);
 
-        this.frame = (FrameLayout)findViewById(R.id.framelayout);
+        this.mapFrame = (FrameLayout)findViewById(R.id.framelayout);
+        this.transparentView = (LinearLayout)findViewById(R.id.linearlayout);
 
         this.mMapView = (MapView)findViewById(R.id.mapView);
         this.mMapView.onCreate(savedInstanceState);
@@ -123,23 +128,6 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         this.separatorMove.setOnTouchListener(new OnTouchListener(this));
 
         this.mSeparator = (ImageView)findViewById(R.id.separatorView);
-
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-
-//        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
-//        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        float dpHeight = displayMetrics.heightPixels;
-        float dpWidth = displayMetrics.widthPixels;
-        Log.d(TAG,"Width->" + dpWidth + ",Height=>" + dpHeight);
-
-//        this.linear = (LinearLayout)findViewById(R.id.linearlayout);
-//        ViewGroup.LayoutParams linearparam = StationPuzzleActivity.this.linear.getLayoutParams();
-//        int limit = linearparam.height*3/4;
-//        Log.d(TAG,String.format("limit = %d,linear.param.height = %d",limit,linearparam.height));
-        int limit = (int)dpHeight;
-        Log.d(TAG,String.format("limit = %d, dpHeight = %f",limit,dpHeight));
-        this.mapExpandLimit = limit;
-
     }
 
     public DBAdapter getDb(){
@@ -159,7 +147,6 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     	finish();
 
     }
-
     @Override
     public void onItemClick(AdapterView adapterView, View view, int position, long l) {
         Log.d(TAG,String.format("onItemClick() position = %d,駅名=%s",position,stationsAdapter.getStationInfo(position).getName()));
@@ -260,7 +247,43 @@ public class StationPuzzleActivity extends AppCompatActivity implements
             mDialog.show();
         }
     }
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        Station station = this.stations.get(position);
+        String s = station.getName()+"("+station.getName()+")";
+        Log.d(TAG, String.format("onItemLongClick 駅：%s", s));
 
+        final ArrayList<String> contextMenuList = new ArrayList<String>();
+        contextMenuList.add("回答クリア");
+        contextMenuList.add("回答を見る");
+        contextMenuList.add("最初の位置に戻す");
+        contextMenuList.add("Webを検索する");
+
+        ArrayAdapter<String> contextMenuAdapter
+                = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,contextMenuList);
+
+        // 未正解アイテムのリストビュー生成
+        ListView contextMenuListView = new ListView(this);
+        contextMenuListView.setAdapter(contextMenuAdapter);
+        contextMenuListView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener(){
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                        mDialog.dismiss();
+                        Toast.makeText(StationPuzzleActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+        // ダイアログ表示
+        mDialog = new AlertDialog.Builder(this)
+                .setTitle(String.format("%s", s))
+                .setPositiveButton("Cancel", null)
+                .setView(contextMenuListView)
+                .create();
+        mDialog.show();
+        return true;
+
+    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.mMap = googleMap;
@@ -296,6 +319,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         } catch (JSONException e) {
             Log.e(TAG, "GeoJSON file could not be converted to a JSONObject");
         }
+
         this.mapReady = true;
 
         // mapオブジェクトが生成された後にMarkerのOverlay初期表示を行うため、
@@ -304,8 +328,8 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         this.stationsAdapter = new StationListAdapter(this,this.stations,this.mMap);
         this.stationListView.setAdapter(this.stationsAdapter);
         this.stationListView.setOnItemClickListener(this);
+        this.stationListView.setOnItemLongClickListener(this);
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -368,18 +392,30 @@ public class StationPuzzleActivity extends AppCompatActivity implements
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            ViewGroup.LayoutParams param = StationPuzzleActivity.this.frame.getLayoutParams();
-            int height = param.height;
-            int change = height+(int)e2.getY();
-            if( change < 100 ) {
-                change = 100;
+            ViewGroup.LayoutParams mapFrameParam = StationPuzzleActivity.this.mapFrame.getLayoutParams();
+            int baseHeight = StationPuzzleActivity.this.transparentView.getHeight()
+                    - StationPuzzleActivity.this.progressTitle.getHeight()
+                    - StationPuzzleActivity.this.progress.getHeight();
+            int maxHeight = baseHeight*4/5;
+            int minHeight = baseHeight/5;
+            int currentMapHeight = mapFrameParam.height;
+            int changeMapHeight = currentMapHeight+(int)e2.getY();
+
+            Drawable drawable;
+            if( changeMapHeight < minHeight ) {
+                changeMapHeight = minHeight;
+                drawable = ResourcesCompat.getDrawable(StationPuzzleActivity.this.getResources(),R.drawable.ic_expandmapbutton,null);
             }
-            else if( StationPuzzleActivity.this.mapExpandLimit < change ) {
-                change = StationPuzzleActivity.this.mapExpandLimit;
+            else if( maxHeight < changeMapHeight ) {
+                changeMapHeight = maxHeight;
+                drawable = ResourcesCompat.getDrawable(StationPuzzleActivity.this.getResources(),R.drawable.ic_reducemapbutton,null);
             }
-            Log.d(TAG,String.format("change =%d",change));
-            param.height = change;
-            StationPuzzleActivity.this.frame.setLayoutParams(param);
+            else{
+                drawable = ResourcesCompat.getDrawable(StationPuzzleActivity.this.getResources(),R.drawable.ic_changemapsizebutton,null);
+            }
+            mapFrameParam.height = changeMapHeight;
+            StationPuzzleActivity.this.mapFrame.setLayoutParams(mapFrameParam);
+            StationPuzzleActivity.this.separatorMove.setImageDrawable(drawable);
             return true;
         }
 
@@ -455,5 +491,25 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_AboutPuzzRail) {
+            Toast.makeText(StationPuzzleActivity.this, "パズレールについて", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        else if (id == R.id.action_Help) {
+            Toast.makeText(StationPuzzleActivity.this, "使い方", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        else if(id == R.id.action_Ask) {
+            Toast.makeText(StationPuzzleActivity.this, "お問い合わせ", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
