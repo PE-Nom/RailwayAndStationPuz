@@ -55,17 +55,19 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         OnMapReadyCallback {
 
     private String TAG = "StationPuzzleActivity";
+    private String lineNameNone = "*****";
+    private String lineName;
+    private String stationNameNone = "*****";
     private DBAdapter db;
-    private int selectedLineId;
     private Line line;
+    private int companyId;
+    private int selectedLineId;
     private ArrayList<Station> stations = new ArrayList<Station>();
 
     private GoogleMap mMap;
-    private boolean mapReady = false;
     private TextView progressTitle;
     private ProgressBar progress;
     private MapView mMapView;
-    private ImageView mSeparator;
     private StationListAdapter stationsAdapter;
     private ListView stationListView;
     private AlertDialog mDialog;
@@ -74,7 +76,6 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     private ImageView separatorMove;
     private FrameLayout mapFrame;
     private LinearLayout transparentView;
-    private int heightLimit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,11 +98,16 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         String companyName = db.getCompany(line.getCompanyId()).getName();
         String lineName = line.getName();
         String linekana = line.getLineKana();
+        this.companyId = line.getCompanyId();
 
         actionBar.setTitle("Puz-Rail：Station Set");
-        actionBar.setSubtitle(companyName+"／"+lineName+"("+linekana+")");
-
-        Log.d(TAG,String.format("selected line is %s",line.getName()));
+        if(line.isNameCompleted()){
+            this.lineName = lineName+"("+linekana+")";
+        }
+        else{
+            this.lineName = lineNameNone;
+        }
+        actionBar.setSubtitle(companyName+"／"+this.lineName);
 
         int finishedCnt = 0;
         Iterator<Station> ite = stations.listIterator();
@@ -127,7 +133,6 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         this.separatorMove.setLongClickable(true);
         this.separatorMove.setOnTouchListener(new OnTouchListener(this));
 
-        this.mSeparator = (ImageView)findViewById(R.id.separatorView);
     }
 
     public DBAdapter getDb(){
@@ -140,6 +145,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this.getApplicationContext(), PieceGarallyActivity.class);
+        intent.putExtra("SelectedCompanyId", this.companyId);
         startActivityForResult(intent, 1);
         // アニメーションの設定
         overridePendingTransition(R.anim.in_left, R.anim.out_right);
@@ -250,8 +256,13 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         Station station = this.stations.get(position);
-        String s = station.getName()+"("+station.getName()+")";
-        Log.d(TAG, String.format("onItemLongClick 駅：%s", s));
+        String s;
+        if(station.isFinished()){
+            s = station.getName()+"("+station.getName()+")";
+        }
+        else{
+            s = this.stationNameNone;
+        }
 
         final ArrayList<String> contextMenuList = new ArrayList<String>();
         contextMenuList.add("回答クリア");
@@ -319,8 +330,6 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         } catch (JSONException e) {
             Log.e(TAG, "GeoJSON file could not be converted to a JSONObject");
         }
-
-        this.mapReady = true;
 
         // mapオブジェクトが生成された後にMarkerのOverlay初期表示を行うため、
         // stationListAdapterをOnMapReadyの最後に生成する。

@@ -74,7 +74,8 @@
                 <FrameLayout
                     android:id="@+id/framelayout"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp">
+                    android:layout_height="200dp"
+                    android:elevation="24dp">
 
                     <com.google.android.gms.maps.MapView
                         android:id="@+id/mapView"
@@ -84,21 +85,12 @@
 
                     <ImageView
                         android:id="@+id/separatorMove"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
                         android:layout_gravity="bottom|right"
                         app:srcCompat="@drawable/ic_changemapsizebutton" />
 
                 </FrameLayout>
-
-                <ImageView
-                    android:id="@+id/separatorView"
-                    android:layout_width="match_parent"
-                    android:layout_height="6dp"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="2dp"
-                    android:src="@drawable/ic_separator"
-                    app:srcCompat="?attr/colorPrimary" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

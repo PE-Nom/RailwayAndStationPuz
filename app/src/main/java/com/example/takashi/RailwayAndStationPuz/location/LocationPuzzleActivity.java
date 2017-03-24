@@ -43,7 +43,10 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         OnLineScrollEndListener {
 
     private final static String TAG = "LocationPuzzleActivity";
+    private String lineNameNone = "*****";
+    private String lineName;
     private DBAdapter db;
+    private int companyId;
     private int selectedLineId;
     private Line line;
     private GoogleMap mMap;
@@ -77,8 +80,16 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         String companyName = db.getCompany(line.getCompanyId()).getName();
         String lineName = line.getName();
         String linekana = line.getLineKana();
+        this.companyId = line.getCompanyId();
+
         actionBar.setTitle("Puz-Rail：Location Set");
-        actionBar.setSubtitle(companyName+"／"+lineName+"("+linekana+")");
+        if(line.isNameCompleted()){
+            this.lineName = lineName+"("+linekana+")";
+        }
+        else{
+            this.lineName = lineNameNone;
+        }
+        actionBar.setSubtitle(companyName+"／"+this.lineName);
 
     }
 
@@ -89,6 +100,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this.getApplicationContext(), PieceGarallyActivity.class);
+        intent.putExtra("SelectedCompanyId", this.companyId);
         startActivityForResult(intent, 1);
         // アニメーションの設定
         overridePendingTransition(R.anim.in_left, R.anim.out_right);

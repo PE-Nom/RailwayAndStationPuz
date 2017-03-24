@@ -75,14 +75,10 @@ public class PieceGarallyActivity extends AppCompatActivity
         this.lineLocationProgress.setData(locationProgress,"%",  ContextCompat.getColor(this, R.color.color_60), 90, true);
 
         this.stationsProgress = (GaugeView) findViewById(R.id.stationsProgress);
-//        Log.d(TAG,String.format("answered stations = %d, total stations = %d",
-//                db.countAnsweredStationsInCompany(this.companyId), db.countTotalStationsInCompany(this.companyId)));
         int stationAnsweredProgress = 100*db.countAnsweredStationsInCompany(this.companyId)/db.countTotalStationsInCompany(this.companyId);
         this.stationsProgress.setData(stationAnsweredProgress,"%",  ContextCompat.getColor(this, R.color.color_30), 90, true);
 
         // GridViewのインスタンスを生成
-//        RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_main);
-//        getLayoutInflater().inflate(R.layout.activity_line_select_list, layout);
         this.listView = (MultiButtonListView) findViewById(R.id.railway_list_view);
         RailwayListAdapter listadapter = new RailwayListAdapter(this.getApplicationContext(), this.lines, db);
         this.baseAdapter = listadapter;
@@ -227,8 +223,14 @@ public class PieceGarallyActivity extends AppCompatActivity
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        String s;
         Line line = lines.get(position);
-        String s = line.getName()+"("+line.getLineKana()+")";
+        if(line.isNameCompleted()){
+            s = line.getName()+"("+line.getLineKana()+")";
+        }
+        else{
+            s = "*****";
+        }
         Log.d(TAG, String.format("onItemLongClick 路線：%s", s));
 
         final ArrayList<String> contextMenuList = new ArrayList<String>();
