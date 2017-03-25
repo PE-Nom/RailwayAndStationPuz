@@ -8,11 +8,16 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.takashi.RailwayAndStationPuz.piecegarally.PieceGarallyActivity;
 import com.example.takashi.RailwayAndStationPuz.R;
@@ -57,6 +62,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
 
     private boolean geoJsonVisible = false;
     private Drawable mDrawable;
+    private AlertDialog mDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,31 +135,35 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         mMap = googleMap;
 
         // マップ形式の設定
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        this.mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         // 表示エリアと縮尺の制限
-        UiSettings mUiSetting = mMap.getUiSettings();
+        UiSettings mUiSetting = this.mMap.getUiSettings();
         mUiSetting.setRotateGesturesEnabled(false);
-        mMap.setMaxZoomPreference(this.line.getMaxZoomLevel());
-        mMap.setMinZoomPreference(this.line.getMinZoomLevel());
+        this.mMap.setMaxZoomPreference(this.line.getMaxZoomLevel());
+        this.mMap.setMinZoomPreference(this.line.getMinZoomLevel());
         // 離島除く
         LatLng north_east = new LatLng(this.line.getScrollMaxLat(),this.line.getScrollMaxLng());
         LatLng south_west = new LatLng(this.line.getScrollMinLat(),this.line.getScrollMinLng());
         LatLngBounds JAPAN = new LatLngBounds(south_west,north_east);
-        mMap.setLatLngBoundsForCameraTarget(JAPAN);
+        this.mMap.setLatLngBoundsForCameraTarget(JAPAN);
 
         // EventListener
-        mMap.setOnMapClickListener(this);
-        mMap.setOnMapLongClickListener(this);
-        mMap.setOnCameraIdleListener(this);
-        // Add a marker in Sydney and move the camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(this.line.getInitCamposLat(),this.line.getInitCamposLng()),
-                        this.line.getInitZoomLevel())
-                        );
+        this.mMap.setOnMapClickListener(this);
+        this.mMap.setOnMapLongClickListener(this);
+        this.mMap.setOnCameraIdleListener(this);
+        mImageView.setMap(this.mMap);
+        setImageDrawable();
+        mapInitialize();
 
-        mImageView.setMap(this.mMap); //
     }
 
+    private void mapInitialize(){
+        // Add a marker in Sydney and move the camera
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(this.line.getInitCamposLat(),this.line.getInitCamposLng()),
+                this.line.getInitZoomLevel())
+        );
+    }
     // GeoJsonLayerの生成とColorの指定、Mapへの登録
     private void retrieveFileFromResource() {
         try {
@@ -193,18 +203,61 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     @Override
     public void onMapLongClick(LatLng latLng) {
         Log.d(TAG,"onMapLongClick");
-        setGeoJsonVisible();
+
+        final ArrayList<String> contextMenuList = new ArrayList<String>();
+        contextMenuList.add("回答クリア");
+        contextMenuList.add("回答を見る");
+        contextMenuList.add("最初の位置に戻す");
+        contextMenuList.add("Webを検索する");
+
+        ArrayAdapter<String> contextMenuAdapter
+                = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,contextMenuList);
+
+        // 未正解アイテムのリストビュー生成
+        ListView contextMenuListView = new ListView(this);
+        contextMenuListView.setAdapter(contextMenuAdapter);
+        contextMenuListView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener(){
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                        LocationPuzzleActivity.this.mDialog.dismiss();
+                        ArrayAdapter<String> adapter = (ArrayAdapter<String>)adapterView.getAdapter();
+                        switch(position){
+                            case 0:
+                                Toast.makeText(LocationPuzzleActivity.this,String.format("position=%d:%s",position,adapter.getItem(position)), Toast.LENGTH_SHORT).show();
+                                break;
+                            case 1:
+                                Toast.makeText(LocationPuzzleActivity.this,String.format("position=%d:%s",position,adapter.getItem(position)), Toast.LENGTH_SHORT).show();
+                                setGeoJsonVisible();
+                                break;
+                            case 2:
+                                Toast.makeText(LocationPuzzleActivity.this,String.format("position=%d:%s",position,adapter.getItem(position)), Toast.LENGTH_SHORT).show();
+                                LocationPuzzleActivity.this.mapInitialize();
+                                LocationPuzzleActivity.this.resetImageDrawable();
+                                LocationPuzzleActivity.this.setImageDrawable();
+                                break;
+                            case 3:
+                                Toast.makeText(LocationPuzzleActivity.this,String.format("position=%d:%s",position,adapter.getItem(position)), Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                    }
+                }
+        );
+
+        // ダイアログ表示
+        this.mDialog = new AlertDialog.Builder(this)
+                .setTitle(String.format("%s", this.lineName))
+                .setPositiveButton("Cancel", null)
+                .setView(contextMenuListView)
+                .create();
+        this.mDialog.show();
+
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
         Log.d(TAG,"onMapClick");
-        if(mImageView.getDrawable() == null){
-            setImageDrawable();
-        }
-        else{
-            resetImageDrawable();
-        }
+        // ToDo
+        // タイムトライアルのタイマー開始／停止操作実装
     }
 
     @Override

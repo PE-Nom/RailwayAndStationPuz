@@ -493,6 +493,7 @@ public class LineMapOverlayView extends ImageView {
     public void setMap(GoogleMap map){
         this.map = map;
     }
+
     private void computeLocationError(){
         RectF railwayImageRect = getCurrentImageRect();
         Log.d(TAG,String.format("RailwayLine Image : left=%f,top=%f,right=%f,bottom=%f",
