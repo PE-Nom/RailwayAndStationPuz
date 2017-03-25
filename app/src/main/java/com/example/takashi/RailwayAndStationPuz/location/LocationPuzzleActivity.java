@@ -43,7 +43,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         OnLineScrollEndListener {
 
     private final static String TAG = "LocationPuzzleActivity";
-    private String lineNameNone = "*****";
+    private String lineNameNone = "------------";
     private String lineName;
     private DBAdapter db;
     private int companyId;

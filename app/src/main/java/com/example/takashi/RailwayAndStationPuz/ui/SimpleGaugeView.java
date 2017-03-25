@@ -101,6 +101,7 @@ public class SimpleGaugeView extends View {
             if (isLandscape) {
                 ringStrokeWidth = canvas.getHeight() * RING_STROKE_PERCENTAGE;
                 ringRadius = (canvas.getHeight() / 2) - ringStrokeWidth;
+                centerX = canvas.getWidth()/20+ringRadius+ringStrokeWidth;
             } else {
                 ringStrokeWidth = canvas.getWidth() * RING_STROKE_PERCENTAGE;
                 ringRadius = (canvas.getWidth() / 2) - ringStrokeWidth;

@@ -55,9 +55,9 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         OnMapReadyCallback {
 
     private String TAG = "StationPuzzleActivity";
-    private String lineNameNone = "*****";
+    private String lineNameNone = "------------";
     private String lineName;
-    private String stationNameNone = "*****";
+    private String stationNameNone = "------------";
     private DBAdapter db;
     private Line line;
     private int companyId;

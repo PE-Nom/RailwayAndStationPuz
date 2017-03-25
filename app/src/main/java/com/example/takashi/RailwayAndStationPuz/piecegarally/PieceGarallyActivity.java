@@ -229,7 +229,7 @@ public class PieceGarallyActivity extends AppCompatActivity
             s = line.getName()+"("+line.getLineKana()+")";
         }
         else{
-            s = "*****";
+            s = "------------";
         }
         Log.d(TAG, String.format("onItemLongClick 路線：%s", s));
 

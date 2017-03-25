@@ -114,7 +114,7 @@ public class RailwayListAdapter extends BaseAdapter {
             holder.railwayLineName.setText(line.getName()+"("+line.getLineKana()+")");
         }
         else{
-            holder.railwayLineName.setText("*****");
+            holder.railwayLineName.setText("------------");
         }
         holder.railwayLineName.setTextColor(Color.parseColor("#142d81"));
 
