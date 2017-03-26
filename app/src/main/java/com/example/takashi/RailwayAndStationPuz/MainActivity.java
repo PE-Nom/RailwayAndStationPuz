@@ -66,11 +66,10 @@ public class MainActivity extends AppCompatActivity
         actionBar.setSubtitle("鉄道事業者選択");
 
         this.listView = (ListView) findViewById(R.id.company_list_view);
-//        this.adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, names);
         this.adapter = new CompanyListAdapter(this,this.companies,this.db);
-        Log.d(TAG,"MainActivityStart");
+        Log.d(TAG,"MainActivityStart#1");
         this.listView.setAdapter(this.adapter);
-        Log.d(TAG,"MainActivityStart");
+        Log.d(TAG,"MainActivityStart#2");
         this.listView.setOnItemClickListener(this);
         this.listView.setOnItemLongClickListener(this);
     }
@@ -90,9 +89,6 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        int companyId = this.companies.get(position).getId();
-//        Log.d(TAG,String.format("%d: %s is selected",companyId,this.companies.get(position).getName()));
-//        this.db.updateSelectedCompany(companyId);
         Intent intent = new Intent(mContext, PieceGarallyActivity.class);
         intent.putExtra("SelectedCompanyId", this.companies.get(position).getId());
         startActivityForResult(intent, RESULTCODE);

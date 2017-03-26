@@ -1,6 +1,7 @@
 package com.example.takashi.RailwayAndStationPuz;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -97,21 +98,24 @@ public class CompanyListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.company_list_item,null);
             holder = new ViewHolder();
             holder.companyName = (TextView)convertView.findViewById(R.id.companyName);
+            holder.companyKana = (TextView)convertView.findViewById(R.id.companyKana);
             holder.lineNameProgressTitle = (TextView)convertView.findViewById(R.id.nameProgTitle);
             holder.trackLayingProgressTitle = (TextView)convertView.findViewById(R.id.trackLayingProgTitle);
-            holder.stationOpenProgressTtitle = (TextView)convertView.findViewById(R.id.stationProgTitle);
+            holder.stationOpenProgressTitle = (TextView)convertView.findViewById(R.id.stationProgTitle);
             holder.lineNameProgress = (GaugeView)convertView.findViewById(R.id.lineNameProgress);
             holder.trackLayingProgress = (GaugeView)convertView.findViewById(R.id.trackLayingProgress);
             holder.stationOpenProgress = (GaugeView)convertView.findViewById(R.id.stationProgress);
+            convertView.setTag(holder);
         }
         else{
             holder = (ViewHolder)convertView.getTag();
         }
 
         Company company = this.companies.get(position);
-        String companyName = company.getName()+"("+company.getKana()+")";
-        Log.d(TAG,String.format("companyName = %s",companyName));
-        holder.companyName.setText(companyName);
+        holder.companyName.setText(company.getName());
+        holder.companyName.setTextColor(Color.parseColor("#142d81"));
+        holder.companyKana.setText("("+company.getKana()+")");
+        holder.companyKana.setTextColor(Color.parseColor("#142d81"));
 
         // 路線名の進捗
         Log.d(TAG,"nameProgress");
@@ -133,11 +137,12 @@ public class CompanyListAdapter extends BaseAdapter {
 
     private class ViewHolder {
         TextView companyName;
+        TextView companyKana;
         TextView lineNameProgressTitle;
         GaugeView lineNameProgress;
         TextView trackLayingProgressTitle;
         GaugeView trackLayingProgress;
-        TextView stationOpenProgressTtitle;
+        TextView stationOpenProgressTitle;
         GaugeView stationOpenProgress;
     }
 }

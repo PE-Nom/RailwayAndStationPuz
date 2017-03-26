@@ -58,7 +58,8 @@
                     android:layout_weight="1"
                     android:foregroundGravity="center_vertical"
                     android:gravity="right"
-                    android:text="路線名" />
+                    android:text="路線名"
+                    android:textSize="12sp" />
 
                 <com.example.takashi.RailwayAndStationPuz.ui.GaugeView
                     android:id="@+id/lineNameProgress"
@@ -74,7 +75,8 @@
                     android:layout_marginTop="10dp"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="敷設" />
+                    android:text="敷設"
+                    android:textSize="12sp" />
 
                 <com.example.takashi.RailwayAndStationPuz.ui.GaugeView
                     android:id="@+id/lineMapProgress"
@@ -90,7 +92,8 @@
                     android:layout_marginTop="10dp"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="　駅" />
+                    android:text="　駅"
+                    android:textSize="12sp" />
 
                 <com.example.takashi.RailwayAndStationPuz.ui.GaugeView
                     android:id="@+id/stationsProgress"

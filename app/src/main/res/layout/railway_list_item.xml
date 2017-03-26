@@ -76,24 +76,6 @@
                     android:visibility="visible"
                     app:srcCompat="@drawable/ic_tracklaying" />
 
-                <!--                <Button
-                    android:id="@+id/location"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_toRightOf="@+id/mapImageButton"
-                    android:background="@android:color/holo_green_light"
-                    android:elevation="5dp"
-                    android:fontFamily="monospace"
-                    android:gravity="center"
-                    android:singleLine="true"
-                    android:text="Map >>"
-                    android:textSize="10sp" />
--->
-
                 <ImageButton
                     android:id="@+id/stationImageButton"
                     style="@style/Widget.AppCompat.ImageButton"
@@ -122,20 +104,6 @@
                     android:layout_toRightOf="@+id/stationProgress"
                     app:srcCompat="@android:color/transparent" />
 
-                <!--                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignBottom="@+id/stationImageButton"
-                    android:layout_toRightOf="@+id/stationImageButton"
-                    android:layout_centerVertical="true"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="10dp" >
-
-
-                </FrameLayout>
--->
             </RelativeLayout>
 
         </LinearLayout>
