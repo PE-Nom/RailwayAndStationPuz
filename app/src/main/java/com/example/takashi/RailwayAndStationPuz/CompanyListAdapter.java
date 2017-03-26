@@ -42,7 +42,7 @@ public class CompanyListAdapter extends BaseAdapter {
      */
     @Override
     public int getCount() {
-        Log.d(TAG,String.format("getCount = %d",this.companies.size()));
+//        Log.d(TAG,String.format("getCount = %d",this.companies.size()));
         return this.companies.size();
     }
 
@@ -55,7 +55,7 @@ public class CompanyListAdapter extends BaseAdapter {
      */
     @Override
     public Object getItem(int position) {
-        Log.d(TAG,String.format("getItem position = %d",position));
+//        Log.d(TAG,String.format("getItem position = %d",position));
         return this.companies.get(position);
     }
 
@@ -67,7 +67,7 @@ public class CompanyListAdapter extends BaseAdapter {
      */
     @Override
     public long getItemId(int position) {
-        Log.d(TAG,String.format("getItemId position = %d",position));
+//        Log.d(TAG,String.format("getItemId position = %d",position));
         return this.companies.get(position).getId();
     }
 
@@ -112,7 +112,7 @@ public class CompanyListAdapter extends BaseAdapter {
         }
 
         Company company = this.companies.get(position);
-        holder.companyName.setText(company.getName());
+        holder.companyName.setText(company.getName()+" ");
         holder.companyName.setTextColor(Color.parseColor("#142d81"));
         holder.companyKana.setText("("+company.getKana()+")");
         holder.companyKana.setTextColor(Color.parseColor("#142d81"));
@@ -125,17 +125,17 @@ public class CompanyListAdapter extends BaseAdapter {
         int openedStations = this.dbAdapter.countAnsweredStationsInCompany(id);
         // 路線名の進捗
         int nameProgress = 100*namedLines/totalLines;
-        Log.d(TAG,String.format("namedLines = %d, totalLines = %d, nameProgress = %d",namedLines,totalLines,nameProgress));
+//        Log.d(TAG,String.format("namedLines = %d, totalLines = %d, nameProgress = %d",namedLines,totalLines,nameProgress));
         holder.lineNameProgress.setData(nameProgress,"%", ContextCompat.getColor(this.context, R.color.color_90),90,true);
 
         // 敷設工事の進捗
         int trackLayingProgress = 100*locatedLines/totalLines;
-        Log.d(TAG,String.format("locatedLines = %d, totalLines = %d, tracklayingProgress = %d",locatedLines,totalLines,trackLayingProgress));
+//        Log.d(TAG,String.format("locatedLines = %d, totalLines = %d, tracklayingProgress = %d",locatedLines,totalLines,trackLayingProgress));
         holder.trackLayingProgress.setData(trackLayingProgress,"%",ContextCompat.getColor(this.context, R.color.color_60),90,true);
 
         // 駅開設の進捗
         int stationOpenProgress = 100*openedStations/totalStations;
-        Log.d(TAG,String.format("opendStations = %d, totalStations = %d, stationProgress = %d",openedStations,totalStations,stationOpenProgress));
+//        Log.d(TAG,String.format("opendStations = %d, totalStations = %d, stationProgress = %d",openedStations,totalStations,stationOpenProgress));
         holder.stationOpenProgress.setData(stationOpenProgress,"%",ContextCompat.getColor(this.context, R.color.color_30),90,true);
 
         return convertView;

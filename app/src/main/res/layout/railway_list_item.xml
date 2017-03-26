@@ -45,17 +45,35 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/linename"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:fontFamily="monospace"
-                android:gravity="center_vertical"
-                android:singleLine="true"
-                android:text="*****"
-                android:textSize="18sp" />
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/linename"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="monospace"
+                    android:gravity="center_vertical"
+                    android:singleLine="true"
+                    android:text="*****"
+                    android:textSize="18sp"
+                    android:textStyle="bold|italic"
+                    android:typeface="monospace" />
+
+                <TextView
+                    android:id="@+id/linekana"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_toRightOf="@+id/linename"
+                    android:singleLine="true"
+                    android:text="TextView"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"

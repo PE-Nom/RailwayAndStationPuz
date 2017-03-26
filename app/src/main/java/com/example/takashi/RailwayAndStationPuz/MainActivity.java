@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -47,7 +48,6 @@ public class MainActivity extends AppCompatActivity
         this.mContext = getApplicationContext();
         setContentView(R.layout.activity_company_select_list);
 
-        Log.d(TAG,"MainActivityStart");
         db = new DBAdapter(this);
         db.open();
         this.companies = db.getCompanies();
@@ -67,9 +67,7 @@ public class MainActivity extends AppCompatActivity
 
         this.listView = (ListView) findViewById(R.id.company_list_view);
         this.adapter = new CompanyListAdapter(this,this.companies,this.db);
-        Log.d(TAG,"MainActivityStart#1");
         this.listView.setAdapter(this.adapter);
-        Log.d(TAG,"MainActivityStart#2");
         this.listView.setOnItemClickListener(this);
         this.listView.setOnItemLongClickListener(this);
     }
@@ -101,6 +99,42 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    /**
+     * This hook is called whenever an item in your options menu is selected.
+     * The default implementation simply returns false to have the normal
+     * processing happen (calling the item's Runnable or sending a message to
+     * its Handler as appropriate).  You can use this method for any items
+     * for which you would like to do processing without those other
+     * facilities.
+     * <p>
+     * <p>Derived classes should call through to the base class for it to
+     * perform the default menu handling.</p>
+     *
+     * @param item The menu item that was selected.
+     * @return boolean Return false to allow normal menu processing to
+     * proceed, true to consume it here.
+     * @see #onCreateOptionsMenu
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_AboutPuzzRail) {
+            Toast.makeText(MainActivity.this, "パズレールについて", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        else if (id == R.id.action_Help) {
+            Toast.makeText(MainActivity.this, "使い方", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        else if(id == R.id.action_Ask) {
+            Toast.makeText(MainActivity.this, "お問い合わせ", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**

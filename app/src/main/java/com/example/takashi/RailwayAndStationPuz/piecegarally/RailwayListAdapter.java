@@ -62,6 +62,7 @@ public class RailwayListAdapter extends BaseAdapter {
         ImageView railwayLineImage;
         ImageView pieceBorderImage;
         TextView railwayLineName;
+        TextView railwaylineKana;
         ImageButton mapImageBtn;
         ImageButton staImageBtn;
         SimpleGaugeView progGauge;
@@ -89,6 +90,7 @@ public class RailwayListAdapter extends BaseAdapter {
             holder.pieceBorderImage = (ImageView)convertView.findViewById(R.id.piece_border_list_image_view);
             holder.railwayLineImage = (ImageView)convertView.findViewById(R.id.railway_line_list_image_view);
             holder.railwayLineName = (TextView) convertView.findViewById(R.id.linename);
+            holder.railwaylineKana = (TextView) convertView.findViewById(R.id.linekana);
 
             holder.mapImageBtn = (ImageButton)convertView.findViewById(R.id.mapImageButton);
             holder.staImageBtn = (ImageButton)convertView.findViewById(R.id.stationImageButton);
@@ -111,12 +113,15 @@ public class RailwayListAdapter extends BaseAdapter {
 
         // 路線名のテキスト表示
         if(line.isNameCompleted()){
-            holder.railwayLineName.setText(line.getName()+"("+line.getLineKana()+")");
+            holder.railwayLineName.setText(line.getName()+" ");
+            holder.railwaylineKana.setText("("+line.getLineKana()+")");
         }
         else{
-            holder.railwayLineName.setText("------------");
+            holder.railwayLineName.setText("------------ ");
+            holder.railwaylineKana.setText("(------------)");
         }
         holder.railwayLineName.setTextColor(Color.parseColor("#142d81"));
+        holder.railwaylineKana.setTextColor(Color.parseColor("#142d81"));
 
         // 敷設工事のImageButtonの表示Image切り替え
         if(line.isLocationCompleted()){

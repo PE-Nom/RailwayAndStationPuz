@@ -17,7 +17,10 @@
             android:fontFamily="monospace"
             android:singleLine="false"
             android:text="事業者名"
-            android:textSize="18sp" />
+            android:textAllCaps="true"
+            android:textSize="18sp"
+            android:textStyle="bold|italic"
+            android:typeface="monospace" />
 
         <TextView
             android:id="@+id/companyKana"
@@ -26,7 +29,6 @@
             android:layout_alignBottom="@+id/companyName"
             android:layout_alignParentBottom="false"
             android:layout_marginBottom="2dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_toRightOf="@+id/companyName"
             android:fontFamily="monospace"
