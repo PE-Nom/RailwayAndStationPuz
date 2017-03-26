@@ -47,26 +47,36 @@
                 android:text="Expandable List View for Company Code and Name !!"
                 android:id="@+id/companyListTextView" />
         -->
+<!--
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.38">
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.38">
 
-                <ExpandableListView
-                    android:id="@+id/lvExp"
-                    android:layout_width="match_parent"
-                    android:layout_height="415dp"
-                    android:layout_weight="0.44" />
-
+                            <ExpandableListView
+                                android:id="@+id/lvExp"
+                                android:layout_width="match_parent"
+                                android:layout_height="415dp"
+                                android:layout_weight="0.44" />
                 <ListView
                     android:id="@+id/company_list_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.44" />
 
-            </FrameLayout>
 
+            </FrameLayout>
+            -->
+
+            <ListView
+                android:id="@+id/company_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:divider="#000"
+                android:dividerHeight="0.5dp" />
+            
         </LinearLayout>
 
     </LinearLayout>

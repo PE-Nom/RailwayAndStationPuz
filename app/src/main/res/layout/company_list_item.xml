@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/companyName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="事業者名" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/nameProgTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="路線名進捗" />
+
+        <com.example.takashi.RailwayAndStationPuz.ui.GaugeView
+            android:id="@+id/lineNameProgress"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/trackLayingProgTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="敷設工事" />
+
+        <com.example.takashi.RailwayAndStationPuz.ui.GaugeView
+            android:id="@+id/trackLayingProgress"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/stationProgTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="駅開設" />
+
+        <com.example.takashi.RailwayAndStationPuz.ui.GaugeView
+            android:id="@+id/stationProgress"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
