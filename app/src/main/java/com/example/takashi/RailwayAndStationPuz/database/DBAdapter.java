@@ -277,6 +277,13 @@ public class DBAdapter {
     }
 
     /*
+     * 総路線数の取得
+     */
+    public int countTotalLines(int companyId){
+        Cursor cur = db.rawQuery("SELECT * from lines WHERE companyId=?",new String[]{String.valueOf(companyId)});
+        return cur.getCount();
+    }
+    /*
      * 事業者ごとの路線名完了件数の取得
      */
     public int countLineNameAnsweredLines(int companyId){
@@ -379,14 +386,6 @@ public class DBAdapter {
         return cur.getCount();
     }
     /*
-     * 路線ごとの総駅数の取得
-     */
-    public int countTotalStationsInLine(int companyId,int lineId){
-        Cursor cur = db.rawQuery("SELECT * from stations WHERE companyId=? and lineId=?",
-                new String[]{String.valueOf(companyId), String.valueOf(lineId)});
-        return cur.getCount();
-    }
-    /*
      * 事業者ごとの開設完了駅数の取得
      */
     public int countAnsweredStationsInCompany(int companyId){
@@ -395,6 +394,14 @@ public class DBAdapter {
                 new String[]{String.valueOf(companyId)});
         cnt = cursor.getCount();
         return cnt;
+    }
+    /*
+     * 路線ごとの総駅数の取得
+     */
+    public int countTotalStationsInLine(int companyId,int lineId){
+        Cursor cur = db.rawQuery("SELECT * from stations WHERE companyId=? and lineId=?",
+                new String[]{String.valueOf(companyId), String.valueOf(lineId)});
+        return cur.getCount();
     }
     /*
      * 路線ごとの開設完了駅数の取得
