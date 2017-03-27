@@ -32,7 +32,7 @@ public class GaugeView extends View {
         RAINBOW
     }
 
-    private float MARGIN_UNIT = 5f;
+    private float MARGIN_UNIT = 1f;
     private float MARGIN_INNER_RING = 2f;
 
     private static final float PERCENTAGE_RING_STROKE = 0.25f;
@@ -44,6 +44,7 @@ public class GaugeView extends View {
     private static final int COLOR_SECOND_LOOP_BASE_RING = Color.rgb(242, 89, 12);
     private static final int COLOR_SECOND_LOOP = Color.rgb(245, 139, 85);
     private static final int COLOR_CURRENT_POINT = Color.rgb(155, 155, 155);
+    private static final int COLOR_UNIT_TEXT = Color.rgb(128,128,128);
 
     private String TAG = "GaugeView";
 
@@ -249,7 +250,8 @@ public class GaugeView extends View {
 
             // unit
             paint.setTypeface(Typeface.DEFAULT);
-            paint.setColor(COLOR_BASE_RING_INNER);
+            paint.setColor(COLOR_UNIT_TEXT);
+//            paint.setColor(COLOR_BASE_RING_INNER);
             paint.setTextSize(unitSize);
             paint.getTextBounds(unit, 0, unit.length(), labelRect);
             canvas.drawText(unit, centerX, centerY + ringRadius - MARGIN_UNIT, paint);

@@ -100,8 +100,11 @@ public class CompanyListAdapter extends BaseAdapter {
             holder.companyName = (TextView)convertView.findViewById(R.id.companyName);
             holder.companyKana = (TextView)convertView.findViewById(R.id.companyKana);
             holder.lineNameProgressTitle = (TextView)convertView.findViewById(R.id.nameProgTitle);
+            holder.lineNameProgressValue = (TextView)convertView.findViewById(R.id.nameProgValue);
             holder.trackLayingProgressTitle = (TextView)convertView.findViewById(R.id.trackLayingProgTitle);
+            holder.trackLayingProgressValue = (TextView)convertView.findViewById(R.id.trackLayingProgValue);
             holder.stationOpenProgressTitle = (TextView)convertView.findViewById(R.id.stationProgTitle);
+            holder.stationOpenProgressValue = (TextView)convertView.findViewById(R.id.stationProgValue);
             holder.lineNameProgress = (GaugeView)convertView.findViewById(R.id.lineNameProgress);
             holder.trackLayingProgress = (GaugeView)convertView.findViewById(R.id.trackLayingProgress);
             holder.stationOpenProgress = (GaugeView)convertView.findViewById(R.id.stationProgress);
@@ -124,16 +127,19 @@ public class CompanyListAdapter extends BaseAdapter {
         int totalStations = this.dbAdapter.countTotalStationsInCompany(id);
         int openedStations = this.dbAdapter.countAnsweredStationsInCompany(id);
         // 路線名の進捗
+        holder.lineNameProgressValue.setText(String.format("%d/%d",namedLines,totalLines));
         int nameProgress = 100*namedLines/totalLines;
 //        Log.d(TAG,String.format("namedLines = %d, totalLines = %d, nameProgress = %d",namedLines,totalLines,nameProgress));
         holder.lineNameProgress.setData(nameProgress,"%", ContextCompat.getColor(this.context, R.color.color_90),90,true);
 
         // 敷設工事の進捗
+        holder.trackLayingProgressValue.setText(String.format("%d/%d",locatedLines,totalLines));
         int trackLayingProgress = 100*locatedLines/totalLines;
 //        Log.d(TAG,String.format("locatedLines = %d, totalLines = %d, tracklayingProgress = %d",locatedLines,totalLines,trackLayingProgress));
         holder.trackLayingProgress.setData(trackLayingProgress,"%",ContextCompat.getColor(this.context, R.color.color_60),90,true);
 
         // 駅開設の進捗
+        holder.stationOpenProgressValue.setText(String.format("%d/%d",openedStations,totalStations));
         int stationOpenProgress = 100*openedStations/totalStations;
 //        Log.d(TAG,String.format("opendStations = %d, totalStations = %d, stationProgress = %d",openedStations,totalStations,stationOpenProgress));
         holder.stationOpenProgress.setData(stationOpenProgress,"%",ContextCompat.getColor(this.context, R.color.color_30),90,true);
@@ -145,10 +151,13 @@ public class CompanyListAdapter extends BaseAdapter {
         TextView companyName;
         TextView companyKana;
         TextView lineNameProgressTitle;
+        TextView lineNameProgressValue;
         GaugeView lineNameProgress;
         TextView trackLayingProgressTitle;
+        TextView trackLayingProgressValue;
         GaugeView trackLayingProgress;
         TextView stationOpenProgressTitle;
+        TextView stationOpenProgressValue;
         GaugeView stationOpenProgress;
     }
 }

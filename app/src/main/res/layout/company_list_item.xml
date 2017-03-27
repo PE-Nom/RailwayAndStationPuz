@@ -7,7 +7,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/companyName"
@@ -38,67 +38,126 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:layout_marginBottom="4dp"
-        android:orientation="horizontal">
+        android:layout_marginTop="4dp"
+        android:layout_weight="1">
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="32dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:srcCompat="@android:color/transparent" />
-
-        <TextView
-            android:id="@+id/nameProgTitle"
+        <LinearLayout
+            android:id="@+id/namelayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="2dp"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="路線名"
-            android:textSize="12sp" />
+            android:layout_toLeftOf="@+id/lineNameProgress"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/nameProgTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="2dp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="　　路線名"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/nameProgValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="2dp"
+                android:layout_weight="1"
+                android:gravity="bottom|right"
+                android:text="進捗値"
+                android:textSize="10sp" />
+        </LinearLayout>
 
         <com.example.takashi.RailwayAndStationPuz.ui.GaugeView
             android:id="@+id/lineNameProgress"
             android:layout_width="36dp"
-            android:layout_height="match_parent" />
+            android:layout_height="36dp"
+            android:layout_marginRight="2dp"
+            android:layout_toLeftOf="@+id/trackLayout" />
 
-        <TextView
-            android:id="@+id/trackLayingProgTitle"
+        <LinearLayout
+            android:id="@+id/trackLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="2dp"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="敷設"
-            android:textSize="12sp" />
+            android:layout_toLeftOf="@+id/trackLayingProgress"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/trackLayingProgTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="2dp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="　　　敷設"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/trackLayingProgValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="2dp"
+                android:layout_weight="1"
+                android:gravity="bottom|right"
+                android:text="進捗値"
+                android:textSize="10sp" />
+
+        </LinearLayout>
 
         <com.example.takashi.RailwayAndStationPuz.ui.GaugeView
             android:id="@+id/trackLayingProgress"
             android:layout_width="36dp"
-            android:layout_height="match_parent" />
+            android:layout_height="36dp"
+            android:layout_marginRight="2dp"
+            android:layout_toLeftOf="@+id/stationLayout" />
 
-        <TextView
-            android:id="@+id/stationProgTitle"
+        <LinearLayout
+            android:id="@+id/stationLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="2dp"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="駅"
-            android:textSize="12sp" />
+            android:layout_toLeftOf="@+id/stationProgress"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/stationProgTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="2dp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="　　　　駅"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/stationProgValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|right"
+                android:text="進捗値"
+                android:textSize="10sp" />
+
+        </LinearLayout>
 
         <com.example.takashi.RailwayAndStationPuz.ui.GaugeView
             android:id="@+id/stationProgress"
             android:layout_width="36dp"
-            android:layout_height="match_parent" />
-
-    </LinearLayout>
+            android:layout_height="36dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="4dp" />
+    </RelativeLayout>
 
 </LinearLayout>

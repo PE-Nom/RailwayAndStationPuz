@@ -15,7 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.takashi.RailwayAndStationPuz.MainActivity;
@@ -41,7 +41,8 @@ public class PieceGarallyActivity extends AppCompatActivity
     private BaseAdapter baseAdapter;
     private DBAdapter db;
     private ArrayList<Line> lines = new ArrayList<Line>();
-    private GaugeView lineNameProgress, lineLocationProgress,stationsProgress;
+    private TextView lineNameProgValue,lineMapProgValue,stationProgValue;
+    private GaugeView lineNameProgress, lineMapProgress,stationsProgress;
     private int selectedLineIndex = -1;
     private int companyId;
 
@@ -65,17 +66,24 @@ public class PieceGarallyActivity extends AppCompatActivity
 
         this.lines = db.getLineList(this.companyId);
 
-
+        this.lineNameProgValue = (TextView) findViewById(R.id.lineNameProgValue);
         this.lineNameProgress = (GaugeView) findViewById(R.id.lineNameProgress) ;
         updateLineNameProgress();
 
-        this.lineLocationProgress =(GaugeView) findViewById(R.id.lineMapProgress);
-        int locationProgress = 100*db.countLocationAnsweredLines(this.companyId)/lines.size();
-        this.lineLocationProgress.setData(locationProgress,"%",  ContextCompat.getColor(this, R.color.color_60), 90, true);
+        this.lineMapProgValue = (TextView) findViewById(R.id.lineMapProgValue);
+        this.lineMapProgress =(GaugeView) findViewById(R.id.lineMapProgress);
+        int answeredLines = db.countLocationAnsweredLines(this.companyId);
+        int locationProgress = 100*answeredLines/lines.size();
+        this.lineMapProgress.setData(locationProgress,"%",  ContextCompat.getColor(this, R.color.color_60), 90, true);
+        this.lineMapProgValue.setText(String.format("%d/%d",answeredLines,lines.size()));
 
+        this.stationProgValue = (TextView) findViewById(R.id.stationProgValue);
         this.stationsProgress = (GaugeView) findViewById(R.id.stationsProgress);
-        int stationAnsweredProgress = 100*db.countAnsweredStationsInCompany(this.companyId)/db.countTotalStationsInCompany(this.companyId);
+        int answeredStations = db.countAnsweredStationsInCompany(this.companyId);
+        int totalStations = db.countTotalStationsInCompany(this.companyId);
+        int stationAnsweredProgress = 100*answeredStations/totalStations;
         this.stationsProgress.setData(stationAnsweredProgress,"%",  ContextCompat.getColor(this, R.color.color_30), 90, true);
+        this.stationProgValue.setText(String.format("%d/%d",answeredStations,totalStations));
 
         // GridViewのインスタンスを生成
         this.listView = (MultiButtonListView) findViewById(R.id.railway_list_view);
@@ -96,8 +104,8 @@ public class PieceGarallyActivity extends AppCompatActivity
     private void updateLineNameProgress(){
         int cnt = db.countLineNameAnsweredLines(this.companyId);
         int lineNameProgress = 100*cnt/this.lines.size();
-        Log.d(TAG,String.format("%d,%d/%d",lineNameProgress,cnt,lines.size()));
         this.lineNameProgress.setData(lineNameProgress,"%",  ContextCompat.getColor(this, R.color.color_90), 90, true);
+        this.lineNameProgValue.setText(String.format("%d/%d",cnt,this.lines.size()));
     }
 
     @Override
