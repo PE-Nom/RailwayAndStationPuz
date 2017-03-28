@@ -63,7 +63,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_weight="1"
                         android:gravity="right|center_vertical"
-                        android:text="　路線名"
+                        android:text="路線名"
                         android:textSize="12sp" />
 
                     <TextView
@@ -99,7 +99,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_weight="1"
                         android:gravity="right|center_vertical"
-                        android:text="　　敷設"
+                        android:text="　敷設"
                         android:textSize="12sp" />
 
                     <TextView
@@ -135,7 +135,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_weight="1"
                         android:gravity="right|center_vertical"
-                        android:text="　　　　駅"
+                        android:text="　　駅"
                         android:textSize="12sp" />
 
                     <TextView
