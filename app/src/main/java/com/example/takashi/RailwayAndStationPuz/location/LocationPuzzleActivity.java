@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -40,6 +41,8 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LocationPuzzleActivity extends AppCompatActivity implements
         OnMapReadyCallback,
@@ -63,6 +66,10 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     private boolean geoJsonVisible = false;
     private Drawable mDrawable;
     private AlertDialog mDialog;
+
+    private final static long DISPLAY_ANSWERE_TIME = 3000;
+    private Timer mAnswerDisplayingTimer = null;
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,8 +193,51 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         return geoJsonVisible;
     }
 
+    // 回答表示の消去
+    private class displayTimerElapse extends TimerTask {
+        /**
+         * The action to be performed by this timer task.
+         */
+        @Override
+        public void run() {
+            mHandler.post(new Runnable(){
+                /**
+                 * When an object implementing interface <code>Runnable</code> is used
+                 * to create a thread, starting the thread causes the object's
+                 * <code>run</code> method to be called in that separately executing
+                 * thread.
+                 * <p>
+                 * The general contract of the method <code>run</code> is that it may
+                 * take any action whatsoever.
+                 *
+                 * @see Thread#run()
+                 */
+                @Override
+                public void run() {
+                    if(isGeoJsonVisible()){
+                        layer.removeLayerFromMap();
+                        layer = null;
+                        geoJsonVisible=false;
+                        mAnswerDisplayingTimer = null;
+                    }
+                }
+            });
+        }
+    }
+
+    // 回答の表示と消去タイマ起動
     private void setGeoJsonVisible(){
-        if(isGeoJsonVisible()){
+        if (mAnswerDisplayingTimer == null) {
+            // Loading a local GeoJSON file.
+            retrieveFileFromResource();
+            layer.addLayerToMap();
+            geoJsonVisible=true;
+
+            mAnswerDisplayingTimer = new Timer(true);
+            mAnswerDisplayingTimer.schedule(new displayTimerElapse(),DISPLAY_ANSWERE_TIME);
+        }
+
+/*        if(isGeoJsonVisible()){
             layer.removeLayerFromMap();
             layer = null;
             geoJsonVisible=false;
@@ -198,6 +248,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
             layer.addLayerToMap();
             geoJsonVisible=true;
         }
+        */
     }
 
     @Override
