@@ -267,7 +267,6 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         final ArrayList<String> contextMenuList = new ArrayList<String>();
         contextMenuList.add("回答クリア");
         contextMenuList.add("回答を見る");
-        contextMenuList.add("最初の位置に戻す");
         contextMenuList.add("Webを検索する");
 
         ArrayAdapter<String> contextMenuAdapter

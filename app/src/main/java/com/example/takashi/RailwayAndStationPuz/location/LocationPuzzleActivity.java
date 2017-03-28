@@ -236,19 +236,6 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
             mAnswerDisplayingTimer = new Timer(true);
             mAnswerDisplayingTimer.schedule(new displayTimerElapse(),DISPLAY_ANSWERE_TIME);
         }
-
-/*        if(isGeoJsonVisible()){
-            layer.removeLayerFromMap();
-            layer = null;
-            geoJsonVisible=false;
-        }
-        else{
-            // Loading a local GeoJSON file.
-            retrieveFileFromResource();
-            layer.addLayerToMap();
-            geoJsonVisible=true;
-        }
-        */
     }
 
     @Override
