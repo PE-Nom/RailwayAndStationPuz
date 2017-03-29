@@ -348,6 +348,19 @@ public class DBAdapter {
 
     }
 
+    // lineIdで指定される路線の初ターミナルを除くすべて駅の回答ステータスを変更する
+    public boolean updateStationsAnswerStatus(int lineId,boolean status){
+        ContentValues cv = new ContentValues();
+        if(status){
+            cv.put("answerStatus", 1);
+        }
+        else{
+            cv.put("answerStatus", 0);
+        }
+        db.update("stations", cv, "lineId = "+lineId + " AND stationOrder != 1", null);
+        return true;
+    }
+
     public boolean updateStationAnswerStatus(Station station){
         ContentValues cv = new ContentValues();
         if(station.isFinished()){

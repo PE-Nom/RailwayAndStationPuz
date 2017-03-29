@@ -14,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +22,7 @@ import com.example.takashi.RailwayAndStationPuz.MainActivity;
 import com.example.takashi.RailwayAndStationPuz.R;
 import com.example.takashi.RailwayAndStationPuz.database.DBAdapter;
 import com.example.takashi.RailwayAndStationPuz.database.Line;
+import com.example.takashi.RailwayAndStationPuz.database.Station;
 import com.example.takashi.RailwayAndStationPuz.location.LocationPuzzleActivity;
 import com.example.takashi.RailwayAndStationPuz.station.StationPuzzleActivity;
 import com.example.takashi.RailwayAndStationPuz.ui.GaugeView;
@@ -39,7 +39,7 @@ public class PieceGarallyActivity extends AppCompatActivity
     private static String TAG = "PieceGarallyActivity";
     private static final int RESULTCODE = 1;
     private MultiButtonListView listView;
-    private BaseAdapter baseAdapter;
+    private RailwayListAdapter lineListAdapter;
     private DBAdapter db;
     private ArrayList<Line> lines = new ArrayList<Line>();
     private TextView lineNameProgValue,lineMapProgValue,stationProgValue;
@@ -73,24 +73,16 @@ public class PieceGarallyActivity extends AppCompatActivity
 
         this.lineMapProgValue = (TextView) findViewById(R.id.lineMapProgValue);
         this.lineMapProgress =(GaugeView) findViewById(R.id.lineMapProgress);
-        int answeredLines = db.countLocationAnsweredLines(this.companyId);
-        int locationProgress = 100*answeredLines/lines.size();
-        this.lineMapProgress.setData(locationProgress,"%",  ContextCompat.getColor(this, R.color.color_60), 90, true);
-        this.lineMapProgValue.setText(String.format("%d/%d",answeredLines,lines.size()));
+        updateLocationProgress();
 
         this.stationProgValue = (TextView) findViewById(R.id.stationProgValue);
         this.stationsProgress = (GaugeView) findViewById(R.id.stationsProgress);
-        int answeredStations = db.countAnsweredStationsInCompany(this.companyId);
-        int totalStations = db.countTotalStationsInCompany(this.companyId);
-        int stationAnsweredProgress = 100*answeredStations/totalStations;
-        this.stationsProgress.setData(stationAnsweredProgress,"%",  ContextCompat.getColor(this, R.color.color_30), 90, true);
-        this.stationProgValue.setText(String.format("%d/%d",answeredStations,totalStations));
+        updateStationsProgress();
 
         // GridViewのインスタンスを生成
         this.listView = (MultiButtonListView) findViewById(R.id.railway_list_view);
-        RailwayListAdapter listadapter = new RailwayListAdapter(this.getApplicationContext(), this.lines, db);
-        this.baseAdapter = listadapter;
-        this.listView.setAdapter(listadapter);
+        this.lineListAdapter = new RailwayListAdapter(this.getApplicationContext(), this.lines, db);;
+        this.listView.setAdapter(this.lineListAdapter);
         this.listView.setOnItemClickListener(this);
         this.listView.setOnItemLongClickListener(this);
 
@@ -107,6 +99,21 @@ public class PieceGarallyActivity extends AppCompatActivity
         int lineNameProgress = 100*cnt/this.lines.size();
         this.lineNameProgress.setData(lineNameProgress,"%",  ContextCompat.getColor(this, R.color.color_90), 90, true);
         this.lineNameProgValue.setText(String.format("%d/%d",cnt,this.lines.size()));
+    }
+
+    private void updateLocationProgress(){
+        int answeredLines = db.countLocationAnsweredLines(this.companyId);
+        int locationProgress = 100*answeredLines/lines.size();
+        this.lineMapProgress.setData(locationProgress,"%",  ContextCompat.getColor(this, R.color.color_60), 90, true);
+        this.lineMapProgValue.setText(String.format("%d/%d",answeredLines,lines.size()));
+    }
+
+    private void updateStationsProgress(){
+        int answeredStations = db.countAnsweredStationsInCompany(this.companyId);
+        int totalStations = db.countTotalStationsInCompany(this.companyId);
+        int stationAnsweredProgress = 100*answeredStations/totalStations;
+        this.stationsProgress.setData(stationAnsweredProgress,"%",  ContextCompat.getColor(this, R.color.color_30), 90, true);
+        this.stationProgValue.setText(String.format("%d/%d",answeredStations,totalStations));
     }
 
     @Override
@@ -168,7 +175,7 @@ public class PieceGarallyActivity extends AppCompatActivity
                         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                             mDialog.dismiss();
                             int correctAnswerIdx = PieceGarallyActivity.this.selectedLineIndex;
-                            Line correctLine = (Line)(PieceGarallyActivity.this.baseAdapter.getItem(correctAnswerIdx));
+                            Line correctLine = (Line)(PieceGarallyActivity.this.lineListAdapter.getItem(correctAnswerIdx));
                             String correctLineName = correctLine.getName()+"("+correctLine.getLineKana()+")";
                             String selectedLineName = randomizedRemainLines.get(position);
                             Log.d(TAG,String.format("correct %s, selected %s",correctLineName,selectedLineName));
@@ -178,7 +185,7 @@ public class PieceGarallyActivity extends AppCompatActivity
                                 correctLine.setNameAnswerStatus();
                                 PieceGarallyActivity.this.db.updateLineNameAnswerStatus(correctLine);
                                 PieceGarallyActivity.this.lines = PieceGarallyActivity.this.db.getLineList(PieceGarallyActivity.this.companyId);
-                                PieceGarallyActivity.this.baseAdapter.notifyDataSetChanged();
+                                PieceGarallyActivity.this.lineListAdapter.notifyDataSetChanged();
                                 PieceGarallyActivity.this.updateLineNameProgress();
                             }
                             else{
@@ -261,12 +268,12 @@ public class PieceGarallyActivity extends AppCompatActivity
     }
 
     // 回答クリアの対象選択
-    private String answerClearLineName = null;
+    private Line answerClearLine = null;
     private void answerClear(){
         final String[] items = {"路線名回答", "敷設回答", "全駅名回答"};
         final Boolean[] checkedItems = {false,false,false};
         new AlertDialog.Builder(this)
-                .setTitle(answerClearLineName+" : 回答クリア")
+                .setTitle(answerClearLine.getName() +" : 回答クリア")
                 .setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
@@ -279,24 +286,36 @@ public class PieceGarallyActivity extends AppCompatActivity
                         for( int i=0; i<checkedItems.length; i++){
                             switch (i){
                                 case 0:
-                                    if(checkedItems[i]) Log.d(TAG,String.format("%s:路線名回答のクリア",answerClearLineName));
+                                    if(checkedItems[i]){
+                                        Log.d(TAG,String.format("%s:路線名回答のクリア", PieceGarallyActivity.this.answerClearLine.getName()));
+                                        PieceGarallyActivity.this.answerClearLine.resetNameAnswerStatus();
+                                        PieceGarallyActivity.this.db.updateLineNameAnswerStatus(PieceGarallyActivity.this.answerClearLine);
+                                        PieceGarallyActivity.this.lineListAdapter.notifyDataSetChanged();
+                                        PieceGarallyActivity.this.updateLineNameProgress();
+                                    }
                                     break;
                                 case 1:
-                                    if(checkedItems[i]) Log.d(TAG,String.format("%s:敷設回答のクリア",answerClearLineName));
+                                    if(checkedItems[i]){
+                                        Log.d(TAG,String.format("%s:敷設回答のクリア", PieceGarallyActivity.this.answerClearLine.getName()));
+                                        PieceGarallyActivity.this.answerClearLine.resetLocationAnswerStatus();
+                                        PieceGarallyActivity.this.db.updateLineLocationAnswerStatus(PieceGarallyActivity.this.answerClearLine);
+                                        PieceGarallyActivity.this.lineListAdapter.notifyDataSetChanged();
+                                        PieceGarallyActivity.this.updateLocationProgress();
+                                    }
                                     break;
                                 case 2:
-                                    if(checkedItems[i]) Log.d(TAG,String.format("%s:駅回答のクリア",answerClearLineName));
+                                    if(checkedItems[i]){
+                                        Log.d(TAG,String.format("%s:駅回答のクリア", PieceGarallyActivity.this.answerClearLine.getName()));
+                                        // answerClearLine.getLineId()で指定される路線の初ターミナルを除くすべて駅の回答ステータスを変更する
+                                        PieceGarallyActivity.this.db.updateStationsAnswerStatus(PieceGarallyActivity.this.answerClearLine.getLineId(),false);
+                                        PieceGarallyActivity.this.lineListAdapter.notifyDataSetChanged();
+                                        PieceGarallyActivity.this.updateStationsProgress();
+                                    }
                                     break;
                                 default:
                                     break;
                             }
                         }
-                        // item_i checked
-                        Intent intent = new Intent(PieceGarallyActivity.this, PieceGarallyActivity.class);
-                        intent.putExtra("SelectedCompanyId", PieceGarallyActivity.this.companyId);
-                        startActivityForResult(intent, RESULTCODE);
-                        db.close();
-                        finish();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -306,9 +325,9 @@ public class PieceGarallyActivity extends AppCompatActivity
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         String s;
-        Line line = lines.get(position);
-        if(line.isNameCompleted()){
-            s = line.getName();
+        answerClearLine = lines.get(position);
+        if(answerClearLine.isNameCompleted()){
+            s = answerClearLine.getName();
         }
         else{
             s = "------------";
@@ -351,7 +370,6 @@ public class PieceGarallyActivity extends AppCompatActivity
                 .setView(contextMenuListView)
                 .create();
         mDialog.show();
-        answerClearLineName =s;
         return true;
     }
 
