@@ -110,18 +110,9 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         }
         actionBar.setSubtitle(companyName+"／"+this.lineName);
 
-        int finishedCnt = 0;
-        Iterator<Station> ite = stations.listIterator();
-        while(ite.hasNext()){
-            Station station = ite.next();
-            if(station.isFinished()) finishedCnt++;
-
-        }
         this.progressTitle = (TextView)findViewById(R.id.ProgressTitle);
-        this.progressTitle.setText(String.format("%s 駅名解答率 : %d/%d",lineName, finishedCnt, stations.size()));
         this.progress = (ProgressBar)findViewById(R.id.ProgressBar);
-        this.progress.setMax(stations.size());
-        this.progress.setProgress(finishedCnt);
+        updateProgressBar();
 
         this.mapFrame = (FrameLayout)findViewById(R.id.framelayout);
         this.transparentView = (LinearLayout)findViewById(R.id.linearlayout);
@@ -134,6 +125,19 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         this.separatorMove.setLongClickable(true);
         this.separatorMove.setOnTouchListener(new OnTouchListener(this));
 
+    }
+
+    private void updateProgressBar(){
+        int finishedCnt = 0;
+        Iterator<Station> ite = stations.listIterator();
+        while(ite.hasNext()){
+            Station station = ite.next();
+            if(station.isFinished()) finishedCnt++;
+
+        }
+        this.progressTitle.setText(String.format("%s 駅名解答率 : %d/%d",this.line.getName(), finishedCnt, stations.size()));
+        this.progress.setMax(stations.size());
+        this.progress.setProgress(finishedCnt);
     }
 
     public DBAdapter getDb(){
@@ -222,20 +226,11 @@ public class StationPuzzleActivity extends AppCompatActivity implements
 
                             if(answerName.equals(correctName)){ // 駅名が一致する？
                                 Toast.makeText(StationPuzzleActivity.this,"正解!!! v(￣Д￣)v ", Toast.LENGTH_SHORT).show();
-                                correctStationInfo.finished();
-                                adapter.notifyDataSetChanged();
+                                correctStationInfo.setFinishStatus();
                                 StationPuzzleActivity.this.db.updateStationAnswerStatus(correctStationInfo);
-
+                                StationPuzzleActivity.this.stationsAdapter.notifyDataSetChanged();
                                 // 進捗バーの更新
-                                int answeredStations = 0;
-                                int totalStations = StationPuzzleActivity.this.stations.size();
-                                Iterator<Station> ite = StationPuzzleActivity.this.stations.iterator();
-                                while(ite.hasNext()){
-                                    Station sta = ite.next();
-                                    if(sta.isFinished()) answeredStations++;
-                                }
-                                StationPuzzleActivity.this.progressTitle.setText(String.format("%s 駅名解答率 : %d/%d",lineName,answeredStations,totalStations));
-                                StationPuzzleActivity.this.progress.setProgress(answeredStations);
+                                StationPuzzleActivity.this.updateProgressBar();
                             }
                             else{
                                 Toast.makeText(StationPuzzleActivity.this,"残念･･･ Σ(￣ロ￣lll)", Toast.LENGTH_SHORT).show();
@@ -483,22 +478,20 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     }
 
     // 回答クリア
-    private String answerStationName = null;
+    private Station answerStation = null;
     private void answerClear(){
         new AlertDialog.Builder(this)
-                .setTitle(answerStationName+" : 回答クリア")
+                .setTitle(answerStation.getName()+" : 回答クリア")
                 .setMessage("駅名をクリアします。"+"\n"+"　　よろしいですか？")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d(TAG,String.format("%s:駅名クリア",StationPuzzleActivity.this.answerStationName));
-                        Intent intent = new Intent(StationPuzzleActivity.this, StationPuzzleActivity.class);
-                        intent.putExtra("SelectedLineId", StationPuzzleActivity.this.selectedLineId);
-                        startActivity(intent);
-                        // アニメーションの設定
- //                       overridePendingTransition(R.anim.in_right, R.anim.out_left);
-                        db.close();
-                        finish();
+                        Log.d(TAG,String.format("%s:駅名クリア",StationPuzzleActivity.this.answerStation.getName()));
+                        StationPuzzleActivity.this.answerStation.resetFinishStatus();
+                        StationPuzzleActivity.this.db.updateStationAnswerStatus(StationPuzzleActivity.this.answerStation);
+                        StationPuzzleActivity.this.stationsAdapter.notifyDataSetChanged();
+                        // 進捗バーの更新
+                        StationPuzzleActivity.this.updateProgressBar();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -507,10 +500,10 @@ public class StationPuzzleActivity extends AppCompatActivity implements
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        Station station = this.stations.get(position);
+        answerStation = this.stations.get(position);
         String s;
-        if(station.isFinished()){
-            s = station.getName();
+        if(answerStation.isFinished()){
+            s = answerStation.getName();
         }
         else{
             s = this.stationNameNone;
@@ -533,6 +526,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
                         mDialog.dismiss();
                         switch(position) {
                             case 0: // 回答をクリア
+                                if(StationPuzzleActivity.this.answerStation.getStationOrder()!=1)
                                 answerClear();
                                 break;
                             case 1: // 回答を見る
@@ -553,7 +547,6 @@ public class StationPuzzleActivity extends AppCompatActivity implements
                 .setView(contextMenuListView)
                 .create();
         mDialog.show();
-        answerStationName =s;
         return true;
 
     }

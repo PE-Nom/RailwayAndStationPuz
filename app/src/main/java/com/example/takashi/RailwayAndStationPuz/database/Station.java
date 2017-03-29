@@ -64,9 +64,10 @@ public class Station {
         return this.answerStatus;
     }
 
-    public void finished(){
+    public void setFinishStatus(){
         this.answerStatus=true;
     }
+    public void resetFinishStatus() { this.answerStatus=false; }
 
     public boolean isOverlaySw(){return this.overlaySw;}
 

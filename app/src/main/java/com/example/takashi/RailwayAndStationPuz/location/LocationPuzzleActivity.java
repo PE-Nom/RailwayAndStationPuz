@@ -160,8 +160,14 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         this.mMap.setOnMapLongClickListener(this);
         this.mMap.setOnCameraIdleListener(this);
         mImageView.setMap(this.mMap);
-        setImageDrawable();
         mapInitialize();
+        setImageDrawable();
+        // Test Code for 回答クリア、回答を見る の操作
+        // 正解座標のDB登録の完了と正誤判定ロジックの実装完了後、削除する
+//        this.line.setLocationAnswerStatus();
+//        this.db.updateLineLocationAnswerStatus(this.line);
+        //
+        if(hasAlreadyLocated()) setGeoJsonVisible();
 
     }
 
@@ -190,8 +196,22 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         }
     }
 
-    private boolean isGeoJsonVisible(){
-        return geoJsonVisible;
+    private boolean hasAlreadyLocated(){
+        return this.line.isLocationCompleted();
+    }
+
+    private void setGeoJsonVisible(){
+        retrieveFileFromResource();
+        layer.addLayerToMap();
+        geoJsonVisible=true;
+    }
+
+    private void resetGeoJsonVisible(){
+        if(layer!=null){
+            layer.removeLayerFromMap();
+            layer = null;
+            geoJsonVisible=false;
+        }
     }
 
     // 回答表示の消去
@@ -215,25 +235,17 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                  */
                 @Override
                 public void run() {
-                    if(isGeoJsonVisible()){
-                        layer.removeLayerFromMap();
-                        layer = null;
-                        geoJsonVisible=false;
-                        mAnswerDisplayingTimer = null;
-                    }
+                    resetGeoJsonVisible();
+                    mAnswerDisplayingTimer = null;
                 }
             });
         }
     }
 
     // 回答の表示と消去タイマ起動
-    private void setGeoJsonVisible(){
+    private void answerDisplay(){
         if (mAnswerDisplayingTimer == null) {
-            // Loading a local GeoJSON file.
-            retrieveFileFromResource();
-            layer.addLayerToMap();
-            geoJsonVisible=true;
-
+            setGeoJsonVisible();
             mAnswerDisplayingTimer = new Timer(true);
             mAnswerDisplayingTimer.schedule(new displayTimerElapse(),DISPLAY_ANSWERE_TIME);
         }
@@ -248,12 +260,12 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d(TAG,String.format("%s:敷設回答クリア",LocationPuzzleActivity.this.line.getName()));
-                        Intent intent = new Intent(LocationPuzzleActivity.this, LocationPuzzleActivity.class);
-                        intent.putExtra("SelectedLineId", LocationPuzzleActivity.this.selectedLineId);
-                        startActivity(intent);
-                        // アニメーションの設定
-                        db.close();
-                        finish();
+                        LocationPuzzleActivity.this.line.resetLocationAnswerStatus();
+                        LocationPuzzleActivity.this.db.updateLineLocationAnswerStatus(LocationPuzzleActivity.this.line);
+                        LocationPuzzleActivity.this.resetGeoJsonVisible();
+                        LocationPuzzleActivity.this.resetImageDrawable();
+                        LocationPuzzleActivity.this.mapInitialize();
+                        LocationPuzzleActivity.this.setImageDrawable();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -282,11 +294,13 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                         LocationPuzzleActivity.this.mDialog.dismiss();
                         ArrayAdapter<String> adapter = (ArrayAdapter<String>)adapterView.getAdapter();
                         switch(position){
-                            case 0: // 回答をクリア
-                                answerClear();
+                            case 0: // 回答をクリア（回答済みの場合）
+                                if(LocationPuzzleActivity.this.hasAlreadyLocated())
+                                    answerClear();
                                 break;
-                            case 1: // 回答を見る
-                                setGeoJsonVisible();
+                            case 1: // 回答を見る（未回答の場合）
+                                if(!LocationPuzzleActivity.this.hasAlreadyLocated())
+                                    answerDisplay();
                                 break;
                             case 2: // 最初の位置に戻す
                                 LocationPuzzleActivity.this.mapInitialize();
@@ -379,9 +393,6 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
             Log.d(TAG,"ロケーションOK");
             resetImageDrawable();
             setGeoJsonVisible();
-            if(!isGeoJsonVisible()){
-                setGeoJsonVisible();
-            }
             this.line.setLocationAnswerStatus();
             db.updateLineLocationAnswerStatus(this.line);
         }
