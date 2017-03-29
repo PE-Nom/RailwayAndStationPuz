@@ -196,7 +196,6 @@ public class MainActivity extends AppCompatActivity
 
         final ArrayList<String> contextMenuList = new ArrayList<String>();
         contextMenuList.add("回答クリア");
-        contextMenuList.add("回答を見る");
         contextMenuList.add("Webを検索する");
 
         ArrayAdapter<String> contextMenuAdapter
@@ -213,10 +212,7 @@ public class MainActivity extends AppCompatActivity
                             case 0: // 回答をクリア
                                 answerClear();
                                 break;
-                            case 1: // 回答を見る
-                                Toast.makeText(MainActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
-                                break;
-                            case 2: // Webを検索する
+                            case 1: // Webを検索する
                                 Toast.makeText(MainActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
                                 break;
                         }

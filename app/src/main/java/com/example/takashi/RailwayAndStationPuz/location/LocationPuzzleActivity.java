@@ -1,5 +1,6 @@
 package com.example.takashi.RailwayAndStationPuz.location;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -238,6 +239,21 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         }
     }
 
+    // 回答クリア
+    private void answerClear(){
+        new AlertDialog.Builder(this)
+                .setTitle(this.line.getName()+" : 回答クリア")
+                .setMessage("敷設回答をクリアします。"+"\n"+"　　よろしいですか？")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG,String.format("%s:敷設回答クリア",LocationPuzzleActivity.this.line.getName()));
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
     @Override
     public void onMapLongClick(LatLng latLng) {
         Log.d(TAG,"onMapLongClick");
@@ -261,7 +277,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                         ArrayAdapter<String> adapter = (ArrayAdapter<String>)adapterView.getAdapter();
                         switch(position){
                             case 0: // 回答をクリア
-                                Toast.makeText(LocationPuzzleActivity.this,String.format("position=%d:%s",position,adapter.getItem(position)), Toast.LENGTH_SHORT).show();
+                                answerClear();
                                 break;
                             case 1: // 回答を見る
                                 setGeoJsonVisible();

@@ -491,7 +491,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d(TAG,String.format("%s:駅名クリア"));
+                        Log.d(TAG,String.format("%s:駅名クリア",StationPuzzleActivity.this.answerStationName));
                     }
                 })
                 .setNegativeButton("Cancel", null)
