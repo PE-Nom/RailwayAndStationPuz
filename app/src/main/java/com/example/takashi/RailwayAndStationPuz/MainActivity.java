@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra("SelectedCompanyId", this.companies.get(position).getId());
         startActivityForResult(intent, RESULTCODE);
         overridePendingTransition(R.anim.in_right, R.anim.out_left);
+        db.close();
         finish();
     }
 
@@ -170,6 +171,10 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                         // item_i checked
+                        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                        startActivityForResult(intent, RESULTCODE);
+                        db.close();
+                        finish();
                     }
                 })
                 .setNegativeButton("Cancel", null)

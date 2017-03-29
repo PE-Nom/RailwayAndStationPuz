@@ -248,6 +248,12 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d(TAG,String.format("%s:敷設回答クリア",LocationPuzzleActivity.this.line.getName()));
+                        Intent intent = new Intent(LocationPuzzleActivity.this, LocationPuzzleActivity.class);
+                        intent.putExtra("SelectedLineId", LocationPuzzleActivity.this.selectedLineId);
+                        startActivity(intent);
+                        // アニメーションの設定
+                        db.close();
+                        finish();
                     }
                 })
                 .setNegativeButton("Cancel", null)

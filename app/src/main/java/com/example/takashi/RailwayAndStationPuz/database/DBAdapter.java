@@ -360,6 +360,7 @@ public class DBAdapter {
         return true;
     }
 
+
     public boolean updateStationMarkerOverlaySw(Station station){
         ContentValues cv = new ContentValues();
         if(station.isOverlaySw()){

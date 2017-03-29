@@ -234,7 +234,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
                                     Station sta = ite.next();
                                     if(sta.isFinished()) answeredStations++;
                                 }
-                                StationPuzzleActivity.this.progressTitle.setText(String.format("紀勢線 駅名解答率 : %d/%d",answeredStations,totalStations));
+                                StationPuzzleActivity.this.progressTitle.setText(String.format("%s 駅名解答率 : %d/%d",lineName,answeredStations,totalStations));
                                 StationPuzzleActivity.this.progress.setProgress(answeredStations);
                             }
                             else{
@@ -492,6 +492,13 @@ public class StationPuzzleActivity extends AppCompatActivity implements
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d(TAG,String.format("%s:駅名クリア",StationPuzzleActivity.this.answerStationName));
+                        Intent intent = new Intent(StationPuzzleActivity.this, StationPuzzleActivity.class);
+                        intent.putExtra("SelectedLineId", StationPuzzleActivity.this.selectedLineId);
+                        startActivity(intent);
+                        // アニメーションの設定
+ //                       overridePendingTransition(R.anim.in_right, R.anim.out_left);
+                        db.close();
+                        finish();
                     }
                 })
                 .setNegativeButton("Cancel", null)

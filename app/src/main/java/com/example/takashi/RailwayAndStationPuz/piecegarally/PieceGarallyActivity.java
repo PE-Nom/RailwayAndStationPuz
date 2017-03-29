@@ -292,6 +292,11 @@ public class PieceGarallyActivity extends AppCompatActivity
                             }
                         }
                         // item_i checked
+                        Intent intent = new Intent(PieceGarallyActivity.this, PieceGarallyActivity.class);
+                        intent.putExtra("SelectedCompanyId", PieceGarallyActivity.this.companyId);
+                        startActivityForResult(intent, RESULTCODE);
+                        db.close();
+                        finish();
                     }
                 })
                 .setNegativeButton("Cancel", null)
