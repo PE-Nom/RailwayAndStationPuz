@@ -94,15 +94,10 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         String companyName = db.getCompany(line.getCompanyId()).getName();
         String lineName = line.getName();
         String linekana = line.getLineKana();
+        this.lineName = lineName+"("+linekana+")";
         this.companyId = line.getCompanyId();
 
         actionBar.setTitle("Puz-Rail：Location Set");
-        if(line.isNameCompleted()){
-            this.lineName = lineName+"("+linekana+")";
-        }
-        else{
-            this.lineName = lineNameNone;
-        }
         actionBar.setSubtitle(companyName+"／"+this.lineName);
 
     }
@@ -317,7 +312,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
 
         // ダイアログ表示
         this.mDialog = new AlertDialog.Builder(this)
-                .setTitle(String.format("%s", this.lineName))
+                .setTitle(String.format("%s", this.line.getName()))
                 .setPositiveButton("Cancel", null)
                 .setView(contextMenuListView)
                 .create();

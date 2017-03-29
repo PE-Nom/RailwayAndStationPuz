@@ -152,13 +152,13 @@ public class PieceGarallyActivity extends AppCompatActivity
                 boolean already = false;
                 while(li.hasNext()){
                     String toLineName = li.next();
-                    if(toLineName.equals(fromLine.getName()+"("+fromLine.getLineKana()+")")){
+                    if(toLineName.equals(fromLine.getRawName()+"("+fromLine.getRawKana()+")")){
                         already = true;
                         break;
                     }
                 }
                 if(!already){
-                    randomizedRemainLines.add(fromLine.getName()+"("+fromLine.getLineKana()+")");
+                    randomizedRemainLines.add(fromLine.getRawName()+"("+fromLine.getRawKana()+")");
                 }
             }
 
@@ -175,7 +175,7 @@ public class PieceGarallyActivity extends AppCompatActivity
                             mDialog.dismiss();
                             int correctAnswerIdx = PieceGarallyActivity.this.selectedLineIndex;
                             Line correctLine = (Line)(PieceGarallyActivity.this.lineListAdapter.getItem(correctAnswerIdx));
-                            String correctLineName = correctLine.getName()+"("+correctLine.getLineKana()+")";
+                            String correctLineName = correctLine.getRawName()+"("+correctLine.getRawKana()+")";
                             String selectedLineName = randomizedRemainLines.get(position);
                             Log.d(TAG,String.format("correct %s, selected %s",correctLineName,selectedLineName));
                             //正解判定
@@ -207,7 +207,6 @@ public class PieceGarallyActivity extends AppCompatActivity
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         Line line = this.lines.get(position);
-        String s = line.getName();
         switch(view.getId()){
             case R.id.mapImageButton: {
                     Intent intent = new Intent(PieceGarallyActivity.this, LocationPuzzleActivity.class);
@@ -323,14 +322,7 @@ public class PieceGarallyActivity extends AppCompatActivity
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        String s;
         answerClearLine = lines.get(position);
-        if(answerClearLine.isNameCompleted()){
-            s = answerClearLine.getName();
-        }
-        else{
-            s = "------------";
-        }
 
         final ArrayList<String> contextMenuList = new ArrayList<String>();
         contextMenuList.add("回答クリア");
@@ -364,7 +356,7 @@ public class PieceGarallyActivity extends AppCompatActivity
 
         // ダイアログ表示
         mDialog = new AlertDialog.Builder(this)
-                .setTitle(String.format("%s", s))
+                .setTitle(String.format("%s", answerClearLine.getName()))
                 .setPositiveButton("Cancel", null)
                 .setView(contextMenuListView)
                 .create();

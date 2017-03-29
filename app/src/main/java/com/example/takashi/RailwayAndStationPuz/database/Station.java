@@ -10,6 +10,9 @@ import com.google.android.gms.maps.model.Marker;
  */
 
 public class Station {
+
+    private final String noneName = "------------";
+
     private int companyId;
     private int lineId;
     private int stationOrder;
@@ -42,10 +45,24 @@ public class Station {
         this.answerStatus=answerStatus;
     }
 
-    public String getName(){
+    public String getRawName(){
         return this.stationName;
     }
-    public String getKana() { return this.stationKana; }
+    public String getName() {
+        String name = this.noneName;
+        if(isFinished()){
+            name = this.stationName;
+        }
+        return name;
+    }
+    public String getRawKana() { return this.stationKana; }
+    public String getKana() {
+        String kana = this.noneName;
+        if(isFinished()){
+            kana = this.stationKana;
+        }
+        return kana;
+    }
 
     public double getStationLng(){
         return this.stationLng;

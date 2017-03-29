@@ -21,7 +21,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by takashi on 2016/12/04.
@@ -85,6 +84,7 @@ public class StationListAdapter extends BaseAdapter {
         }
 
         Station station = (Station)stations.get(position);
+        String name = station.getName() + "(" + station.getKana() + ")";
 
         if(station.isFinished()){   // 当該ステーションが正解済み
             Drawable drawable;
@@ -98,7 +98,6 @@ public class StationListAdapter extends BaseAdapter {
                 drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_open_station,null);
             }
             holder.iconStation.setImageDrawable(drawable);
-            String name = station.getName() + "(" + station.getKana() + ")";
             holder.stationName.setText(name);
             holder.mapOverlaySw.setChecked(station.isOverlaySw());
             holder.mapOverlaySw.setClickable(true);
@@ -106,8 +105,8 @@ public class StationListAdapter extends BaseAdapter {
             if(station.isOverlaySw()){
                 station.removeMarker();
                 LatLng latlng = new LatLng(station.getStationLat(), station.getStationLng());
-                Log.d(TAG,String.format("initialize overlay : %s, Lat = %3.4f, Lng = %3.4f",station.getName(),station.getStationLat(),station.getStationLng()));
-                MarkerOptions options = new MarkerOptions().position(latlng).title(station.getName());
+                Log.d(TAG,String.format("initialize overlay : %s, Lat = %3.4f, Lng = %3.4f",station.getRawName(),station.getStationLat(),station.getStationLng()));
+                MarkerOptions options = new MarkerOptions().position(latlng).title(station.getRawName());
                 Marker marker = this.mMap.addMarker(options);
                 station.setMarker(marker);
             }
@@ -121,7 +120,7 @@ public class StationListAdapter extends BaseAdapter {
                 drawable = ResourcesCompat.getDrawable(this.context.getResources(),R.drawable.ic_out_of_sv_station,null);
             }
             holder.iconStation.setImageDrawable(drawable);
-            holder.stationName.setText("------------");
+            holder.stationName.setText(name);
             holder.mapOverlaySw.setChecked(false);
             holder.mapOverlaySw.setClickable(false);
         }
@@ -142,9 +141,9 @@ public class StationListAdapter extends BaseAdapter {
             Station station = (Station)StationListAdapter.this.stations.get(this.position);
             if(this.holder.mapOverlaySw.isChecked()){
                 // ここでオーバーレイ表示する
-                Log.d(TAG,String.format("checked mapOverlaySw : %s, Lat = %3.4f, Lng = %3.4f",station.getName(),station.getStationLat(),station.getStationLng()));
+                Log.d(TAG,String.format("checked mapOverlaySw : %s, Lat = %3.4f, Lng = %3.4f",station.getRawName(),station.getStationLat(),station.getStationLng()));
                 LatLng latlng = new LatLng(station.getStationLat(), station.getStationLng());
-                MarkerOptions options = new MarkerOptions().position(latlng).title(station.getName());
+                MarkerOptions options = new MarkerOptions().position(latlng).title(station.getRawName());
                 Marker marker = StationListAdapter.this.mMap.addMarker(options);
                 station.setMarker(marker);
             }

@@ -13,6 +13,7 @@ public class Line {
     private Resources res;
 
     private String TAG = "Line";
+    private final String noneName = "------------";
     private int lineId;
     private int areaCode;
     private int companyId;
@@ -95,10 +96,22 @@ public class Line {
 
     public int getCompanyId(){ return this.companyId; }
     public int getLineId(){ return this.lineId; }
-    public String getName(){
-        return this.lineName;
+    public String getRawName() { return this.lineName; }
+    public String getName() {
+        String name = this.noneName;
+        if(isNameCompleted()){
+            name = this.lineName;
+        }
+        return name;
     }
-    public String getLineKana() { return this.lineKana; }
+    public String getRawKana() { return this.lineKana; }
+    public String getLineKana() {
+        String name = this.noneName;
+        if(isNameCompleted()){
+            name = this.lineKana;
+        }
+        return name;
+    }
     public int getDrawableResourceId() {
         return this.res.getIdentifier(this.drawable_resource_name, "drawable", this.context.getPackageName());
     }
