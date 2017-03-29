@@ -247,6 +247,18 @@ public class DBAdapter {
     /*
      * ロケーションセットのステータス更新
      */
+    public boolean updateLineLocationAnswerStatusInCompany(int companyId,boolean status){
+        ContentValues cv = new ContentValues();
+        if(status){
+            cv.put("locationAnswerStatus", 1);
+        }
+        else{
+            cv.put("locationAnswerStatus", 0);
+        }
+        db.update("lines", cv, "companyId = "+companyId, null);
+        return true;
+    }
+
     public boolean updateLineLocationAnswerStatus(Line line){
         int lineId = line.getLineId();
         ContentValues cv = new ContentValues();
@@ -263,6 +275,18 @@ public class DBAdapter {
     /*
      * 路線名のAnswerStatus更新
      */
+    public boolean updateLineNameAnswerStatusInCompany(int companyId,boolean status){
+        ContentValues cv = new ContentValues();
+        if(status){
+            cv.put("nameAnswerStatus", 1);
+        }
+        else{
+            cv.put("nameAnswerStatus", 0);
+        }
+        db.update("lines", cv, "companyId = "+companyId, null);
+        return true;
+    }
+
     public boolean updateLineNameAnswerStatus(Line line){
         int lineId = line.getLineId();
         ContentValues cv = new ContentValues();
@@ -348,8 +372,21 @@ public class DBAdapter {
 
     }
 
+    // companyIdで指定される事業者内全路線の初ターミナルを除くすべて駅の回答ステータスを変更する
+    public boolean updateStationsAnswerStatusInCompany(int companyId,boolean status){
+        ContentValues cv = new ContentValues();
+        if(status){
+            cv.put("answerStatus", 1);
+        }
+        else{
+            cv.put("answerStatus", 0);
+        }
+        db.update("stations", cv, "companyId = "+companyId + " AND stationOrder != 1", null);
+        return true;
+    }
+
     // lineIdで指定される路線の初ターミナルを除くすべて駅の回答ステータスを変更する
-    public boolean updateStationsAnswerStatus(int lineId,boolean status){
+    public boolean updateStationsAnswerStatusInLine(int lineId, boolean status){
         ContentValues cv = new ContentValues();
         if(status){
             cv.put("answerStatus", 1);

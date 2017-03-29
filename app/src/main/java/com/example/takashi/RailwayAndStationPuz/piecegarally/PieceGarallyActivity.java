@@ -22,7 +22,6 @@ import com.example.takashi.RailwayAndStationPuz.MainActivity;
 import com.example.takashi.RailwayAndStationPuz.R;
 import com.example.takashi.RailwayAndStationPuz.database.DBAdapter;
 import com.example.takashi.RailwayAndStationPuz.database.Line;
-import com.example.takashi.RailwayAndStationPuz.database.Station;
 import com.example.takashi.RailwayAndStationPuz.location.LocationPuzzleActivity;
 import com.example.takashi.RailwayAndStationPuz.station.StationPuzzleActivity;
 import com.example.takashi.RailwayAndStationPuz.ui.GaugeView;
@@ -307,7 +306,7 @@ public class PieceGarallyActivity extends AppCompatActivity
                                     if(checkedItems[i]){
                                         Log.d(TAG,String.format("%s:駅回答のクリア", PieceGarallyActivity.this.answerClearLine.getName()));
                                         // answerClearLine.getLineId()で指定される路線の初ターミナルを除くすべて駅の回答ステータスを変更する
-                                        PieceGarallyActivity.this.db.updateStationsAnswerStatus(PieceGarallyActivity.this.answerClearLine.getLineId(),false);
+                                        PieceGarallyActivity.this.db.updateStationsAnswerStatusInLine(PieceGarallyActivity.this.answerClearLine.getLineId(),false);
                                         PieceGarallyActivity.this.lineListAdapter.notifyDataSetChanged();
                                         PieceGarallyActivity.this.updateStationsProgress();
                                     }

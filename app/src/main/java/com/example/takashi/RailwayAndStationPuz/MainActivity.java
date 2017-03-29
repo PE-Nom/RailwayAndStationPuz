@@ -140,12 +140,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     // クリア対象の回答データ選択
-    private String answerClearCompany = null;
+    private Company answerClearCompany = null;
     private void answerClear(){
         final String[] items = {"全路線の路線名回答", "全路線の敷設回答", "全路線の全駅名回答"};
         final Boolean[] checkedItems = {false,false,false};
         new AlertDialog.Builder(this)
-                .setTitle(answerClearCompany+" : 回答クリア")
+                .setTitle(answerClearCompany.getName()+" : 回答クリア")
                 .setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
@@ -158,23 +158,30 @@ public class MainActivity extends AppCompatActivity
                         for( int i=0; i<checkedItems.length; i++){
                             switch (i){
                                 case 0:
-                                    if(checkedItems[i]) Log.d(TAG,String.format("%s:路線名回答のクリア",answerClearCompany));
+                                    if(checkedItems[i]){
+                                        Log.d(TAG,String.format("%s:路線名回答のクリア",MainActivity.this.answerClearCompany.getName()));
+                                        MainActivity.this.db.updateLineNameAnswerStatusInCompany(MainActivity.this.answerClearCompany.getId(),false);
+                                        MainActivity.this.adapter.notifyDataSetChanged();
+                                    }
                                     break;
                                 case 1:
-                                    if(checkedItems[i]) Log.d(TAG,String.format("%s:敷設回答のクリア",answerClearCompany));
+                                    if(checkedItems[i]){
+                                        Log.d(TAG,String.format("%s:敷設回答のクリア",MainActivity.this.answerClearCompany.getName()));
+                                        MainActivity.this.db.updateLineLocationAnswerStatusInCompany(MainActivity.this.answerClearCompany.getId(),false);
+                                        MainActivity.this.adapter.notifyDataSetChanged();
+                                    }
                                     break;
                                 case 2:
-                                    if(checkedItems[i]) Log.d(TAG,String.format("%s:駅回答のクリア",answerClearCompany));
+                                    if(checkedItems[i]){
+                                        Log.d(TAG,String.format("%s:駅回答のクリア",MainActivity.this.answerClearCompany.getName()));
+                                        MainActivity.this.db.updateStationsAnswerStatusInCompany(MainActivity.this.answerClearCompany.getId(),false);
+                                        MainActivity.this.adapter.notifyDataSetChanged();
+                                    }
                                     break;
                                 default:
                                     break;
                             }
                         }
-                        // item_i checked
-                        Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                        startActivityForResult(intent, RESULTCODE);
-                        db.close();
-                        finish();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -197,7 +204,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-        Company company = this.companies.get(position);
+        answerClearCompany = this.companies.get(position);
 
         final ArrayList<String> contextMenuList = new ArrayList<String>();
         contextMenuList.add("回答クリア");
@@ -227,12 +234,11 @@ public class MainActivity extends AppCompatActivity
 
         // ダイアログ表示
         mDialog = new AlertDialog.Builder(this)
-                .setTitle(String.format("%s", company.getName()))
+                .setTitle(String.format("%s", this.answerClearCompany.getName()))
                 .setPositiveButton("Cancel", null)
                 .setView(contextMenuListView)
                 .create();
         mDialog.show();
-        answerClearCompany=company.getName();
         return true;
     }
 }
