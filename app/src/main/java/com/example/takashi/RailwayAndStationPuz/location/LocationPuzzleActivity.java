@@ -260,20 +260,18 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                         LocationPuzzleActivity.this.mDialog.dismiss();
                         ArrayAdapter<String> adapter = (ArrayAdapter<String>)adapterView.getAdapter();
                         switch(position){
-                            case 0:
+                            case 0: // 回答をクリア
                                 Toast.makeText(LocationPuzzleActivity.this,String.format("position=%d:%s",position,adapter.getItem(position)), Toast.LENGTH_SHORT).show();
                                 break;
-                            case 1:
-                                Toast.makeText(LocationPuzzleActivity.this,String.format("position=%d:%s",position,adapter.getItem(position)), Toast.LENGTH_SHORT).show();
+                            case 1: // 回答を見る
                                 setGeoJsonVisible();
                                 break;
-                            case 2:
-                                Toast.makeText(LocationPuzzleActivity.this,String.format("position=%d:%s",position,adapter.getItem(position)), Toast.LENGTH_SHORT).show();
+                            case 2: // 最初の位置に戻す
                                 LocationPuzzleActivity.this.mapInitialize();
                                 LocationPuzzleActivity.this.resetImageDrawable();
                                 LocationPuzzleActivity.this.setImageDrawable();
                                 break;
-                            case 3:
+                            case 3: // Webを検索する
                                 Toast.makeText(LocationPuzzleActivity.this,String.format("position=%d:%s",position,adapter.getItem(position)), Toast.LENGTH_SHORT).show();
                                 break;
                         }

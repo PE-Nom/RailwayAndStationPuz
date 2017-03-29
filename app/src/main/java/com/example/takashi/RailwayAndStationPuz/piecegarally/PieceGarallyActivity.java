@@ -1,5 +1,6 @@
 package com.example.takashi.RailwayAndStationPuz.piecegarally;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -229,48 +230,6 @@ public class PieceGarallyActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        String s;
-        Line line = lines.get(position);
-        if(line.isNameCompleted()){
-            s = line.getName()+"("+line.getLineKana()+")";
-        }
-        else{
-            s = "------------";
-        }
-        Log.d(TAG, String.format("onItemLongClick 路線：%s", s));
-
-        final ArrayList<String> contextMenuList = new ArrayList<String>();
-        contextMenuList.add("回答クリア");
-        contextMenuList.add("回答を見る");
-        contextMenuList.add("Webを検索する");
-
-        ArrayAdapter<String> contextMenuAdapter
-                = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,contextMenuList);
-
-        // 未正解アイテムのリストビュー生成
-        ListView contextMenuListView = new ListView(this);
-        contextMenuListView.setAdapter(contextMenuAdapter);
-        contextMenuListView.setOnItemClickListener(
-                new AdapterView.OnItemClickListener(){
-                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                        mDialog.dismiss();
-                        Toast.makeText(PieceGarallyActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-
-        // ダイアログ表示
-        mDialog = new AlertDialog.Builder(this)
-                .setTitle(String.format("%s", s))
-                .setPositiveButton("Cancel", null)
-                .setView(contextMenuListView)
-                .create();
-        mDialog.show();
-        return true;
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
@@ -300,4 +259,95 @@ public class PieceGarallyActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
+
+    // 回答クリアの対象選択
+    private String answerClearLineName = null;
+    private void answerClear(){
+        final String[] items = {"路線名回答", "敷設回答", "全駅名回答"};
+        final Boolean[] checkedItems = {false,false,false};
+        new AlertDialog.Builder(this)
+                .setTitle(answerClearLineName+" : 回答クリア")
+                .setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        checkedItems[which] = isChecked;
+                    }
+                })
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        for( int i=0; i<checkedItems.length; i++){
+                            switch (i){
+                                case 0:
+                                    if(checkedItems[i]) Log.d(TAG,String.format("%s:路線名回答のクリア",answerClearLineName));
+                                    break;
+                                case 1:
+                                    if(checkedItems[i]) Log.d(TAG,String.format("%s:敷設回答のクリア",answerClearLineName));
+                                    break;
+                                case 2:
+                                    if(checkedItems[i]) Log.d(TAG,String.format("%s:駅回答のクリア",answerClearLineName));
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        // item_i checked
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        String s;
+        Line line = lines.get(position);
+        if(line.isNameCompleted()){
+            s = line.getName();
+        }
+        else{
+            s = "------------";
+        }
+
+        final ArrayList<String> contextMenuList = new ArrayList<String>();
+        contextMenuList.add("回答クリア");
+        contextMenuList.add("回答を見る");
+        contextMenuList.add("Webを検索する");
+
+        ArrayAdapter<String> contextMenuAdapter
+                = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,contextMenuList);
+
+        // 未正解アイテムのリストビュー生成
+        ListView contextMenuListView = new ListView(this);
+        contextMenuListView.setAdapter(contextMenuAdapter);
+        contextMenuListView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener(){
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                        mDialog.dismiss();
+                        switch(position) {
+                            case 0: // 回答をクリア
+                                answerClear();
+                                break;
+                            case 1: // 回答を見る
+                                Toast.makeText(PieceGarallyActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
+                                break;
+                            case 2: // Webを検索する
+                                Toast.makeText(PieceGarallyActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                    }
+                }
+        );
+
+        // ダイアログ表示
+        mDialog = new AlertDialog.Builder(this)
+                .setTitle(String.format("%s", s))
+                .setPositiveButton("Cancel", null)
+                .setView(contextMenuListView)
+                .create();
+        mDialog.show();
+        answerClearLineName =s;
+        return true;
+    }
+
 }

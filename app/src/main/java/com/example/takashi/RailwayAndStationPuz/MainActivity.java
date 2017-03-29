@@ -1,6 +1,7 @@
 package com.example.takashi.RailwayAndStationPuz;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -137,6 +138,44 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    // クリア対象の回答データ選択
+    private String answerClearCompany = null;
+    private void answerClear(){
+        final String[] items = {"全路線の路線名回答", "全路線の敷設回答", "全路線の全駅名回答"};
+        final Boolean[] checkedItems = {false,false,false};
+        new AlertDialog.Builder(this)
+                .setTitle(answerClearCompany+" : 回答クリア")
+                .setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        checkedItems[which] = isChecked;
+                    }
+                })
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        for( int i=0; i<checkedItems.length; i++){
+                            switch (i){
+                                case 0:
+                                    if(checkedItems[i]) Log.d(TAG,String.format("%s:路線名回答のクリア",answerClearCompany));
+                                    break;
+                                case 1:
+                                    if(checkedItems[i]) Log.d(TAG,String.format("%s:敷設回答のクリア",answerClearCompany));
+                                    break;
+                                case 2:
+                                    if(checkedItems[i]) Log.d(TAG,String.format("%s:駅回答のクリア",answerClearCompany));
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        // item_i checked
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
     /**
      * Callback method to be invoked when an item in this view has been
      * clicked and held.
@@ -158,7 +197,6 @@ public class MainActivity extends AppCompatActivity
         final ArrayList<String> contextMenuList = new ArrayList<String>();
         contextMenuList.add("回答クリア");
         contextMenuList.add("回答を見る");
-        contextMenuList.add("最初の位置に戻す");
         contextMenuList.add("Webを検索する");
 
         ArrayAdapter<String> contextMenuAdapter
@@ -171,7 +209,17 @@ public class MainActivity extends AppCompatActivity
                 new AdapterView.OnItemClickListener(){
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                         mDialog.dismiss();
-                        Toast.makeText(MainActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
+                        switch(position) {
+                            case 0: // 回答をクリア
+                                answerClear();
+                                break;
+                            case 1: // 回答を見る
+                                Toast.makeText(MainActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
+                                break;
+                            case 2: // Webを検索する
+                                Toast.makeText(MainActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
+                                break;
+                        }
                     }
                 }
         );
@@ -183,6 +231,7 @@ public class MainActivity extends AppCompatActivity
                 .setView(contextMenuListView)
                 .create();
         mDialog.show();
+        answerClearCompany=company.getName();
         return true;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.takashi.RailwayAndStationPuz.station;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -253,47 +254,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
             mDialog.show();
         }
     }
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        Station station = this.stations.get(position);
-        String s;
-        if(station.isFinished()){
-            s = station.getName()+"("+station.getName()+")";
-        }
-        else{
-            s = this.stationNameNone;
-        }
 
-        final ArrayList<String> contextMenuList = new ArrayList<String>();
-        contextMenuList.add("回答クリア");
-        contextMenuList.add("回答を見る");
-        contextMenuList.add("Webを検索する");
-
-        ArrayAdapter<String> contextMenuAdapter
-                = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,contextMenuList);
-
-        // 未正解アイテムのリストビュー生成
-        ListView contextMenuListView = new ListView(this);
-        contextMenuListView.setAdapter(contextMenuAdapter);
-        contextMenuListView.setOnItemClickListener(
-                new AdapterView.OnItemClickListener(){
-                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                        mDialog.dismiss();
-                        Toast.makeText(StationPuzzleActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-
-        // ダイアログ表示
-        mDialog = new AlertDialog.Builder(this)
-                .setTitle(String.format("%s", s))
-                .setPositiveButton("Cancel", null)
-                .setView(contextMenuListView)
-                .create();
-        mDialog.show();
-        return true;
-
-    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.mMap = googleMap;
@@ -520,4 +481,74 @@ public class StationPuzzleActivity extends AppCompatActivity implements
 
         return super.onOptionsItemSelected(item);
     }
+
+    // 回答クリア
+    private String answerStationName = null;
+    private void answerClear(){
+        new AlertDialog.Builder(this)
+                .setTitle(answerStationName+" : 回答クリア")
+                .setMessage("駅名をクリアします。"+"\n"+"　　よろしいですか？")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG,String.format("%s:駅名クリア"));
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        Station station = this.stations.get(position);
+        String s;
+        if(station.isFinished()){
+            s = station.getName();
+        }
+        else{
+            s = this.stationNameNone;
+        }
+
+        final ArrayList<String> contextMenuList = new ArrayList<String>();
+        contextMenuList.add("回答クリア");
+        contextMenuList.add("回答を見る");
+        contextMenuList.add("Webを検索する");
+
+        ArrayAdapter<String> contextMenuAdapter
+                = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,contextMenuList);
+
+        // 未正解アイテムのリストビュー生成
+        ListView contextMenuListView = new ListView(this);
+        contextMenuListView.setAdapter(contextMenuAdapter);
+        contextMenuListView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener(){
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                        mDialog.dismiss();
+                        switch(position) {
+                            case 0: // 回答をクリア
+                                answerClear();
+                                break;
+                            case 1: // 回答を見る
+                                Toast.makeText(StationPuzzleActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
+                                break;
+                            case 2: // Webを検索する
+                                Toast.makeText(StationPuzzleActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                    }
+                }
+        );
+
+        // ダイアログ表示
+        mDialog = new AlertDialog.Builder(this)
+                .setTitle(String.format("%s", s))
+                .setPositiveButton("Cancel", null)
+                .setView(contextMenuListView)
+                .create();
+        mDialog.show();
+        answerStationName =s;
+        return true;
+
+    }
+
 }
