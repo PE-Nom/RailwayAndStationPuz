@@ -23,8 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Created by takashi on 2016/11/12.
  */
-
-public class LineMapOverlayView extends ImageView {
+public class LineMapOverlayView extends android.support.v7.widget.AppCompatImageView {
 
     private static final boolean DEBUG = true;	// TODO for debugging
     private static String TAG = "RailwayLineImageView";
@@ -69,11 +68,11 @@ public class LineMapOverlayView extends ImageView {
         if(DEBUG) Log.d(TAG,"constructor3");
     }
 
-    public LineMapOverlayView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        createListener(context);
-        if(DEBUG) Log.d(TAG,"constructor4");
-    }
+//    public LineMapOverlayView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+//        super(context, attrs, defStyleAttr, defStyleRes);
+//        createListener(context);
+//        if(DEBUG) Log.d(TAG,"constructor4");
+//    }
 
     public void setOnScrollEndListener(OnLineScrollEndListener listener){
         this.listener = listener;

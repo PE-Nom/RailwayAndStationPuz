@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -68,13 +69,14 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     private MapView mMapView;
     private GeoJsonLayer layer;
     private LineMapOverlayView mImageView;
+    private ImageView transparent;
     private ArrayList<View> views = new ArrayList<View>();
 
     private boolean geoJsonVisible = false;
     private Drawable mDrawable;
     private AlertDialog mDialog;
 
-    private final static long DISPLAY_ANSWERE_TIME = 2750;
+    private final static long DISPLAY_ANSWERE_TIME = 3000;
     private Timer mAnswerDisplayingTimer = null;
     private Handler mHandler = new Handler();
 
@@ -134,6 +136,8 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         mImageView.setOnScrollEndListener(this);
         mImageView.setLine(this.line); //
         views.add(mImageView);
+
+        transparent = (ImageView)findViewById(R.id.transparent);
 
         this.mMapView.addFocusables(views,View.FOCUS_FORWARD);
 
@@ -297,18 +301,19 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                         switch(position){
                             case 0: // 回答をクリア（回答済みの場合）
                                 if(LocationPuzzleActivity.this.hasAlreadyLocated()){
-                                    final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.mMapView,
+                                    answerClear();
+                                }
+                                break;
+                            case 1: // 回答を見る（未回答の場合）
+                                if(!LocationPuzzleActivity.this.hasAlreadyLocated()){
+                                    final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.transparent,
                                             LocationPuzzleActivity.this.line.getRawName()+"("+LocationPuzzleActivity.this.line.getRawKana()+")",
                                             Snackbar.LENGTH_LONG);
                                     sb.setActionTextColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.background1));
                                     sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.color_10));
                                     sb.show();
-                                    answerClear();
-                                }
-                                break;
-                            case 1: // 回答を見る（未回答の場合）
-                                if(!LocationPuzzleActivity.this.hasAlreadyLocated())
                                     answerDisplay();
+                                }
                                 break;
                             case 2: // 最初の位置に戻す
                                 LocationPuzzleActivity.this.mapInitialize();
