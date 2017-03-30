@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.widget.ImageView;
 
 import com.example.takashi.RailwayAndStationPuz.database.Line;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,9 +41,7 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
 
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
-    private GestureDetector.OnDoubleTapListener mDoubleTapListener;
 
-    private float mScale = 0.5f; // 描画する倍率
     private boolean mScalingMode = false;
     private boolean mScrolling = false;
 
@@ -67,12 +64,6 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
         createListener(context);
         if(DEBUG) Log.d(TAG,"constructor3");
     }
-
-//    public LineMapOverlayView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-//        super(context, attrs, defStyleAttr, defStyleRes);
-//        createListener(context);
-//        if(DEBUG) Log.d(TAG,"constructor4");
-//    }
 
     public void setOnScrollEndListener(OnLineScrollEndListener listener){
         this.listener = listener;

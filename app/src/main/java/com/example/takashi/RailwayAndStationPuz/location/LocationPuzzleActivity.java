@@ -25,12 +25,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.takashi.RailwayAndStationPuz.MainActivity;
 import com.example.takashi.RailwayAndStationPuz.piecegarally.PieceGarallyActivity;
 import com.example.takashi.RailwayAndStationPuz.R;
 import com.example.takashi.RailwayAndStationPuz.database.DBAdapter;
 import com.example.takashi.RailwayAndStationPuz.database.Line;
-import com.example.takashi.RailwayAndStationPuz.station.StationPuzzleActivity;
 import com.example.takashi.RailwayAndStationPuz.ui.PopUp;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -59,7 +57,6 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         OnLineScrollEndListener {
 
     private final static String TAG = "LocationPuzzleActivity";
-    private String lineNameNone = "------------";
     private String lineName;
     private DBAdapter db;
     private int companyId;
@@ -72,7 +69,6 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     private ImageView transparent;
     private ArrayList<View> views = new ArrayList<View>();
 
-    private boolean geoJsonVisible = false;
     private Drawable mDrawable;
     private AlertDialog mDialog;
 
@@ -208,14 +204,12 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     private void setGeoJsonVisible(){
         retrieveFileFromResource();
         layer.addLayerToMap();
-        geoJsonVisible=true;
     }
 
     private void resetGeoJsonVisible(){
         if(layer!=null){
             layer.removeLayerFromMap();
             layer = null;
-            geoJsonVisible=false;
         }
     }
 
