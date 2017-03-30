@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.takashi.RailwayAndStationPuz.database.Company;
 import com.example.takashi.RailwayAndStationPuz.database.DBAdapter;
 import com.example.takashi.RailwayAndStationPuz.piecegarally.PieceGarallyActivity;
+import com.example.takashi.RailwayAndStationPuz.ui.PopUp;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -125,7 +126,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_AboutPuzzRail) {
-            Toast.makeText(MainActivity.this, "パズレールについて", Toast.LENGTH_SHORT).show();
+            PopUp.makePopup(this,this.listView,"file:///android_asset/puzzrail_help.html");
             return true;
         }
         else if (id == R.id.action_Help) {

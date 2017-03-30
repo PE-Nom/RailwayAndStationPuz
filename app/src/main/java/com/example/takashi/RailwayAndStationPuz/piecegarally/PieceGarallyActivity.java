@@ -3,6 +3,7 @@ package com.example.takashi.RailwayAndStationPuz.piecegarally;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -26,6 +27,7 @@ import com.example.takashi.RailwayAndStationPuz.location.LocationPuzzleActivity;
 import com.example.takashi.RailwayAndStationPuz.station.StationPuzzleActivity;
 import com.example.takashi.RailwayAndStationPuz.ui.GaugeView;
 import com.example.takashi.RailwayAndStationPuz.ui.MultiButtonListView;
+import com.example.takashi.RailwayAndStationPuz.ui.PopUp;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
@@ -64,7 +66,7 @@ public class PieceGarallyActivity extends AppCompatActivity
         Intent intent = getIntent();
         this.companyId = intent.getIntExtra("SelectedCompanyId", 3); // デフォルトを西日本旅客鉄道のIdにしておく
 
-        this.lines = db.getLineList(this.companyId);
+        this.lines = db.getLineList(this.companyId, true);
 
         this.lineNameProgValue = (TextView) findViewById(R.id.lineNameProgValue);
         this.lineNameProgress = (GaugeView) findViewById(R.id.lineNameProgress) ;
@@ -183,7 +185,6 @@ public class PieceGarallyActivity extends AppCompatActivity
                                 Toast.makeText(PieceGarallyActivity.this,"正解!!! v(￣Д￣)v ", Toast.LENGTH_SHORT).show();
                                 correctLine.setNameAnswerStatus();
                                 PieceGarallyActivity.this.db.updateLineNameAnswerStatus(correctLine);
-                                PieceGarallyActivity.this.lines = PieceGarallyActivity.this.db.getLineList(PieceGarallyActivity.this.companyId);
                                 PieceGarallyActivity.this.lineListAdapter.notifyDataSetChanged();
                                 PieceGarallyActivity.this.updateLineNameProgress();
                             }
@@ -250,7 +251,7 @@ public class PieceGarallyActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_AboutPuzzRail) {
-            Toast.makeText(PieceGarallyActivity.this, "パズレールについて", Toast.LENGTH_SHORT).show();
+            PopUp.makePopup(this,this.listView,"file:///android_asset/puzzrail_help.html");
             return true;
         }
         else if (id == R.id.action_Help) {
@@ -266,12 +267,12 @@ public class PieceGarallyActivity extends AppCompatActivity
     }
 
     // 回答クリアの対象選択
-    private Line answerClearLine = null;
+    private Line longClickSelectedLine = null;
     private void answerClear(){
         final String[] items = {"路線名回答", "敷設回答", "全駅名回答"};
         final Boolean[] checkedItems = {false,false,false};
         new AlertDialog.Builder(this)
-                .setTitle(answerClearLine.getName() +" : 回答クリア")
+                .setTitle(longClickSelectedLine.getName() +" : 回答クリア")
                 .setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
@@ -285,27 +286,27 @@ public class PieceGarallyActivity extends AppCompatActivity
                             switch (i){
                                 case 0:
                                     if(checkedItems[i]){
-                                        Log.d(TAG,String.format("%s:路線名回答のクリア", PieceGarallyActivity.this.answerClearLine.getName()));
-                                        PieceGarallyActivity.this.answerClearLine.resetNameAnswerStatus();
-                                        PieceGarallyActivity.this.db.updateLineNameAnswerStatus(PieceGarallyActivity.this.answerClearLine);
+                                        Log.d(TAG,String.format("%s:路線名回答のクリア", PieceGarallyActivity.this.longClickSelectedLine.getName()));
+                                        PieceGarallyActivity.this.longClickSelectedLine.resetNameAnswerStatus();
+                                        PieceGarallyActivity.this.db.updateLineNameAnswerStatus(PieceGarallyActivity.this.longClickSelectedLine);
                                         PieceGarallyActivity.this.lineListAdapter.notifyDataSetChanged();
                                         PieceGarallyActivity.this.updateLineNameProgress();
                                     }
                                     break;
                                 case 1:
                                     if(checkedItems[i]){
-                                        Log.d(TAG,String.format("%s:敷設回答のクリア", PieceGarallyActivity.this.answerClearLine.getName()));
-                                        PieceGarallyActivity.this.answerClearLine.resetLocationAnswerStatus();
-                                        PieceGarallyActivity.this.db.updateLineLocationAnswerStatus(PieceGarallyActivity.this.answerClearLine);
+                                        Log.d(TAG,String.format("%s:敷設回答のクリア", PieceGarallyActivity.this.longClickSelectedLine.getName()));
+                                        PieceGarallyActivity.this.longClickSelectedLine.resetLocationAnswerStatus();
+                                        PieceGarallyActivity.this.db.updateLineLocationAnswerStatus(PieceGarallyActivity.this.longClickSelectedLine);
                                         PieceGarallyActivity.this.lineListAdapter.notifyDataSetChanged();
                                         PieceGarallyActivity.this.updateLocationProgress();
                                     }
                                     break;
                                 case 2:
                                     if(checkedItems[i]){
-                                        Log.d(TAG,String.format("%s:駅回答のクリア", PieceGarallyActivity.this.answerClearLine.getName()));
-                                        // answerClearLine.getLineId()で指定される路線の初ターミナルを除くすべて駅の回答ステータスを変更する
-                                        PieceGarallyActivity.this.db.updateStationsAnswerStatusInLine(PieceGarallyActivity.this.answerClearLine.getLineId(),false);
+                                        Log.d(TAG,String.format("%s:駅回答のクリア", PieceGarallyActivity.this.longClickSelectedLine.getName()));
+                                        // longClickSelectedLine.getLineId()で指定される路線の初ターミナルを除くすべて駅の回答ステータスを変更する
+                                        PieceGarallyActivity.this.db.updateStationsAnswerStatusInLine(PieceGarallyActivity.this.longClickSelectedLine.getLineId(),false);
                                         PieceGarallyActivity.this.lineListAdapter.notifyDataSetChanged();
                                         PieceGarallyActivity.this.updateStationsProgress();
                                     }
@@ -322,7 +323,7 @@ public class PieceGarallyActivity extends AppCompatActivity
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        answerClearLine = lines.get(position);
+        longClickSelectedLine = lines.get(position);
 
         final ArrayList<String> contextMenuList = new ArrayList<String>();
         contextMenuList.add("回答クリア");
@@ -344,7 +345,12 @@ public class PieceGarallyActivity extends AppCompatActivity
                                 answerClear();
                                 break;
                             case 1: // 回答を見る
-                                Toast.makeText(PieceGarallyActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
+                                final Snackbar sb = Snackbar.make(PieceGarallyActivity.this.listView,
+                                        longClickSelectedLine.getRawName()+"("+longClickSelectedLine.getRawKana()+")",
+                                        Snackbar.LENGTH_LONG);
+                                sb.setActionTextColor(ContextCompat.getColor(PieceGarallyActivity.this, R.color.background1));
+                                sb.getView().setBackgroundColor(ContextCompat.getColor(PieceGarallyActivity.this, R.color.color_10));
+                                sb.show();
                                 break;
                             case 2: // Webを検索する
                                 Toast.makeText(PieceGarallyActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
@@ -356,7 +362,7 @@ public class PieceGarallyActivity extends AppCompatActivity
 
         // ダイアログ表示
         mDialog = new AlertDialog.Builder(this)
-                .setTitle(String.format("%s", answerClearLine.getName()))
+                .setTitle(String.format("%s", longClickSelectedLine.getName()))
                 .setPositiveButton("Cancel", null)
                 .setView(contextMenuListView)
                 .create();

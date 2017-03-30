@@ -8,6 +8,8 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -15,16 +17,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.takashi.RailwayAndStationPuz.MainActivity;
 import com.example.takashi.RailwayAndStationPuz.piecegarally.PieceGarallyActivity;
 import com.example.takashi.RailwayAndStationPuz.R;
 import com.example.takashi.RailwayAndStationPuz.database.DBAdapter;
 import com.example.takashi.RailwayAndStationPuz.database.Line;
+import com.example.takashi.RailwayAndStationPuz.station.StationPuzzleActivity;
+import com.example.takashi.RailwayAndStationPuz.ui.PopUp;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -68,7 +74,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     private Drawable mDrawable;
     private AlertDialog mDialog;
 
-    private final static long DISPLAY_ANSWERE_TIME = 3000;
+    private final static long DISPLAY_ANSWERE_TIME = 2750;
     private Timer mAnswerDisplayingTimer = null;
     private Handler mHandler = new Handler();
 
@@ -290,8 +296,15 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                         ArrayAdapter<String> adapter = (ArrayAdapter<String>)adapterView.getAdapter();
                         switch(position){
                             case 0: // 回答をクリア（回答済みの場合）
-                                if(LocationPuzzleActivity.this.hasAlreadyLocated())
+                                if(LocationPuzzleActivity.this.hasAlreadyLocated()){
+                                    final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.mMapView,
+                                            LocationPuzzleActivity.this.line.getRawName()+"("+LocationPuzzleActivity.this.line.getRawKana()+")",
+                                            Snackbar.LENGTH_LONG);
+                                    sb.setActionTextColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.background1));
+                                    sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.color_10));
+                                    sb.show();
                                     answerClear();
+                                }
                                 break;
                             case 1: // 回答を見る（未回答の場合）
                                 if(!LocationPuzzleActivity.this.hasAlreadyLocated())
@@ -466,4 +479,39 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         super.onLowMemory();
     }
 
+    /**
+     * This hook is called whenever an item in your options menu is selected.
+     * The default implementation simply returns false to have the normal
+     * processing happen (calling the item's Runnable or sending a message to
+     * its Handler as appropriate).  You can use this method for any items
+     * for which you would like to do processing without those other
+     * facilities.
+     * <p>
+     * <p>Derived classes should call through to the base class for it to
+     * perform the default menu handling.</p>
+     *
+     * @param item The menu item that was selected.
+     * @return boolean Return false to allow normal menu processing to
+     * proceed, true to consume it here.
+     * @see #onCreateOptionsMenu
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_AboutPuzzRail) {
+            PopUp.makePopup(this,this.mImageView,"file:///android_asset/puzzrail_help.html");
+            return true;
+        }
+        else if (id == R.id.action_Help) {
+            Toast.makeText(LocationPuzzleActivity.this, "使い方", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        else if(id == R.id.action_Ask) {
+            Toast.makeText(LocationPuzzleActivity.this, "お問い合わせ", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

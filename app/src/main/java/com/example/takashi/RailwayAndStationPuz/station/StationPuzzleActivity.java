@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -33,6 +35,7 @@ import com.example.takashi.RailwayAndStationPuz.R;
 import com.example.takashi.RailwayAndStationPuz.database.DBAdapter;
 import com.example.takashi.RailwayAndStationPuz.database.Line;
 import com.example.takashi.RailwayAndStationPuz.database.Station;
+import com.example.takashi.RailwayAndStationPuz.ui.PopUp;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -457,7 +460,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_AboutPuzzRail) {
-            Toast.makeText(StationPuzzleActivity.this, "パズレールについて", Toast.LENGTH_SHORT).show();
+            PopUp.makePopup(this,this.transparentView,"file:///android_asset/puzzrail_help.html");
             return true;
         }
         else if (id == R.id.action_Help) {
@@ -473,17 +476,17 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     }
 
     // 回答クリア
-    private Station answerStation = null;
+    private Station longClickSelectedStation = null;
     private void answerClear(){
         new AlertDialog.Builder(this)
-                .setTitle(answerStation.getName()+" : 回答クリア")
+                .setTitle(longClickSelectedStation.getName()+" : 回答クリア")
                 .setMessage("駅名をクリアします。"+"\n"+"　　よろしいですか？")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d(TAG,String.format("%s:駅名クリア",StationPuzzleActivity.this.answerStation.getRawName()));
-                        StationPuzzleActivity.this.answerStation.resetFinishStatus();
-                        StationPuzzleActivity.this.db.updateStationAnswerStatus(StationPuzzleActivity.this.answerStation);
+                        Log.d(TAG,String.format("%s:駅名クリア",StationPuzzleActivity.this.longClickSelectedStation.getRawName()));
+                        StationPuzzleActivity.this.longClickSelectedStation.resetFinishStatus();
+                        StationPuzzleActivity.this.db.updateStationAnswerStatus(StationPuzzleActivity.this.longClickSelectedStation);
                         StationPuzzleActivity.this.stationsAdapter.notifyDataSetChanged();
                         // 進捗バーの更新
                         StationPuzzleActivity.this.updateProgressBar();
@@ -495,7 +498,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        answerStation = this.stations.get(position);
+        longClickSelectedStation = this.stations.get(position);
 
         final ArrayList<String> contextMenuList = new ArrayList<String>();
         contextMenuList.add("回答クリア");
@@ -514,12 +517,17 @@ public class StationPuzzleActivity extends AppCompatActivity implements
                         mDialog.dismiss();
                         switch(position) {
                             case 0: // 回答をクリア
-                                if(StationPuzzleActivity.this.answerStation.getStationOrder()!=1 &&
-                                        StationPuzzleActivity.this.answerStation.isFinished())
+                                if(StationPuzzleActivity.this.longClickSelectedStation.getStationOrder()!=1 &&
+                                        StationPuzzleActivity.this.longClickSelectedStation.isFinished())
                                 answerClear();
                                 break;
                             case 1: // 回答を見る
-                                Toast.makeText(StationPuzzleActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
+                                final Snackbar sb = Snackbar.make(StationPuzzleActivity.this.stationListView,
+                                        longClickSelectedStation.getRawName()+"("+longClickSelectedStation.getRawKana()+")",
+                                        Snackbar.LENGTH_LONG);
+                                sb.setActionTextColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.background1));
+                                sb.getView().setBackgroundColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.color_10));
+                                sb.show();
                                 break;
                             case 2: // Webを検索する
                                 Toast.makeText(StationPuzzleActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
@@ -531,7 +539,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
 
         // ダイアログ表示
         mDialog = new AlertDialog.Builder(this)
-                .setTitle(String.format("%s", this.answerStation.getName()))
+                .setTitle(String.format("%s", this.longClickSelectedStation.getName()))
                 .setPositiveButton("Cancel", null)
                 .setView(contextMenuListView)
                 .create();

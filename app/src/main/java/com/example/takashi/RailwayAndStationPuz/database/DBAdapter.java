@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Random;
 import java.util.StringTokenizer;
 
 /**
@@ -226,8 +228,11 @@ public class DBAdapter {
 
     }
 
-    public ArrayList<Line> getLineList(int companyId){
+    public ArrayList<Line> getLineList(int companyId, boolean isRandomize){
+        ArrayList<Line> returnLines = new ArrayList<Line>();
         ArrayList<Line> lines = new ArrayList<Line>();
+        ArrayList<Line> randomizedLines = new ArrayList<Line>();
+
         Cursor cursor = db.rawQuery("SELECT * from lines WHERE companyId=?",new String[]{String.valueOf(companyId)});
         try{
             if(cursor.moveToFirst()){
@@ -241,7 +246,29 @@ public class DBAdapter {
         }finally {
             cursor.close();
         }
-        return lines;
+        returnLines = lines;
+
+        if(isRandomize){
+            Random rnd = new Random();
+            while(randomizedLines.size() < lines.size()){
+                int idx = rnd.nextInt(lines.size());
+                Line srcLine = lines.get(idx);
+                Iterator<Line> rndLinesIte = randomizedLines.iterator();
+                boolean alreadyCopied = false;
+                while(rndLinesIte.hasNext()){
+                    Line ln = rndLinesIte.next();
+                    if(ln.getLineId()==srcLine.getLineId()){
+                        alreadyCopied = true;
+                    }
+                }
+                if(!alreadyCopied){
+                    randomizedLines.add(srcLine);
+                }
+            }
+            returnLines = randomizedLines;
+        }
+
+        return returnLines;
     }
 
     /*
