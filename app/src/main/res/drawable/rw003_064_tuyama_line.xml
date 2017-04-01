@@ -2,7 +2,7 @@
     android:viewportWidth="1052.0" android:width="120dp" xmlns:android="http://schemas.android.com/apk/res/android">
     <path android:fillColor="#00000000"
         android:pathData="M0,0 L1052,0 1052,1052 0,1052 0,0"
-        android:strokeColor="#c94266" android:strokeLineCap="round"
+        android:strokeColor="#ff0000" android:strokeLineCap="round"
         android:strokeLineJoin="round" android:strokeWidth="10"/>
     <path android:fillColor="#00000000"
         android:pathData="M543.8,349.2 L547.7,342.3 553.6,314 553.9,302.6 546.3,281.6"

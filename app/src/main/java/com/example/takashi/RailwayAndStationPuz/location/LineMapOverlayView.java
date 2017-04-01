@@ -459,9 +459,9 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
      * ColorMatrix data for reversing image
      */
     private static final float[] REVERSE = {
-            -1.0f,   0.0f,   0.0f,  0.0f,  255.0f,
-            0.0f,  -1.0f,   0.0f,  0.0f,  255.0f,
-            0.0f,   0.0f,  -1.0f,  0.0f,  255.0f,
+            1.0f,   0.0f,   0.0f,  0.0f,    0.0f,
+            0.0f,   1.0f,   0.0f,  0.0f,    0.0f,
+           -1.0f,   0.0f,   1.0f,  0.0f,  255.0f,
             0.0f,   0.0f,   0.0f,  1.0f,    0.0f,
     };
     private static final float[] NORMAL = {
@@ -519,5 +519,4 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
         }
         super.onDraw(canvas);
     }
-//
 }
