@@ -538,7 +538,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
                             case 2: // Webを検索する
                                 if(longClickSelectedStation.isFinished()){
                                     Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-                                    intent.putExtra(SearchManager.QUERY, longClickSelectedStation.getName()); // query contains search string
+                                    intent.putExtra(SearchManager.QUERY, longClickSelectedStation.getName()+"駅"); // query contains search string
                                     startActivity(intent);
                                 }
                                 else{
