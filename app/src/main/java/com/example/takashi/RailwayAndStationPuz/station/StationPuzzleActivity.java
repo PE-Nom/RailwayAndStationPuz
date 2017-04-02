@@ -1,5 +1,6 @@
 package com.example.takashi.RailwayAndStationPuz.station;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.takashi.RailwayAndStationPuz.location.LocationPuzzleActivity;
 import com.example.takashi.RailwayAndStationPuz.piecegarally.PieceGarallyActivity;
 import com.example.takashi.RailwayAndStationPuz.R;
 import com.example.takashi.RailwayAndStationPuz.database.DBAdapter;
@@ -468,7 +470,11 @@ public class StationPuzzleActivity extends AppCompatActivity implements
             return true;
         }
         else if(id == R.id.action_Ask) {
-            Toast.makeText(StationPuzzleActivity.this, "お問い合わせ", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("plain/text");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[] { "ib65629@gmail.com" });
+            intent.putExtra(Intent.EXTRA_SUBJECT, "パズレールについてのお問い合わせ");
+            startActivity(Intent.createChooser(intent, ""));
             return true;
         }
 
@@ -530,7 +536,14 @@ public class StationPuzzleActivity extends AppCompatActivity implements
                                 sb.show();
                                 break;
                             case 2: // Webを検索する
-                                Toast.makeText(StationPuzzleActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
+                                if(longClickSelectedStation.isFinished()){
+                                    Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+                                    intent.putExtra(SearchManager.QUERY, longClickSelectedStation.getName()); // query contains search string
+                                    startActivity(intent);
+                                }
+                                else{
+                                    Toast.makeText(StationPuzzleActivity.this,"駅が開設されていません。\n駅名を回答し駅を開設してください", Toast.LENGTH_SHORT).show();
+                                }
                                 break;
                         }
                     }

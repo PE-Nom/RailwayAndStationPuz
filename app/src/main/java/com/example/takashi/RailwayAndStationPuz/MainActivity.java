@@ -1,5 +1,6 @@
 package com.example.takashi.RailwayAndStationPuz;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -134,19 +135,23 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         else if(id == R.id.action_Ask) {
-            Toast.makeText(MainActivity.this, "お問い合わせ", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("plain/text");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[] { "ib65629@gmail.com" });
+            intent.putExtra(Intent.EXTRA_SUBJECT, "パズレールについてのお問い合わせ");
+            startActivity(Intent.createChooser(intent, ""));
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     // クリア対象の回答データ選択
-    private Company answerClearCompany = null;
+    private Company longClickSelectedCompany = null;
     private void answerClear(){
         final String[] items = {"全路線の路線名回答", "全路線の敷設回答", "全路線の全駅名回答"};
         final Boolean[] checkedItems = {false,false,false};
         new AlertDialog.Builder(this)
-                .setTitle(answerClearCompany.getName()+" : 回答クリア")
+                .setTitle(longClickSelectedCompany.getName()+" : 回答クリア")
                 .setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
@@ -160,22 +165,22 @@ public class MainActivity extends AppCompatActivity
                             switch (i){
                                 case 0:
                                     if(checkedItems[i]){
-                                        Log.d(TAG,String.format("%s:路線名回答のクリア",MainActivity.this.answerClearCompany.getName()));
-                                        MainActivity.this.db.updateLineNameAnswerStatusInCompany(MainActivity.this.answerClearCompany.getId(),false);
+                                        Log.d(TAG,String.format("%s:路線名回答のクリア",MainActivity.this.longClickSelectedCompany.getName()));
+                                        MainActivity.this.db.updateLineNameAnswerStatusInCompany(MainActivity.this.longClickSelectedCompany.getId(),false);
                                         MainActivity.this.adapter.notifyDataSetChanged();
                                     }
                                     break;
                                 case 1:
                                     if(checkedItems[i]){
-                                        Log.d(TAG,String.format("%s:敷設回答のクリア",MainActivity.this.answerClearCompany.getName()));
-                                        MainActivity.this.db.updateLineLocationAnswerStatusInCompany(MainActivity.this.answerClearCompany.getId(),false);
+                                        Log.d(TAG,String.format("%s:敷設回答のクリア",MainActivity.this.longClickSelectedCompany.getName()));
+                                        MainActivity.this.db.updateLineLocationAnswerStatusInCompany(MainActivity.this.longClickSelectedCompany.getId(),false);
                                         MainActivity.this.adapter.notifyDataSetChanged();
                                     }
                                     break;
                                 case 2:
                                     if(checkedItems[i]){
-                                        Log.d(TAG,String.format("%s:駅回答のクリア",MainActivity.this.answerClearCompany.getName()));
-                                        MainActivity.this.db.updateStationsAnswerStatusInCompany(MainActivity.this.answerClearCompany.getId(),false);
+                                        Log.d(TAG,String.format("%s:駅回答のクリア",MainActivity.this.longClickSelectedCompany.getName()));
+                                        MainActivity.this.db.updateStationsAnswerStatusInCompany(MainActivity.this.longClickSelectedCompany.getId(),false);
                                         MainActivity.this.adapter.notifyDataSetChanged();
                                     }
                                     break;
@@ -205,7 +210,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-        answerClearCompany = this.companies.get(position);
+        longClickSelectedCompany = this.companies.get(position);
 
         final ArrayList<String> contextMenuList = new ArrayList<String>();
         contextMenuList.add("回答クリア");
@@ -226,7 +231,9 @@ public class MainActivity extends AppCompatActivity
                                 answerClear();
                                 break;
                             case 1: // Webを検索する
-                                Toast.makeText(MainActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+                                intent.putExtra(SearchManager.QUERY, longClickSelectedCompany.getName()); // query contains search string
+                                startActivity(intent);
                                 break;
                         }
                     }
@@ -235,7 +242,7 @@ public class MainActivity extends AppCompatActivity
 
         // ダイアログ表示
         mDialog = new AlertDialog.Builder(this)
-                .setTitle(String.format("%s", this.answerClearCompany.getName()))
+                .setTitle(String.format("%s", this.longClickSelectedCompany.getName()))
                 .setPositiveButton("Cancel", null)
                 .setView(contextMenuListView)
                 .create();

@@ -1,7 +1,9 @@
 package com.example.takashi.RailwayAndStationPuz.piecegarally;
 
+import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -66,7 +68,7 @@ public class PieceGarallyActivity extends AppCompatActivity
         Intent intent = getIntent();
         this.companyId = intent.getIntExtra("SelectedCompanyId", 3); // デフォルトを西日本旅客鉄道のIdにしておく
 
-        this.lines = db.getLineList(this.companyId, false);
+        this.lines = db.getLineList(this.companyId, true);
 
         this.lineNameProgValue = (TextView) findViewById(R.id.lineNameProgValue);
         this.lineNameProgress = (GaugeView) findViewById(R.id.lineNameProgress) ;
@@ -259,7 +261,11 @@ public class PieceGarallyActivity extends AppCompatActivity
             return true;
         }
         else if(id == R.id.action_Ask) {
-            Toast.makeText(PieceGarallyActivity.this, "お問い合わせ", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("plain/text");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[] { "ib65629@gmail.com" });
+            intent.putExtra(Intent.EXTRA_SUBJECT, "パズレールについてのお問い合わせ");
+            startActivity(Intent.createChooser(intent, ""));
             return true;
         }
 
@@ -353,7 +359,14 @@ public class PieceGarallyActivity extends AppCompatActivity
                                 sb.show();
                                 break;
                             case 2: // Webを検索する
-                                Toast.makeText(PieceGarallyActivity.this,String.format("position %d",position), Toast.LENGTH_SHORT).show();
+                                if(longClickSelectedLine.isNameCompleted()){
+                                    Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+                                    intent.putExtra(SearchManager.QUERY, longClickSelectedLine.getName()); // query contains search string
+                                    startActivity(intent);
+                                }
+                                else{
+                                    Toast.makeText(PieceGarallyActivity.this,"路線名が未回答です。\n路線名を先に回答してください", Toast.LENGTH_SHORT).show();
+                                }
                                 break;
                         }
                     }

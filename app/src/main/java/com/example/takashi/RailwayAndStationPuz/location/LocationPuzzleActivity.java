@@ -1,5 +1,6 @@
 package com.example.takashi.RailwayAndStationPuz.location;
 
+import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -315,7 +316,14 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                                 LocationPuzzleActivity.this.setImageDrawable();
                                 break;
                             case 3: // Webを検索する
-                                Toast.makeText(LocationPuzzleActivity.this,String.format("position=%d:%s",position,adapter.getItem(position)), Toast.LENGTH_SHORT).show();
+                                if(LocationPuzzleActivity.this.line.isNameCompleted()){
+                                    Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+                                    intent.putExtra(SearchManager.QUERY, LocationPuzzleActivity.this.line.getName()); // query contains search string
+                                    startActivity(intent);
+                                }
+                                else{
+                                    Toast.makeText(LocationPuzzleActivity.this,"路線名が未回答です。\n路線名を先に回答してください", Toast.LENGTH_SHORT).show();
+                                }
                                 break;
                         }
                     }
@@ -374,26 +382,6 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     }
 
     private boolean checkLocation(){
-/*
-        RectF railwayImageRect = mImageView.getCurrentImageRect();
-        Log.d(TAG,String.format("RailwayLine Image : left=%f,top=%f,right=%f,bottom=%f",
-                railwayImageRect.left,railwayImageRect.top,railwayImageRect.right,railwayImageRect.bottom));
-        Point screenPoint1 = new Point((int)railwayImageRect.left,(int)railwayImageRect.top);
-        Point screenPoint2 = new Point((int)railwayImageRect.right,(int)railwayImageRect.bottom);
-        LatLng point1 = mMap.getProjection().fromScreenLocation(screenPoint1);
-        LatLng point2 = mMap.getProjection().fromScreenLocation(screenPoint2);
-        Log.d(TAG,String.format("answer = %f,%f, point1 = %f,%f",
-                this.line.getCorrectTopLat(),this.line.getCorrectLeftLng(),point1.latitude,point1.longitude));
-        Log.d(TAG,String.format("answer = %f,%f, point2 = %f,%f",
-                this.line.getCorrectBottomLat(),this.line.getCorrectRightLng(),point2.latitude,point2.longitude));
-        // ロケーション正誤判定
-        double error1 = Math.abs(this.line.getCorrectTopLat()-point1.latitude);
-        double error2 = Math.abs(this.line.getCorrectLeftLng()-point1.longitude);
-        double error3 = Math.abs(this.line.getCorrectBottomLat()-point2.latitude);
-        double error4 = Math.abs(this.line.getCorrectRightLng()-point2.longitude);
-        double error = error1+error2+error3+error4;
-        Log.d(TAG,String.format("error = %f, %f, %f, %f, sum = %f",error1,error2,error3,error4,error));
-*/
         double error[] = mImageView.computeLocationError();
         double err = error[0]+error[1]+error[2]+error[3];
         Log.d(TAG,String.format("error = %f, %f, %f, %f, sum = %f",error[0],error[1],error[2],error[3],err));
@@ -512,7 +500,11 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
             return true;
         }
         else if(id == R.id.action_Ask) {
-            Toast.makeText(LocationPuzzleActivity.this, "お問い合わせ", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("plain/text");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[] { "ib65629@gmail.com" });
+            intent.putExtra(Intent.EXTRA_SUBJECT, "パズレールについてのお問い合わせ");
+            startActivity(Intent.createChooser(intent, ""));
             return true;
         }
         return super.onOptionsItemSelected(item);

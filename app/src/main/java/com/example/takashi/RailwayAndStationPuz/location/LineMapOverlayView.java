@@ -491,8 +491,6 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
 
     public double[] computeLocationError(){
         RectF railwayImageRect = getCurrentImageRect();
-//        Log.d(TAG,String.format("RailwayLine Image : left=%f,top=%f,right=%f,bottom=%f",
-//                railwayImageRect.left,railwayImageRect.top,railwayImageRect.right,railwayImageRect.bottom));
         screenPoint1 = new Point((int)railwayImageRect.left,(int)railwayImageRect.top);
         screenPoint2 = new Point((int)railwayImageRect.right,(int)railwayImageRect.bottom);
         point1 = map.getProjection().fromScreenLocation(screenPoint1);
@@ -520,7 +518,7 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
     private final static int ERR_LEVEL2 = 2;
     private final static int ERR_LEVEL3 = 3;
 
-    private final int onTime[] = new int[] {0,40,80,1000};
+    private final int onTime[] = new int[] {0,30,80,1000};
     private final int offTime[] = new int[] {0,10,20,0};
     boolean lightingSw = true;
     int colorCount = 0;
