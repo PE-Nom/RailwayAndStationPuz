@@ -509,9 +509,9 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
     }
 
     public final static double ERR_RANGE_LEVEL0 = 0.05;
-    public final static double ERR_RANGE_LEVEL1 = 0.2;
-    public final static double ERR_RANGE_LEVEL2 = 0.5;
-    public final static double ERR_RANGE_LEVEL3 = 0.9;
+    public final static double ERR_RANGE_LEVEL1 = 0.1;
+    public final static double ERR_RANGE_LEVEL2 = 0.25;
+    public final static double ERR_RANGE_LEVEL3 = 0.5;
 
     private final static int ERR_LEVEL0 = 0;
     private final static int ERR_LEVEL1 = 1;
