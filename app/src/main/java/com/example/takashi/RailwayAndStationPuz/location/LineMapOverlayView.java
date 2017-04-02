@@ -462,7 +462,7 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
             1.0f,   0.0f,   0.0f,  0.0f,  0.0f,
             0.0f,   1.0f,   0.0f,  0.0f,  0.0f,
             0.0f,   0.0f,   1.0f,  0.0f,  0.0f,
-            0.0f,   0.0f,   0.0f,  0.0f,  0.0f,
+            1.0f,   0.0f,   0.0f,  0.0f,  0.0f,
     };
     private static final float[] REVERSE = {
             1.0f,   0.0f,   0.0f,  0.0f,    0.0f,
