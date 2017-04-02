@@ -458,6 +458,12 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
     /**
      * ColorMatrix data for reversing image
      */
+    private static final float[] TRANSPEARENT = {
+            1.0f,   0.0f,   0.0f,  0.0f,  0.0f,
+            0.0f,   1.0f,   0.0f,  0.0f,  0.0f,
+            0.0f,   0.0f,   1.0f,  0.0f,  0.0f,
+            0.0f,   0.0f,   0.0f,  0.0f,  0.0f,
+    };
     private static final float[] REVERSE = {
             1.0f,   0.0f,   0.0f,  0.0f,    0.0f,
             0.0f,   1.0f,   0.0f,  0.0f,    0.0f,
@@ -470,8 +476,7 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
             0.0f,   0.0f,   1.0f,  0.0f,  0.0f,
             0.0f,   0.0f,   0.0f,  1.0f,  0.0f,
     };
-    boolean colorSw = false;
-    int colorCount = 0;
+
     Line line;
     GoogleMap map;
     LatLng point1,point2;
@@ -484,10 +489,10 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
         this.map = map;
     }
 
-    private void computeLocationError(){
+    public double[] computeLocationError(){
         RectF railwayImageRect = getCurrentImageRect();
-        Log.d(TAG,String.format("RailwayLine Image : left=%f,top=%f,right=%f,bottom=%f",
-                railwayImageRect.left,railwayImageRect.top,railwayImageRect.right,railwayImageRect.bottom));
+//        Log.d(TAG,String.format("RailwayLine Image : left=%f,top=%f,right=%f,bottom=%f",
+//                railwayImageRect.left,railwayImageRect.top,railwayImageRect.right,railwayImageRect.bottom));
         screenPoint1 = new Point((int)railwayImageRect.left,(int)railwayImageRect.top);
         screenPoint2 = new Point((int)railwayImageRect.right,(int)railwayImageRect.bottom);
         point1 = map.getProjection().fromScreenLocation(screenPoint1);
@@ -496,27 +501,73 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
                 this.line.getCorrectTopLat(),this.line.getCorrectLeftLng(),point1.latitude,point1.longitude));
         Log.d(TAG,String.format("answer = %f,%f, point2 = %f,%f",
                 this.line.getCorrectBottomLat(),this.line.getCorrectRightLng(),point2.latitude,point2.longitude));
+        double error[] = new double[4];
+        error[0] = Math.abs(this.line.getCorrectTopLat()-point1.latitude);
+        error[1] = Math.abs(this.line.getCorrectLeftLng()-point1.longitude);
+        error[2] = Math.abs(this.line.getCorrectBottomLat()-point2.latitude);
+        error[3] = Math.abs(this.line.getCorrectRightLng()-point2.longitude);
+        Log.d(TAG,String.format("error = %f, %f, %f, %f",error[0],error[1],error[2],error[3]));
+        return error;
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        computeLocationError();
-        if (point2.latitude < 35.0f || 37.0f < point2.latitude) {
-            super.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(NORMAL)));
+    public final static double ERR_RANGE_LEVEL0 = 0.05;
+    public final static double ERR_RANGE_LEVEL1 = 0.2;
+    public final static double ERR_RANGE_LEVEL2 = 0.5;
+    public final static double ERR_RANGE_LEVEL3 = 0.9;
+
+    private final static int ERR_LEVEL0 = 0;
+    private final static int ERR_LEVEL1 = 1;
+    private final static int ERR_LEVEL2 = 2;
+    private final static int ERR_LEVEL3 = 3;
+
+    private final int onTime[] = new int[] {0,40,80,1000};
+    private final int offTime[] = new int[] {0,10,20,0};
+    boolean lightingSw = true;
+    int colorCount = 0;
+
+    private ColorMatrix getColorMatrix(int errLevel){
+        ColorMatrix clm = new ColorMatrix(REVERSE);
+        int onCnt = onTime[errLevel];
+        int offCnt = offTime[errLevel];
+        Log.d(TAG,String.format("errLevel = %d",errLevel));
+        if(lightingSw){
             colorCount++;
-            if( colorCount == 100 ){
-                colorSw = true;
+            if( onCnt <= colorCount ){
+                lightingSw = false;
                 colorCount = 0;
             }
         }
         else{
-            super.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(REVERSE)));
             colorCount++;
-            if( colorCount == 100 ){
-                colorSw = false;
+            if( offCnt <= colorCount ){
+                lightingSw = true;
                 colorCount = 0;
             }
+            else{
+                clm = new ColorMatrix(TRANSPEARENT);
+            }
         }
+        return clm;
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        double err[] = computeLocationError();
+        if(err[0] < ERR_RANGE_LEVEL1 && err[1] < ERR_RANGE_LEVEL1 && err[2] < ERR_RANGE_LEVEL1 && err[3] <ERR_RANGE_LEVEL1){
+            super.setColorFilter(new ColorMatrixColorFilter(getColorMatrix(ERR_LEVEL1)));
+        }
+        else if(err[0] < ERR_RANGE_LEVEL2 && err[1] < ERR_RANGE_LEVEL2 && err[2] < ERR_RANGE_LEVEL2 && err[3] <ERR_RANGE_LEVEL2) {
+            super.setColorFilter(new ColorMatrixColorFilter(getColorMatrix(ERR_LEVEL2)));
+        }
+        else if(err[0] < ERR_RANGE_LEVEL3 && err[1] < ERR_RANGE_LEVEL3 && err[2] < ERR_RANGE_LEVEL3 && err[3] <ERR_RANGE_LEVEL3){
+            super.setColorFilter(new ColorMatrixColorFilter(getColorMatrix(ERR_LEVEL3)));
+        }
+        else{
+            super.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(NORMAL)));
+            colorCount =0;
+            lightingSw = true;
+        }
+
         super.onDraw(canvas);
     }
 }

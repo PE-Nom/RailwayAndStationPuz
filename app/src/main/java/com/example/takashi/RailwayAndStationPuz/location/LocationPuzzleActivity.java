@@ -374,7 +374,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     }
 
     private boolean checkLocation(){
-
+/*
         RectF railwayImageRect = mImageView.getCurrentImageRect();
         Log.d(TAG,String.format("RailwayLine Image : left=%f,top=%f,right=%f,bottom=%f",
                 railwayImageRect.left,railwayImageRect.top,railwayImageRect.right,railwayImageRect.bottom));
@@ -393,18 +393,22 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         double error4 = Math.abs(this.line.getCorrectRightLng()-point2.longitude);
         double error = error1+error2+error3+error4;
         Log.d(TAG,String.format("error = %f, %f, %f, %f, sum = %f",error1,error2,error3,error4,error));
-
-        if(error1 < 0.05 && error2 < 0.05 && error3 < 0.05 && error4 <0.05)
-        {
+*/
+        double error[] = mImageView.computeLocationError();
+        double err = error[0]+error[1]+error[2]+error[3];
+        Log.d(TAG,String.format("error = %f, %f, %f, %f, sum = %f",error[0],error[1],error[2],error[3],err));
+        if(error[0] < LineMapOverlayView.ERR_RANGE_LEVEL0
+                && error[1] < LineMapOverlayView.ERR_RANGE_LEVEL0
+                && error[2] < LineMapOverlayView.ERR_RANGE_LEVEL0
+                && error[3] < LineMapOverlayView.ERR_RANGE_LEVEL0) {
             // 正解
-            Log.d(TAG,"ロケーションOK");
             resetImageDrawable();
             setGeoJsonVisible();
             this.line.setLocationAnswerStatus();
             db.updateLineLocationAnswerStatus(this.line);
+            Toast.makeText(LocationPuzzleActivity.this,"正解!!! v(￣Д￣)v ", Toast.LENGTH_SHORT).show();
         }
         else{
-            Log.d(TAG,"ロケーションNG");
         }
         return true;
 
