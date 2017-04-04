@@ -149,8 +149,8 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         // 表示エリアと縮尺の制限
         UiSettings mUiSetting = this.mMap.getUiSettings();
         mUiSetting.setRotateGesturesEnabled(false);
-        this.mMap.setMaxZoomPreference(this.line.getMaxZoomLevel());
-        this.mMap.setMinZoomPreference(this.line.getMinZoomLevel());
+//        this.mMap.setMaxZoomPreference(this.line.getMaxZoomLevel());
+//        this.mMap.setMinZoomPreference(this.line.getMinZoomLevel());
         // 離島除く
         LatLng north_east = new LatLng(this.line.getScrollMaxLat(),this.line.getScrollMaxLng());
         LatLng south_west = new LatLng(this.line.getScrollMinLat(),this.line.getScrollMinLng());

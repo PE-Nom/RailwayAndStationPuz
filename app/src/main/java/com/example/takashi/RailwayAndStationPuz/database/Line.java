@@ -35,6 +35,7 @@ public class Line {
     private double max_zoom_level;
     private double min_zoom_level;
     private double init_zoom_level;
+    private double errRange[] = new double[4];
 
     private boolean nameAnswerStatus;
     private boolean locationAnswerStatus;
@@ -62,6 +63,7 @@ public class Line {
                 double max_zoom_level,
                 double min_zoom_level,
                 double init_zoom_level,
+                double[] errRange,
                 boolean nameAnswerStatus,
                 boolean locationAnswerStatus,
                 boolean stationAnswerStatus) {
@@ -89,6 +91,10 @@ public class Line {
         this.max_zoom_level = max_zoom_level;
         this.min_zoom_level = min_zoom_level;
         this.init_zoom_level = init_zoom_level;
+        this.errRange[0] = errRange[0];
+        this.errRange[1] = errRange[1];
+        this.errRange[2] = errRange[2];
+        this.errRange[3] = errRange[3];
         this.nameAnswerStatus = nameAnswerStatus;
         this.locationAnswerStatus = locationAnswerStatus;
         this.stationAnswerStatus = stationAnswerStatus;
@@ -177,4 +183,6 @@ public class Line {
     }
     public void setStationAnswerStatus() { this.stationAnswerStatus=true; }
     public void resetStationAnswerStatus() { this.stationAnswerStatus=false; }
+
+    public double[] getErrRange(){ return this.errRange; }
 }
