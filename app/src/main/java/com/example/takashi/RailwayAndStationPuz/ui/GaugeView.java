@@ -198,7 +198,8 @@ public class GaugeView extends View {
 
                     // inner fill
                     if (limitBreak) {
-                        paint.setColor(COLOR_SECOND_LOOP_BASE_RING);
+//                        paint.setColor(COLOR_SECOND_LOOP_BASE_RING);
+                        paint.setColor(color);
                         paint.setStyle(Paint.Style.FILL);
                         canvas.drawCircle(centerX, centerY, ringRadius, paint);
 
@@ -219,7 +220,8 @@ public class GaugeView extends View {
                         rectF.set(ringStrokeWidth / 2, centerY - ringRadius - ringStrokeWidth / 2, canvas.getWidth() - ringStrokeWidth / 2, centerY + ringRadius + ringStrokeWidth / 2);
                     }
                     if (limitBreak) {
-                        paint.setColor(COLOR_SECOND_LOOP_BASE_RING);
+//                        paint.setColor(COLOR_SECOND_LOOP_BASE_RING);
+                        paint.setColor(color);
                     } else {
                         paint.setColor(color);
                     }
@@ -230,7 +232,8 @@ public class GaugeView extends View {
                     // second loop ring
                     if (limitBreak) {
                         if (phase > 100) {
-                            paint.setColor(COLOR_SECOND_LOOP);
+//                            paint.setColor(COLOR_SECOND_LOOP);
+                            paint.setColor(color);
                             canvas.drawArc(rectF, -90, 360 * (Math.min(phase - 100, 100) / 100f), false, paint);
                         }
 

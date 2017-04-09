@@ -161,9 +161,14 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         this.mMap.setOnMapClickListener(this);
         this.mMap.setOnMapLongClickListener(this);
         this.mMap.setOnCameraIdleListener(this);
+        // Add a marker in Sydney and move the camera
+        this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(this.line.getInitCamposLat(),this.line.getInitCamposLng()),
+                this.line.getInitZoomLevel())
+        );
+
         mImageView.setMap(this.mMap);
-        mapInitialize();
-        setImageDrawable();
+        mImageView.setImageDrawable();
         // Test Code for 回答クリア、回答を見る の操作
         // 正解座標のDB登録の完了と正誤判定ロジックの実装完了後、削除する
 //        this.line.setLocationAnswerStatus();
@@ -171,14 +176,6 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         //
         if(hasAlreadyLocated()) setGeoJsonVisible();
 
-    }
-
-    private void mapInitialize(){
-        // Add a marker in Sydney and move the camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(this.line.getInitCamposLat(),this.line.getInitCamposLng()),
-                this.line.getInitZoomLevel())
-        );
     }
     // GeoJsonLayerの生成とColorの指定、Mapへの登録
     private void retrieveFileFromResource() {
@@ -263,9 +260,14 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                         LocationPuzzleActivity.this.line.resetLocationAnswerStatus();
                         LocationPuzzleActivity.this.db.updateLineLocationAnswerStatus(LocationPuzzleActivity.this.line);
                         LocationPuzzleActivity.this.resetGeoJsonVisible();
-                        LocationPuzzleActivity.this.resetImageDrawable();
-                        LocationPuzzleActivity.this.mapInitialize();
-                        LocationPuzzleActivity.this.setImageDrawable();
+                        LocationPuzzleActivity.this.mImageView.resetImageDrawable();
+                        LocationPuzzleActivity.this.mMap.moveCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(LocationPuzzleActivity.this.line.getInitCamposLat(),
+                                        LocationPuzzleActivity.this.line.getInitCamposLng()),
+                                        LocationPuzzleActivity.this.line.getInitZoomLevel())
+                                );
+                        LocationPuzzleActivity.this.mImageView.setImageDrawable();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -311,9 +313,14 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                                 }
                                 break;
                             case 2: // 最初の位置に戻す
-                                LocationPuzzleActivity.this.mapInitialize();
-                                LocationPuzzleActivity.this.resetImageDrawable();
-                                LocationPuzzleActivity.this.setImageDrawable();
+                                LocationPuzzleActivity.this.mMap.moveCamera(
+                                        CameraUpdateFactory.newLatLngZoom(
+                                                new LatLng(LocationPuzzleActivity.this.line.getInitCamposLat(),
+                                                        LocationPuzzleActivity.this.line.getInitCamposLng()),
+                                                LocationPuzzleActivity.this.line.getInitZoomLevel())
+                                );
+                                LocationPuzzleActivity.this.mImageView.resetImageDrawable();
+                                LocationPuzzleActivity.this.mImageView.setImageDrawable();;
                                 break;
                             case 3: // Webを検索する
                                 if(LocationPuzzleActivity.this.line.isNameCompleted()){
@@ -371,26 +378,17 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         checkLocation();
     }
 
-    private void setImageDrawable(){
-        mDrawable  = ResourcesCompat.getDrawable(getResources(), this.line.getDrawableResourceId(), null);
-        mImageView.setImageDrawable(mDrawable);
-    }
-
-    private void resetImageDrawable(){
-        mImageView.setImageDrawable(null);
-        mDrawable=null;
-    }
-
     private boolean checkLocation(){
         double error[] = mImageView.computeLocationError();
         double err = error[0]+error[1]+error[2]+error[3];
         Log.d(TAG,String.format("error = %f, %f, %f, %f, sum = %f",error[0],error[1],error[2],error[3],err));
-        if(error[0] < LineMapOverlayView.ERR_RANGE_LEVEL0
-                && error[1] < LineMapOverlayView.ERR_RANGE_LEVEL0
-                && error[2] < LineMapOverlayView.ERR_RANGE_LEVEL0
-                && error[3] < LineMapOverlayView.ERR_RANGE_LEVEL0) {
+        double errRange[] = this.line.getErrRange();
+        if(error[0] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0]
+                && error[1] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0]
+                && error[2] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0]
+                && error[3] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0] ) {
             // 正解
-            resetImageDrawable();
+            mImageView.resetImageDrawable();
             setGeoJsonVisible();
             this.line.setLocationAnswerStatus();
             db.updateLineLocationAnswerStatus(this.line);

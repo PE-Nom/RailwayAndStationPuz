@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -88,6 +89,12 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
         return new RectF(left,top,right,bottom);
     }
 
+    public void setImageDrawable(){
+        super.setImageDrawable(ResourcesCompat.getDrawable(getResources(), this.line.getDrawableResourceId(), null));
+    }
+    public void resetImageDrawable(){
+        super.setImageDrawable(null);
+    }
     // pinch in/out操作のイベントハンドラ
     private class RailwayLineViewScaleGestureDetector
             implements ScaleGestureDetector.OnScaleGestureListener{
@@ -508,10 +515,10 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
         return error;
     }
 
-    public final static double ERR_RANGE_LEVEL0 = 0.05;
-    public final static double ERR_RANGE_LEVEL1 = 0.1;
-    public final static double ERR_RANGE_LEVEL2 = 0.25;
-    public final static double ERR_RANGE_LEVEL3 = 0.5;
+    public final static int ERR_RANGE_LEVEL0 = 0;
+    public final static int ERR_RANGE_LEVEL1 = 1;
+    public final static int ERR_RANGE_LEVEL2 = 2;
+    public final static int ERR_RANGE_LEVEL3 = 3;
 
     private final static int ERR_LEVEL0 = 0;
     private final static int ERR_LEVEL1 = 1;
@@ -551,13 +558,23 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
     @Override
     protected void onDraw(Canvas canvas) {
         double err[] = computeLocationError();
-        if(err[0] < ERR_RANGE_LEVEL1 && err[1] < ERR_RANGE_LEVEL1 && err[2] < ERR_RANGE_LEVEL1 && err[3] <ERR_RANGE_LEVEL1){
+        double errRange[] = this.line.getErrRange();
+        if(err[0] < errRange[ERR_RANGE_LEVEL1]
+                && err[1] < errRange[ERR_RANGE_LEVEL1]
+                && err[2] < errRange[ERR_RANGE_LEVEL1]
+                && err[3] <errRange[ERR_RANGE_LEVEL1] ){
             super.setColorFilter(new ColorMatrixColorFilter(getColorMatrix(ERR_LEVEL1)));
         }
-        else if(err[0] < ERR_RANGE_LEVEL2 && err[1] < ERR_RANGE_LEVEL2 && err[2] < ERR_RANGE_LEVEL2 && err[3] <ERR_RANGE_LEVEL2) {
+        else if(err[0] < errRange[ERR_RANGE_LEVEL2]
+                && err[1] < errRange[ERR_RANGE_LEVEL2]
+                && err[2] < errRange[ERR_RANGE_LEVEL2]
+                && err[3] < errRange[ERR_RANGE_LEVEL2] ) {
             super.setColorFilter(new ColorMatrixColorFilter(getColorMatrix(ERR_LEVEL2)));
         }
-        else if(err[0] < ERR_RANGE_LEVEL3 && err[1] < ERR_RANGE_LEVEL3 && err[2] < ERR_RANGE_LEVEL3 && err[3] <ERR_RANGE_LEVEL3){
+        else if(err[0] < errRange[ERR_RANGE_LEVEL3]
+                && err[1] < errRange[ERR_RANGE_LEVEL3]
+                && err[2] < errRange[ERR_RANGE_LEVEL3]
+                && err[3] < errRange[ERR_RANGE_LEVEL3] ){
             super.setColorFilter(new ColorMatrixColorFilter(getColorMatrix(ERR_LEVEL3)));
         }
         else{
@@ -565,7 +582,6 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
             colorCount =0;
             lightingSw = true;
         }
-
         super.onDraw(canvas);
     }
 }

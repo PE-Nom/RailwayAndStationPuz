@@ -3,17 +3,17 @@
     <path android:fillColor="#00000000"
         android:pathData="M0,0 L1052,0 1052,1052 0,1052 0,0"
         android:strokeColor="#ff0000" android:strokeLineCap="round"
-        android:strokeLineJoin="round" android:strokeWidth="10"/>
+        android:strokeLineJoin="round" android:strokeWidth="20"/>
     <path android:fillColor="#00000000"
         android:pathData="M639.8,999.1 L599.9,1052"
         android:strokeColor="#000000" android:strokeLineCap="round"
-        android:strokeLineJoin="round" android:strokeWidth="10"/>
+        android:strokeLineJoin="round" android:strokeWidth="20"/>
     <path android:fillColor="#00000000"
         android:pathData="M409.5,44.7 L333,369.8 679.6,677.9 719.8,804.2 639.8,999.1"
         android:strokeColor="#000000" android:strokeLineCap="round"
-        android:strokeLineJoin="round" android:strokeWidth="10"/>
+        android:strokeLineJoin="round" android:strokeWidth="20"/>
     <path android:fillColor="#00000000"
         android:pathData="M433,0 L409.5,44.7"
         android:strokeColor="#000000" android:strokeLineCap="round"
-        android:strokeLineJoin="round" android:strokeWidth="10"/>
+        android:strokeLineJoin="round" android:strokeWidth="20"/>
 </vector>
