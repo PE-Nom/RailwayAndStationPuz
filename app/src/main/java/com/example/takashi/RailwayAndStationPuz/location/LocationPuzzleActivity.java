@@ -383,10 +383,11 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         double err = error[0]+error[1]+error[2]+error[3];
         Log.d(TAG,String.format("error = %f, %f, %f, %f, sum = %f",error[0],error[1],error[2],error[3],err));
         double errRange[] = this.line.getErrRange();
-        if(error[0] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0]
+        if((error[0] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0]
                 && error[1] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0]
                 && error[2] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0]
-                && error[3] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0] ) {
+                && error[3] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0] ) ||
+                ((error[0]+error[1]+error[2]+error[3])<errRange[LineMapOverlayView.ERR_RANGE_LEVEL2])){
             // 正解
             mImageView.resetImageDrawable();
             setGeoJsonVisible();
