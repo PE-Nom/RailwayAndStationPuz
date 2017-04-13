@@ -22,7 +22,7 @@ import java.util.StringTokenizer;
 
 public class DBAdapter {
     static final String DATABASE_NAME = "Railway.db";
-    static final int DATABASE_VERSION = 67;
+    static final int DATABASE_VERSION = 69;
 
     private String TAG = "DBAdapter";
 
