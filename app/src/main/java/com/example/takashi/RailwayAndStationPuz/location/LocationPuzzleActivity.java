@@ -149,8 +149,8 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         // 表示エリアと縮尺の制限
         UiSettings mUiSetting = this.mMap.getUiSettings();
         mUiSetting.setRotateGesturesEnabled(false);
-//        this.mMap.setMaxZoomPreference(this.line.getMaxZoomLevel());
-//        this.mMap.setMinZoomPreference(this.line.getMinZoomLevel());
+        this.mMap.setMaxZoomPreference(this.line.getMaxZoomLevel());
+        this.mMap.setMinZoomPreference(this.line.getMinZoomLevel());
         // 離島除く
         LatLng north_east = new LatLng(this.line.getScrollMaxLat(),this.line.getScrollMaxLng());
         LatLng south_west = new LatLng(this.line.getScrollMinLat(),this.line.getScrollMinLng());
@@ -378,20 +378,34 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         checkLocation();
     }
 
+    private double ERR_RATIO = 0.8;
     private boolean checkLocation(){
+        float zoomlevel = mMap.getCameraPosition().zoom;
+        double errorRange = 0.0;
+        if(zoomlevel < 10.0){
+            errorRange = -0.01 * (double)zoomlevel + 0.11;
+        }
+        else if( zoomlevel < 12.0 ){
+            errorRange = -0.0045 * (double)zoomlevel + 0.055;
+        }
+        else{
+            errorRange = -0.0003 * (double)zoomlevel + 0.0046;
+        }
         double error[] = mImageView.computeLocationError();
         double err = error[0]+error[1]+error[2]+error[3];
-        Log.d(TAG,String.format("error = %f, %f, %f, %f, sum = %f",error[0],error[1],error[2],error[3],err));
+        double errRatio = err/(errorRange*4*ERR_RATIO);
+        Log.d(TAG,String.format("error = %f, %f, %f, %f, errorRange = %f, err = %f, errRatio = %f, zoom = %f",error[0],error[1],error[2],error[3],errorRange,err,errRatio,zoomlevel));
         double errRange[] = this.line.getErrRange();
-        if((error[0] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0]
-                && error[1] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0]
-                && error[2] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0]
-                && error[3] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0] ) ||
-                ((error[0]+error[1]+error[2]+error[3])<errRange[LineMapOverlayView.ERR_RANGE_LEVEL2])){
+//        if((error[0] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0]
+//                && error[1] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0]
+//                && error[2] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0]
+//                && error[3] < errRange[LineMapOverlayView.ERR_RANGE_LEVEL0] ) ||
+//                ((error[0]+error[1]+error[2]+error[3])<errRange[LineMapOverlayView.ERR_RANGE_LEVEL2])){
+        if((error[0] < errorRange && error[1] < errorRange && error[2] < errorRange && error[3] < errorRange )|| ( err < errorRange*4*ERR_RATIO ) ){
             // 正解
             mImageView.resetImageDrawable();
             setGeoJsonVisible();
-            this.line.setLocationAnswerStatus();
+//            this.line.setLocationAnswerStatus();
             db.updateLineLocationAnswerStatus(this.line);
             Toast.makeText(LocationPuzzleActivity.this,"正解!!! v(￣Д￣)v ", Toast.LENGTH_SHORT).show();
         }
