@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.view.animation.PathInterpolatorCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -496,29 +497,44 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
         this.map = map;
     }
 
-    public double[] computeLocationError(){
+    public int[] computeLocationError(){
         RectF railwayImageRect = getCurrentImageRect();
         screenPoint1 = new Point((int)railwayImageRect.left,(int)railwayImageRect.top);
         screenPoint2 = new Point((int)railwayImageRect.right,(int)railwayImageRect.bottom);
         point1 = map.getProjection().fromScreenLocation(screenPoint1);
         point2 = map.getProjection().fromScreenLocation(screenPoint2);
-        Log.d(TAG,String.format("answer = %f,%f, point1 = %f,%f",
-                this.line.getCorrectTopLat(),this.line.getCorrectLeftLng(),point1.latitude,point1.longitude));
-        Log.d(TAG,String.format("answer = %f,%f, point2 = %f,%f",
-                this.line.getCorrectBottomLat(),this.line.getCorrectRightLng(),point2.latitude,point2.longitude));
+//        Log.d(TAG,String.format("answer = %f,%f, point1 = %f,%f",
+//                this.line.getCorrectTopLat(),this.line.getCorrectLeftLng(),point1.latitude,point1.longitude));
+//        Log.d(TAG,String.format("answer = %f,%f, point2 = %f,%f",
+//                this.line.getCorrectBottomLat(),this.line.getCorrectRightLng(),point2.latitude,point2.longitude));
         double error[] = new double[4];
         error[0] = Math.abs(this.line.getCorrectTopLat()-point1.latitude);
         error[1] = Math.abs(this.line.getCorrectLeftLng()-point1.longitude);
         error[2] = Math.abs(this.line.getCorrectBottomLat()-point2.latitude);
         error[3] = Math.abs(this.line.getCorrectRightLng()-point2.longitude);
-        Log.d(TAG,String.format("error = %f, %f, %f, %f",error[0],error[1],error[2],error[3]));
-        return error;
+//        Log.d(TAG,String.format("error = %f, %f, %f, %f",error[0],error[1],error[2],error[3]));
+
+        point1 = new LatLng(this.line.getCorrectTopLat(),this.line.getCorrectLeftLng());
+        point2 = new LatLng(this.line.getCorrectBottomLat(),this.line.getCorrectRightLng());
+        screenPoint1 = map.getProjection().toScreenLocation(point1);
+        screenPoint2 = map.getProjection().toScreenLocation(point2);
+        int err[] = new int[4];
+        err[0] = Math.abs((int)railwayImageRect.top - screenPoint1.y);
+        err[1] = Math.abs((int)railwayImageRect.left - screenPoint1.x);
+        err[2] = Math.abs((int)railwayImageRect.bottom - screenPoint2.y);
+        err[3] = Math.abs((int)railwayImageRect.right - screenPoint2.x);
+        Log.d(TAG,String.format("screenPoint 1.y = %d, 1.x = %d, 2,y = %d, 2.x = %d",screenPoint1.y,screenPoint1.x,screenPoint2.y,screenPoint2.x));
+        Log.d(TAG,String.format("ImageRect top = %d, left = %d, bottom = %d, right = %d",
+                (int)railwayImageRect.top,(int)railwayImageRect.left,(int)railwayImageRect.bottom,(int)railwayImageRect.right));
+        Log.d(TAG,String.format("err = %d, %d, %d, %d",err[0],err[1],err[2],err[3]));
+
+        return err;
     }
 
-    public final static int ERR_RANGE_LEVEL0 = 0;
-    public final static int ERR_RANGE_LEVEL1 = 1;
-    public final static int ERR_RANGE_LEVEL2 = 2;
-    public final static int ERR_RANGE_LEVEL3 = 3;
+    public final static int ERR_RANGE_LEVEL0 = 2;
+    public final static int ERR_RANGE_LEVEL1 = 3;
+    public final static int ERR_RANGE_LEVEL2 = 4;
+    public final static int ERR_RANGE_LEVEL3 = 5;
 
     private final static int ERR_LEVEL0 = 0;
     private final static int ERR_LEVEL1 = 1;
@@ -534,7 +550,6 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
         ColorMatrix clm = new ColorMatrix(REVERSE);
         int onCnt = onTime[errLevel];
         int offCnt = offTime[errLevel];
-        Log.d(TAG,String.format("errLevel = %d",errLevel));
         if(lightingSw){
             colorCount++;
             if( onCnt <= colorCount ){
@@ -557,24 +572,14 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
 
     @Override
     protected void onDraw(Canvas canvas) {
-        double err[] = computeLocationError();
-        double errRange[] = this.line.getErrRange();
-        if(err[0] < errRange[ERR_RANGE_LEVEL1]
-                && err[1] < errRange[ERR_RANGE_LEVEL1]
-                && err[2] < errRange[ERR_RANGE_LEVEL1]
-                && err[3] <errRange[ERR_RANGE_LEVEL1] ){
+        int err[] = computeLocationError();
+        if( err[0] < ERR_RANGE_LEVEL1 && err[1] < ERR_RANGE_LEVEL1 && err[2] < ERR_RANGE_LEVEL1 && err[3] < ERR_RANGE_LEVEL1 ){
             super.setColorFilter(new ColorMatrixColorFilter(getColorMatrix(ERR_LEVEL1)));
         }
-        else if(err[0] < errRange[ERR_RANGE_LEVEL2]
-                && err[1] < errRange[ERR_RANGE_LEVEL2]
-                && err[2] < errRange[ERR_RANGE_LEVEL2]
-                && err[3] < errRange[ERR_RANGE_LEVEL2] ) {
+        else if( err[0] < ERR_RANGE_LEVEL2 && err[1] < ERR_RANGE_LEVEL2 && err[2] < ERR_RANGE_LEVEL2 && err[3] < ERR_RANGE_LEVEL2 ) {
             super.setColorFilter(new ColorMatrixColorFilter(getColorMatrix(ERR_LEVEL2)));
         }
-        else if(err[0] < errRange[ERR_RANGE_LEVEL3]
-                && err[1] < errRange[ERR_RANGE_LEVEL3]
-                && err[2] < errRange[ERR_RANGE_LEVEL3]
-                && err[3] < errRange[ERR_RANGE_LEVEL3] ){
+        else if(err[0] < ERR_RANGE_LEVEL3 && err[1] < ERR_RANGE_LEVEL3 && err[2] < ERR_RANGE_LEVEL3 && err[3] < ERR_RANGE_LEVEL3 ){
             super.setColorFilter(new ColorMatrixColorFilter(getColorMatrix(ERR_LEVEL3)));
         }
         else{
