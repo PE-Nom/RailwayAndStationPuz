@@ -17,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -161,12 +162,42 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         this.mMap.setOnMapClickListener(this);
         this.mMap.setOnMapLongClickListener(this);
         this.mMap.setOnCameraIdleListener(this);
-        // Add a marker in Sydney and move the camera
+
+        // 初期表示座標の計算
+        double lineRangeLng  = this.line.getCorrectRightLng() - this.line.getCorrectLeftLng();
+        double lineRangeLat  = this.line.getCorrectTopLat()   - this.line.getCorrectBottomLat();
+        Log.d(TAG,String.format("##### line range    : lng = %f, lat = %f",lineRangeLng,lineRangeLat));
+
+        double lineCenterLng = ( this.line.getCorrectLeftLng() + this.line.getCorrectRightLng() )/2.0;
+        double lineCenterLat = ( this.line.getCorrectBottomLat() + this.line.getCorrectTopLat() )/2.0;
+        Log.d(TAG,String.format("##### line center   : lng = %f, lat = %f",lineCenterLng,lineCenterLat));
+
+        // 路線中心座標で位置設定
         this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(this.line.getInitCamposLat(),this.line.getInitCamposLng()),
+                new LatLng(lineCenterLat,lineCenterLng),
                 this.line.getInitZoomLevel())
         );
+        Projection proj = this.mMap.getProjection();
+        VisibleRegion vRegion = proj.getVisibleRegion();
+        // 北東 = top/right, 南西 = bottom/left
+        double topLatitude = vRegion.latLngBounds.northeast.latitude;
+        double bottomLatitude = vRegion.latLngBounds.southwest.latitude;
+        double leftLongitude = vRegion.latLngBounds.southwest.longitude;
+        double rightLongitude = vRegion.latLngBounds.northeast.longitude;
+        Log.d(TAG, "地図表示範囲\n緯度:" + bottomLatitude + "～" + topLatitude + "\n経度:" + leftLongitude + "～" + rightLongitude);
 
+        double displayLatRange = topLatitude - bottomLatitude;
+        double displayLngRange = rightLongitude - leftLongitude;
+
+        // 乱数による位置移動
+        double camposLat = lineCenterLat + (displayLatRange-lineRangeLat)*(Math.random()-0.5);
+        double camposLng = lineCenterLng + (displayLngRange-lineRangeLng)*(Math.random()-0.5);
+        Log.d(TAG,String.format("##### camera position   : lng = %f, lat = %f",camposLng,camposLat));
+        this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(camposLat,camposLng),
+                this.line.getInitZoomLevel())
+        );
+//
         mImageView.setMap(this.mMap);
         mImageView.setImageDrawable();
         // Test Code for 回答クリア、回答を見る の操作
