@@ -4,20 +4,16 @@ import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.takashi.RailwayAndStationPuz.piecegarally.PieceGarallyActivity;
@@ -337,8 +334,9 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                                     final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.transparent,
                                             LocationPuzzleActivity.this.line.getRawName()+"("+LocationPuzzleActivity.this.line.getRawKana()+")",
                                             Snackbar.LENGTH_LONG);
-                                    sb.setActionTextColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.background1));
-                                    sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.color_10));
+                                    sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.transparent));
+                                    TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
+                                    textView.setTextColor(ContextCompat.getColor(LocationPuzzleActivity.this.getApplicationContext(), R.color.colorPrimaryDark));
                                     sb.show();
                                     answerDisplay();
                                 }
@@ -411,13 +409,9 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
 
     private boolean checkLocation(){
         int error[] = mImageView.computeLocationError();
-        int err = error[0]+error[1]+error[2]+error[3];
-        Log.d(TAG,String.format("error = %d, %d, %d, %d, sum = %d",error[0],error[1],error[2],error[3],err));
-        if(( error[0] < LineMapOverlayView.ERR_RANGE_LEVEL0
-                && error[1] < LineMapOverlayView.ERR_RANGE_LEVEL0
-                && error[2] < LineMapOverlayView.ERR_RANGE_LEVEL0
-                && error[3] < LineMapOverlayView.ERR_RANGE_LEVEL0 )
-                || ( err < LineMapOverlayView.ERR_RANGE_LEVEL3 ) ){
+        int err = error[0]+error[1];
+        Log.d(TAG,String.format("error = %d, %d sum = %d",error[0],error[1],err));
+        if( error[0] < LineMapOverlayView.ERR_RANGE_LEVEL0 && error[1] < LineMapOverlayView.ERR_RANGE_LEVEL0 ){
             // 正解
             mImageView.resetImageDrawable();
             setGeoJsonVisible();

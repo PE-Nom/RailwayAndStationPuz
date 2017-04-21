@@ -20,4 +20,6 @@
     <color name="color_100">#F2590C</color>
     <color name="color_200">#F58B55</color>
 
+    <color name="transparent">#40637e99</color>
+
 </resources>
