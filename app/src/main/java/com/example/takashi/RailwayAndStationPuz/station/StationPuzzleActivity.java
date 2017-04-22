@@ -83,6 +83,9 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     private FrameLayout mapFrame;
     private LinearLayout transparentView;
 
+    private int showAnswerCount = 0;
+    private static final int showAnswerMax = 5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -531,12 +534,25 @@ public class StationPuzzleActivity extends AppCompatActivity implements
                                 answerClear();
                                 break;
                             case 1: // 回答を見る
-                                final Snackbar sb = Snackbar.make(StationPuzzleActivity.this.stationListView,
-                                        longClickSelectedStation.getRawName()+"("+longClickSelectedStation.getRawKana()+")",
-                                        Snackbar.LENGTH_LONG);
-                                sb.setActionTextColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.background1));
-                                sb.getView().setBackgroundColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.color_10));
-                                sb.show();
+                                if( showAnswerCount < showAnswerMax ){
+                                    final Snackbar sb = Snackbar.make(StationPuzzleActivity.this.stationListView,
+                                            longClickSelectedStation.getRawName()+"("+longClickSelectedStation.getRawKana()+")",
+                                            Snackbar.LENGTH_LONG);
+                                    sb.setActionTextColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.background1));
+                                    sb.getView().setBackgroundColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.color_10));
+                                    sb.show();
+                                    showAnswerCount++;
+                                }
+                                else{
+                                    final Snackbar sb = Snackbar.make(StationPuzzleActivity.this.stationListView,
+                                            "回数制限一杯!!　広告クリックを促す",
+                                            Snackbar.LENGTH_LONG);
+                                    sb.getView().setBackgroundColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.color_10));
+                                    TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
+                                    textView.setTextColor(ContextCompat.getColor(StationPuzzleActivity.this.getApplicationContext(), R.color.coloe_RED));
+                                    sb.show();
+                                    showAnswerCount =0;
+                                }
                                 break;
                             case 2: // Webを検索する
                                 if(longClickSelectedStation.isFinished()){

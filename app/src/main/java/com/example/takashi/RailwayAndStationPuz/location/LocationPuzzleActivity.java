@@ -75,6 +75,9 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     private Timer mAnswerDisplayingTimer = null;
     private Handler mHandler = new Handler();
 
+    private int showAnswerCount = 0;
+    private static final int showAnswerMax = 5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -326,14 +329,26 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                                 break;
                             case 1: // 回答を見る（未回答の場合）
                                 if(!LocationPuzzleActivity.this.hasAlreadyLocated()){
-                                    final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.transparent,
-                                            LocationPuzzleActivity.this.line.getRawName()+"("+LocationPuzzleActivity.this.line.getRawKana()+")",
-                                            Snackbar.LENGTH_LONG);
-                                    sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.transparent));
-                                    TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
-                                    textView.setTextColor(ContextCompat.getColor(LocationPuzzleActivity.this.getApplicationContext(), R.color.colorPrimaryDark));
-                                    sb.show();
-                                    answerDisplay();
+                                    if( showAnswerCount < showAnswerMax ){
+                                        final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.transparent,
+                                                LocationPuzzleActivity.this.line.getRawName()+"("+LocationPuzzleActivity.this.line.getRawKana()+")",
+                                                Snackbar.LENGTH_LONG);
+                                        sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.transparent));
+                                        TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
+                                        textView.setTextColor(ContextCompat.getColor(LocationPuzzleActivity.this.getApplicationContext(), R.color.colorPrimaryDark));
+                                        sb.show();
+                                        answerDisplay();
+                                        showAnswerCount++;
+                                    }
+                                    else{
+                                        final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.transparent,
+                                                "回数制限一杯!!　広告クリックを促す",
+                                                Snackbar.LENGTH_LONG);
+                                        sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.transparent));
+                                        TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
+                                        textView.setTextColor(ContextCompat.getColor(LocationPuzzleActivity.this.getApplicationContext(), R.color.coloe_RED));
+                                        sb.show();
+                                    }
                                 }
                                 break;
                             case 2: // 最初の位置に戻す
