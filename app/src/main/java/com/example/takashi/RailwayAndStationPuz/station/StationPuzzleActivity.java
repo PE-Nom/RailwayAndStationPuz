@@ -264,18 +264,21 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         LatLngBounds JAPAN = new LatLngBounds(south_west,north_east);
         this.mMap.setLatLngBoundsForCameraTarget(JAPAN);
 
-        // Add a marker in Sydney and move the camera
-        this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(this.line.getInitCamposLat(),this.line.getInitCamposLng()),
-                this.line.getInitZoomLevel())
-        );
+        //  初期表示位置
+        double lineCenterLng = ( this.line.getCorrectLeftLng() + this.line.getCorrectRightLng() )/2.0;
+        double lineCenterLat = ( this.line.getCorrectBottomLat() + this.line.getCorrectTopLat() )/2.0;
+        Log.d(TAG,String.format("##### line center   : lng = %f, lat = %f",lineCenterLng,lineCenterLat));
+        double zl = (this.line.getMaxZoomLevel() + this.line.getMinZoomLevel())/2.0;
+
+        // 路線中心座標で位置設定
+        this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom( new LatLng(lineCenterLat,lineCenterLng),(float)zl));
 
         try{
             // 路線図のGeoJsonファイル読込
             GeoJsonLayer layer = new GeoJsonLayer(this.mMap, this.line.getRawResourceId(), this);
             // 路線図の色を変更
             GeoJsonLineStringStyle style = layer.getDefaultLineStringStyle();
-            style.setWidth(2.0f);
+            style.setWidth(5.0f);
             style.setColor(Color.BLUE);
 
             layer.addLayerToMap();

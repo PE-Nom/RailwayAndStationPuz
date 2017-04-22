@@ -504,7 +504,17 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
         this.map = map;
     }
 
-    public int[] computeLocationError(){
+    public void displayCorrectCoordinate(String tag){
+        RectF railwayImageRect = getCurrentImageRect();
+        Point scpt1 = new Point((int)railwayImageRect.left,(int)railwayImageRect.top);
+        Point scpt2 = new Point((int)railwayImageRect.right,(int)railwayImageRect.bottom);
+        LatLng coordinate1 = map.getProjection().fromScreenLocation(scpt1);
+        LatLng coordinate2 = map.getProjection().fromScreenLocation(scpt2);
+        Log.d(tag,String.format("point1 (lat,lng) = (%f,%f), point2 (lat,lng) = (%f,%f)",
+                coordinate1.latitude,coordinate1.longitude,coordinate2.latitude,coordinate2.longitude));
+    }
+
+    public int computeLocationError(){
         RectF railwayImageRect = getCurrentImageRect();
         point1 = new LatLng(this.line.getCorrectTopLat(),this.line.getCorrectLeftLng());
         point2 = new LatLng(this.line.getCorrectBottomLat(),this.line.getCorrectRightLng());
@@ -526,16 +536,17 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
         int err[] = new int[2];
         err[0] = (int)(distance[0] / this.density);
         err[1] = (int)(distance[1] / this.density);
-        Log.d(TAG,String.format("err(dp) = %d, %d",err[0],err[1]));
+        int error = err[0]+err[1];
+        Log.d(TAG,String.format("err(dp) = %d, %d, error = %d",err[0],err[1],error));
 
-        return err;
+        return (error);
     }
 
     // 正誤判定誤差(表示dpでの位置誤差）
-    public final static int ERR_RANGE_LEVEL0 = 2;
-    public final static int ERR_RANGE_LEVEL1 = 3;
-    public final static int ERR_RANGE_LEVEL2 = 4;
-    public final static int ERR_RANGE_LEVEL3 = 5;
+    public final static int ERR_RANGE_LEVEL0 = 6;
+    public final static int ERR_RANGE_LEVEL1 = 12;
+    public final static int ERR_RANGE_LEVEL2 = 25;
+    public final static int ERR_RANGE_LEVEL3 = 50;
 
     //　位置誤差のレベル番号（滅灯のデューティ設定用)
     private final static int ERR_LEVEL0 = 0;
@@ -575,14 +586,14 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
 
     @Override
     protected void onDraw(Canvas canvas) {
-        int err[] = computeLocationError();
-        if( err[0] < ERR_RANGE_LEVEL1 && err[1] < ERR_RANGE_LEVEL1 ){
+        int err = computeLocationError();
+        if( err < ERR_RANGE_LEVEL1 ){
             super.setColorFilter(new ColorMatrixColorFilter(getColorMatrix(ERR_LEVEL1)));
         }
-        else if( err[0] < ERR_RANGE_LEVEL2 && err[1] < ERR_RANGE_LEVEL2 ) {
+        else if( err < ERR_RANGE_LEVEL2 ) {
             super.setColorFilter(new ColorMatrixColorFilter(getColorMatrix(ERR_LEVEL2)));
         }
-        else if(err[0] < ERR_RANGE_LEVEL3 && err[1] < ERR_RANGE_LEVEL3 ){
+        else if(err < ERR_RANGE_LEVEL3 ){
             super.setColorFilter(new ColorMatrixColorFilter(getColorMatrix(ERR_LEVEL3)));
         }
         else{

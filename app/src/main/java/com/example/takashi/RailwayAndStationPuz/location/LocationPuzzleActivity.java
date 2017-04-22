@@ -197,11 +197,6 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
 //
         mImageView.setMap(this.mMap);
         mImageView.setImageDrawable();
-        // Test Code for 回答クリア、回答を見る の操作
-        // 正解座標のDB登録の完了と正誤判定ロジックの実装完了後、削除する
-//        this.line.setLocationAnswerStatus();
-//        this.db.updateLineLocationAnswerStatus(this.line);
-        //
         if(hasAlreadyLocated()) setGeoJsonVisible();
 
     }
@@ -408,14 +403,14 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     }
 
     private boolean checkLocation(){
-        int error[] = mImageView.computeLocationError();
-        int err = error[0]+error[1];
-        Log.d(TAG,String.format("error = %d, %d sum = %d",error[0],error[1],err));
-        if( error[0] < LineMapOverlayView.ERR_RANGE_LEVEL0 && error[1] < LineMapOverlayView.ERR_RANGE_LEVEL0 ){
+        mImageView.displayCorrectCoordinate(TAG);
+        int err = mImageView.computeLocationError();
+        Log.d(TAG,String.format("error = %d",err));
+        if( err < LineMapOverlayView.ERR_RANGE_LEVEL0 ){
             // 正解
             mImageView.resetImageDrawable();
             setGeoJsonVisible();
-//            this.line.setLocationAnswerStatus();
+            this.line.setLocationAnswerStatus();
             db.updateLineLocationAnswerStatus(this.line);
             Toast.makeText(LocationPuzzleActivity.this,"正解!!! v(￣Д￣)v ", Toast.LENGTH_SHORT).show();
         }

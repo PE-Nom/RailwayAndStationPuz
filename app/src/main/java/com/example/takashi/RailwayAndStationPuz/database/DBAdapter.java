@@ -22,7 +22,7 @@ import java.util.StringTokenizer;
 
 public class DBAdapter {
     static final String DATABASE_NAME = "Railway.db";
-    static final int DATABASE_VERSION = 73;
+    static final int DATABASE_VERSION = 76;
 
     private String TAG = "DBAdapter";
 
@@ -177,11 +177,6 @@ public class DBAdapter {
         double max_zoom_level = c.getDouble(c.getColumnIndex("max_zoom_level"));
         double min_zoom_level = c.getDouble(c.getColumnIndex("min_zoom_level"));
         double init_zoom_level = c.getDouble(c.getColumnIndex("init_zoom_level"));
-        double errRange[] = new double[4];
-        errRange[0] = c.getDouble(c.getColumnIndex("err_range_level0"));
-        errRange[1] = c.getDouble(c.getColumnIndex("err_range_level1"));
-        errRange[2] = c.getDouble(c.getColumnIndex("err_range_level2"));
-        errRange[3] = c.getDouble(c.getColumnIndex("err_range_level3"));
         boolean nameAnswerStatus = (c.getInt(c.getColumnIndex("nameAnswerStatus"))==1);
         boolean locationAnswerStatus = (c.getInt(c.getColumnIndex("locationAnswerStatus"))==1);
         boolean stationAnswerStatus = (c.getInt(c.getColumnIndex("stationAnswerStatus"))==1);;
@@ -192,7 +187,6 @@ public class DBAdapter {
                 correct_leftLng,correct_topLat,correct_rightLng,correct_bottomLat,
                 scroll_max_lat,scroll_min_lat,scroll_max_lng,scroll_min_lng,init_campos_lat,init_campos_lng,
                 max_zoom_level,min_zoom_level,init_zoom_level,
-                errRange,
                 nameAnswerStatus,locationAnswerStatus,stationAnswerStatus);
 /*        Log.d(TAG,String.format("lines: %d,%d,%d," +
                         "%s,%s," +
