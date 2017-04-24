@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Puz-Rail：Select Company");
+        actionBar.setTitle("パズレール：");
         actionBar.setSubtitle("鉄道事業者選択");
 
         this.listView = (ListView) findViewById(R.id.company_list_view);
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity
     // クリア対象の回答データ選択
     private Company longClickSelectedCompany = null;
     private void answerClear(){
-        final String[] items = {"全路線の路線名回答", "全路線の敷設回答", "全路線の全駅名回答"};
+        final String[] items = {"路線名（全路線）", "地図合わせ（全路線）", "駅並べ（全駅）"};
         final Boolean[] checkedItems = {false,false,false};
         new AlertDialog.Builder(this)
                 .setTitle(longClickSelectedCompany.getName()+" : 回答クリア")

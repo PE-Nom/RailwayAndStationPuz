@@ -95,7 +95,7 @@ public class PieceGarallyActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Puz-Rail：Select Railway");
+        actionBar.setTitle("パズレール：路線名当て");
         actionBar.setSubtitle(db.getCompany(this.companyId).getName());
     }
 
@@ -277,7 +277,7 @@ public class PieceGarallyActivity extends AppCompatActivity
     // 回答クリアの対象選択
     private Line longClickSelectedLine = null;
     private void answerClear(){
-        final String[] items = {"路線名回答", "敷設回答", "全駅名回答"};
+        final String[] items = {"路線名", "地図合わせ", "駅並べ（全駅）"};
         final Boolean[] checkedItems = {false,false,false};
         new AlertDialog.Builder(this)
                 .setTitle(longClickSelectedLine.getName() +" : 回答クリア")

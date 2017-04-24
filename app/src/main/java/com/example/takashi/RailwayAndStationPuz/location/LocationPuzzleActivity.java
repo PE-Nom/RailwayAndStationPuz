@@ -103,7 +103,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         this.lineName = lineName+"("+linekana+")";
         this.companyId = line.getCompanyId();
 
-        actionBar.setTitle("Puz-Rail：Location Set");
+        actionBar.setTitle("パズレール：地図合わせ");
         actionBar.setSubtitle(companyName+"／"+this.lineName);
 
     }
@@ -278,7 +278,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     private void answerClear(){
         new AlertDialog.Builder(this)
                 .setTitle(this.line.getName()+" : 回答クリア")
-                .setMessage("敷設回答をクリアします。"+"\n"+"　　よろしいですか？")
+                .setMessage("地図合わせの回答をクリアします。"+"\n"+"　　よろしいですか？")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
