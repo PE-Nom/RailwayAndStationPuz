@@ -84,7 +84,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     private LinearLayout transparentView;
 
     private int showAnswerCount = 0;
-    private static final int showAnswerMax = 5;
+    private static final int showAnswerMax = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -537,7 +537,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
                                 if( showAnswerCount < showAnswerMax ){
                                     final Snackbar sb = Snackbar.make(StationPuzzleActivity.this.stationListView,
                                             longClickSelectedStation.getRawName()+"("+longClickSelectedStation.getRawKana()+")",
-                                            Snackbar.LENGTH_LONG);
+                                            Snackbar.LENGTH_SHORT);
                                     sb.setActionTextColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.background1));
                                     sb.getView().setBackgroundColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.color_10));
                                     sb.show();
@@ -546,7 +546,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
                                 else{
                                     final Snackbar sb = Snackbar.make(StationPuzzleActivity.this.stationListView,
                                             "回数制限一杯!!　広告クリックを促す",
-                                            Snackbar.LENGTH_LONG);
+                                            Snackbar.LENGTH_SHORT);
                                     sb.getView().setBackgroundColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.color_10));
                                     TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
                                     textView.setTextColor(ContextCompat.getColor(StationPuzzleActivity.this.getApplicationContext(), R.color.coloe_RED));

@@ -543,7 +543,7 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
     }
 
     // 正誤判定誤差(表示dpでの位置誤差）
-    public final static int ERR_RANGE_LEVEL0 = 6;
+    public final static int ERR_RANGE_LEVEL0 = 5;
     public final static int ERR_RANGE_LEVEL1 = 12;
     public final static int ERR_RANGE_LEVEL2 = 25;
     public final static int ERR_RANGE_LEVEL3 = 50;

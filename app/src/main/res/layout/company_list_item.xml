@@ -54,13 +54,14 @@
 
             <TextView
                 android:id="@+id/nameProgTitle"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="2dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="　路線名"
+                android:text="路線名当て"
                 android:textSize="12sp" />
 
             <TextView
@@ -68,7 +69,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="2dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
                 android:gravity="bottom|right"
@@ -80,7 +82,7 @@
             android:id="@+id/lineNameProgress"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_marginRight="2dp"
+            android:layout_marginRight="1dp"
             android:layout_toLeftOf="@+id/trackLayout" />
 
         <LinearLayout
@@ -92,14 +94,14 @@
 
             <TextView
                 android:id="@+id/trackLayingProgTitle"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="2dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="　　敷設"
+                android:text="地図合わせ"
                 android:textSize="12sp" />
 
             <TextView
@@ -107,8 +109,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="2dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
                 android:gravity="bottom|right"
@@ -121,7 +123,7 @@
             android:id="@+id/trackLayingProgress"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_marginRight="2dp"
+            android:layout_marginRight="1dp"
             android:layout_toLeftOf="@+id/stationLayout" />
 
         <LinearLayout
@@ -133,20 +135,22 @@
 
             <TextView
                 android:id="@+id/stationProgTitle"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="2dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="　　　駅"
+                android:text="　駅並べ"
                 android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/stationProgValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
                 android:gravity="bottom|right"
@@ -160,7 +164,7 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="4dp" />
+            android:layout_marginRight="1dp" />
     </RelativeLayout>
 
 </LinearLayout>

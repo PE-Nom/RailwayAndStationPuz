@@ -50,7 +50,7 @@ public class PieceGarallyActivity extends AppCompatActivity
     private int selectedLineIndex = -1;
     private int companyId;
     private int showAnswerCount = 0;
-    private static final int showAnswerMax = 5;
+    private static final int showAnswerMax = 3;
 
     private AlertDialog mDialog;
     /**
@@ -70,7 +70,7 @@ public class PieceGarallyActivity extends AppCompatActivity
         Intent intent = getIntent();
         this.companyId = intent.getIntExtra("SelectedCompanyId", 3); // デフォルトを西日本旅客鉄道のIdにしておく
 
-        this.lines = db.getLineList(this.companyId, true);
+        this.lines = db.getLineList(this.companyId, false);
 
         this.lineNameProgValue = (TextView) findViewById(R.id.lineNameProgValue);
         this.lineNameProgress = (GaugeView) findViewById(R.id.lineNameProgress) ;
@@ -356,7 +356,7 @@ public class PieceGarallyActivity extends AppCompatActivity
                                 if(showAnswerCount < showAnswerMax ){
                                     final Snackbar sb = Snackbar.make(PieceGarallyActivity.this.listView,
                                             longClickSelectedLine.getRawName()+"("+longClickSelectedLine.getRawKana()+")",
-                                            Snackbar.LENGTH_LONG);
+                                            Snackbar.LENGTH_SHORT);
                                     sb.setActionTextColor(ContextCompat.getColor(PieceGarallyActivity.this, R.color.background1));
                                     sb.getView().setBackgroundColor(ContextCompat.getColor(PieceGarallyActivity.this, R.color.color_10));
                                     sb.show();
@@ -365,7 +365,7 @@ public class PieceGarallyActivity extends AppCompatActivity
                                 else{
                                     final Snackbar sb = Snackbar.make(PieceGarallyActivity.this.listView,
                                             "回数制限一杯!!　広告クリックを促す",
-                                            Snackbar.LENGTH_LONG);
+                                            Snackbar.LENGTH_SHORT);
                                     sb.getView().setBackgroundColor(ContextCompat.getColor(PieceGarallyActivity.this, R.color.color_10));
                                     TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
                                     textView.setTextColor(ContextCompat.getColor(PieceGarallyActivity.this.getApplicationContext(), R.color.coloe_RED));

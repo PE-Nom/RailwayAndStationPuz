@@ -71,12 +71,12 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     private Drawable mDrawable;
     private AlertDialog mDialog;
 
-    private final static long DISPLAY_ANSWERE_TIME = 3000;
+    private final static long DISPLAY_ANSWERE_TIME = 1500;
     private Timer mAnswerDisplayingTimer = null;
     private Handler mHandler = new Handler();
 
     private int showAnswerCount = 0;
-    private static final int showAnswerMax = 5;
+    private static final int showAnswerMax = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -332,7 +332,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                                     if( showAnswerCount < showAnswerMax ){
                                         final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.transparent,
                                                 LocationPuzzleActivity.this.line.getRawName()+"("+LocationPuzzleActivity.this.line.getRawKana()+")",
-                                                Snackbar.LENGTH_LONG);
+                                                Snackbar.LENGTH_SHORT);
                                         sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.transparent));
                                         TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
                                         textView.setTextColor(ContextCompat.getColor(LocationPuzzleActivity.this.getApplicationContext(), R.color.colorPrimaryDark));
@@ -343,7 +343,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                                     else{
                                         final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.transparent,
                                                 "回数制限一杯!!　広告クリックを促す",
-                                                Snackbar.LENGTH_LONG);
+                                                Snackbar.LENGTH_SHORT);
                                         sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.transparent));
                                         TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
                                         textView.setTextColor(ContextCompat.getColor(LocationPuzzleActivity.this.getApplicationContext(), R.color.coloe_RED));
