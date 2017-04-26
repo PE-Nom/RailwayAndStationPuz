@@ -71,25 +71,27 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     private Drawable mDrawable;
     private AlertDialog mDialog;
 
-    private final static long DISPLAY_ANSWERE_TIME = 1500;
+    private final static long DISPLAY_ANSWERE_TIME = 1000;
     private Timer mAnswerDisplayingTimer = null;
     private Handler mHandler = new Handler();
 
     private int showAnswerCount = 0;
     private static final int showAnswerMax = 3;
+    private int previewLineAnswerCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_line_location_puzzle);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.location_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id._toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
 
         Intent intent = getIntent();
         this.selectedLineId = intent.getIntExtra("SelectedLineId", 42); // デフォルトを紀勢線のlineIdにしておく
+        this.previewLineAnswerCount = intent.getIntExtra("previewAnswerCount",0);
 
         this.db = new DBAdapter(this);
         this.db.open();
@@ -116,6 +118,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     public void onBackPressed() {
         Intent intent = new Intent(this.getApplicationContext(), PieceGarallyActivity.class);
         intent.putExtra("SelectedCompanyId", this.companyId);
+        intent.putExtra("previewAnswerCount", this.previewLineAnswerCount);
         startActivityForResult(intent, 1);
         // アニメーションの設定
         overridePendingTransition(R.anim.in_left, R.anim.out_right);
@@ -330,20 +333,20 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                             case 1: // 回答を見る（未回答の場合）
                                 if(!LocationPuzzleActivity.this.hasAlreadyLocated()){
                                     if( showAnswerCount < showAnswerMax ){
-                                        final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.transparent,
-                                                LocationPuzzleActivity.this.line.getRawName()+"("+LocationPuzzleActivity.this.line.getRawKana()+")",
-                                                Snackbar.LENGTH_SHORT);
-                                        sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.transparent));
-                                        TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
-                                        textView.setTextColor(ContextCompat.getColor(LocationPuzzleActivity.this.getApplicationContext(), R.color.colorPrimaryDark));
-                                        sb.show();
+//                                        final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.transparent,
+//                                                LocationPuzzleActivity.this.line.getRawName()+"("+LocationPuzzleActivity.this.line.getRawKana()+")",
+//                                                Snackbar.LENGTH_SHORT);
+//                                        sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.transparent));
+//                                        TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
+//                                        textView.setTextColor(ContextCompat.getColor(LocationPuzzleActivity.this.getApplicationContext(), R.color.colorPrimaryDark));
+//                                        sb.show();
                                         answerDisplay();
                                         showAnswerCount++;
                                     }
                                     else{
                                         final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.transparent,
                                                 "回数制限一杯!!　広告クリックを促す",
-                                                Snackbar.LENGTH_SHORT);
+                                                Snackbar.LENGTH_LONG);
                                         sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.transparent));
                                         TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
                                         textView.setTextColor(ContextCompat.getColor(LocationPuzzleActivity.this.getApplicationContext(), R.color.coloe_RED));

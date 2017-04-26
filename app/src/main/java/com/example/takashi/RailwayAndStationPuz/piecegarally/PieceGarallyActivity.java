@@ -3,7 +3,6 @@ package com.example.takashi.RailwayAndStationPuz.piecegarally;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -49,7 +48,7 @@ public class PieceGarallyActivity extends AppCompatActivity
     private GaugeView lineNameProgress, lineMapProgress,stationsProgress;
     private int selectedLineIndex = -1;
     private int companyId;
-    private int showAnswerCount = 0;
+    private int previewAnswerCount = 0;
     private static final int showAnswerMax = 3;
 
     private AlertDialog mDialog;
@@ -69,6 +68,7 @@ public class PieceGarallyActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         this.companyId = intent.getIntExtra("SelectedCompanyId", 3); // デフォルトを西日本旅客鉄道のIdにしておく
+        this.previewAnswerCount = intent.getIntExtra("previewAnswerCount",0);
 
         this.lines = db.getLineList(this.companyId, false);
 
@@ -91,7 +91,7 @@ public class PieceGarallyActivity extends AppCompatActivity
         this.listView.setOnItemClickListener(this);
         this.listView.setOnItemLongClickListener(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.station_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id._toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -201,7 +201,7 @@ public class PieceGarallyActivity extends AppCompatActivity
 
             // ダイアログ表示
             mDialog = new AlertDialog.Builder(this)
-                    .setTitle("路線名選択リスト")
+                    .setTitle("路線リスト")
                     .setPositiveButton("Cancel",null)
                     .setView(remainLinesListView)
                     .create();
@@ -216,6 +216,7 @@ public class PieceGarallyActivity extends AppCompatActivity
             case R.id.mapImageButton: {
                     Intent intent = new Intent(PieceGarallyActivity.this, LocationPuzzleActivity.class);
                     intent.putExtra("SelectedLineId", line.getLineId());
+                    intent.putExtra("previewAnswerCount", this.previewAnswerCount);
                     startActivity(intent);
                     // アニメーションの設定
                     overridePendingTransition(R.anim.in_right, R.anim.out_left);
@@ -226,6 +227,7 @@ public class PieceGarallyActivity extends AppCompatActivity
             case R.id.stationImageButton : {
                     Intent intent = new Intent(PieceGarallyActivity.this, StationPuzzleActivity.class);
                     intent.putExtra("SelectedLineId", line.getLineId());
+                    intent.putExtra("previewAnswerCount", this.previewAnswerCount);
                     startActivity(intent);
                     // アニメーションの設定
                     overridePendingTransition(R.anim.in_right, R.anim.out_left);
@@ -353,14 +355,14 @@ public class PieceGarallyActivity extends AppCompatActivity
                                 answerClear();
                                 break;
                             case 1: // 回答を見る
-                                if(showAnswerCount < showAnswerMax ){
+                                if(previewAnswerCount < showAnswerMax ){
                                     final Snackbar sb = Snackbar.make(PieceGarallyActivity.this.listView,
                                             longClickSelectedLine.getRawName()+"("+longClickSelectedLine.getRawKana()+")",
                                             Snackbar.LENGTH_SHORT);
                                     sb.setActionTextColor(ContextCompat.getColor(PieceGarallyActivity.this, R.color.background1));
                                     sb.getView().setBackgroundColor(ContextCompat.getColor(PieceGarallyActivity.this, R.color.color_10));
                                     sb.show();
-                                    showAnswerCount++;
+                                    previewAnswerCount++;
                                 }
                                 else{
                                     final Snackbar sb = Snackbar.make(PieceGarallyActivity.this.listView,
@@ -370,7 +372,6 @@ public class PieceGarallyActivity extends AppCompatActivity
                                     TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
                                     textView.setTextColor(ContextCompat.getColor(PieceGarallyActivity.this.getApplicationContext(), R.color.coloe_RED));
                                     sb.show();
-                                    showAnswerCount=0;
                                 }
                                 break;
                             case 2: // Webを検索する

@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity
             Log.d(TAG,String.format("names : %s",company.getName()));
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.station_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id._toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();

@@ -10,6 +10,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.example.takashi.RailwayAndStationPuz.MainActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
@@ -19,12 +20,15 @@
         </activity>
         <activity
             android:name="com.example.takashi.RailwayAndStationPuz.piecegarally.PieceGarallyActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.example.takashi.RailwayAndStationPuz.location.LocationPuzzleActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.example.takashi.RailwayAndStationPuz.station.StationPuzzleActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data

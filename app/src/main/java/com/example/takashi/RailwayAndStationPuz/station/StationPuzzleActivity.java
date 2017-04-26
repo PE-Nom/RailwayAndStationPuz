@@ -85,19 +85,21 @@ public class StationPuzzleActivity extends AppCompatActivity implements
 
     private int showAnswerCount = 0;
     private static final int showAnswerMax = 3;
+    private int previewLineAnswerCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_line_station_puzzle);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.station_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id._toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
 
         Intent intent = getIntent();
         this.selectedLineId = intent.getIntExtra("SelectedLineId", 42); // デフォルトを紀勢線のlineIdにしておく
+        this.previewLineAnswerCount = intent.getIntExtra("previewAnswerCount",0);
 
         this.db = new DBAdapter(this);
         this.db.open();
@@ -154,6 +156,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     public void onBackPressed() {
         Intent intent = new Intent(this.getApplicationContext(), PieceGarallyActivity.class);
         intent.putExtra("SelectedCompanyId", this.companyId);
+        intent.putExtra("previewAnswerCount", this.previewLineAnswerCount);
         startActivityForResult(intent, 1);
         // アニメーションの設定
         overridePendingTransition(R.anim.in_left, R.anim.out_right);
@@ -245,7 +248,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
 
             // ダイアログ表示
             mDialog = new AlertDialog.Builder(this)
-                    .setTitle("駅名選択リスト")
+                    .setTitle("駅リスト")
                     .setPositiveButton("Cancel",null)
                     .setView(remainingStationsListView)
                     .create();
@@ -551,7 +554,6 @@ public class StationPuzzleActivity extends AppCompatActivity implements
                                     TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
                                     textView.setTextColor(ContextCompat.getColor(StationPuzzleActivity.this.getApplicationContext(), R.color.coloe_RED));
                                     sb.show();
-                                    showAnswerCount =0;
                                 }
                                 break;
                             case 2: // Webを検索する
