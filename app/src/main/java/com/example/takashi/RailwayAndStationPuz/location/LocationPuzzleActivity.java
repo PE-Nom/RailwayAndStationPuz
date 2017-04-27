@@ -71,7 +71,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
     private Drawable mDrawable;
     private AlertDialog mDialog;
 
-    private final static long DISPLAY_ANSWERE_TIME = 1000;
+    private final static long DISPLAY_ANSWERE_TIME = 5000;
     private Timer mAnswerDisplayingTimer = null;
     private Handler mHandler = new Handler();
 
@@ -341,7 +341,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
 //                                        textView.setTextColor(ContextCompat.getColor(LocationPuzzleActivity.this.getApplicationContext(), R.color.colorPrimaryDark));
 //                                        sb.show();
                                         answerDisplay();
-                                        showAnswerCount++;
+//                                        showAnswerCount++;
                                     }
                                     else{
                                         final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.transparent,
