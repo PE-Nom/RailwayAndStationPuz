@@ -370,7 +370,7 @@ public class PieceGarallyActivity extends AppCompatActivity
                                             Snackbar.LENGTH_SHORT);
                                     sb.getView().setBackgroundColor(ContextCompat.getColor(PieceGarallyActivity.this, R.color.color_10));
                                     TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
-                                    textView.setTextColor(ContextCompat.getColor(PieceGarallyActivity.this.getApplicationContext(), R.color.coloe_RED));
+                                    textView.setTextColor(ContextCompat.getColor(PieceGarallyActivity.this.getApplicationContext(), R.color.color_RED));
                                     sb.show();
                                 }
                                 break;

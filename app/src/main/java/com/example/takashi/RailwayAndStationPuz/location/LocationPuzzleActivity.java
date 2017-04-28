@@ -206,6 +206,11 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         if(hasAlreadyLocated()) setGeoJsonVisible();
 
     }
+
+    private boolean hasAlreadyLocated(){
+        return this.line.isLocationCompleted();
+    }
+
     // GeoJsonLayerの生成とColorの指定、Mapへの登録
     private void retrieveFileFromResource() {
         try {
@@ -222,10 +227,6 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
         } catch (JSONException e) {
             Log.e(TAG, "GeoJSON file could not be converted to a JSONObject");
         }
-    }
-
-    private boolean hasAlreadyLocated(){
-        return this.line.isLocationCompleted();
     }
 
     private void setGeoJsonVisible(){
@@ -331,17 +332,10 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                                 }
                                 break;
                             case 1: // 回答を見る（未回答の場合）
-                                if(!LocationPuzzleActivity.this.hasAlreadyLocated()){
+                                if(!LocationPuzzleActivity.this.hasAlreadyLocated() && mAnswerDisplayingTimer == null ){
                                     if( showAnswerCount < showAnswerMax ){
-//                                        final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.transparent,
-//                                                LocationPuzzleActivity.this.line.getRawName()+"("+LocationPuzzleActivity.this.line.getRawKana()+")",
-//                                                Snackbar.LENGTH_SHORT);
-//                                        sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.transparent));
-//                                        TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
-//                                        textView.setTextColor(ContextCompat.getColor(LocationPuzzleActivity.this.getApplicationContext(), R.color.colorPrimaryDark));
-//                                        sb.show();
                                         answerDisplay();
-//                                        showAnswerCount++;
+                                        showAnswerCount++;
                                     }
                                     else{
                                         final Snackbar sb = Snackbar.make(LocationPuzzleActivity.this.transparent,
@@ -349,7 +343,7 @@ public class LocationPuzzleActivity extends AppCompatActivity implements
                                                 Snackbar.LENGTH_LONG);
                                         sb.getView().setBackgroundColor(ContextCompat.getColor(LocationPuzzleActivity.this, R.color.transparent));
                                         TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
-                                        textView.setTextColor(ContextCompat.getColor(LocationPuzzleActivity.this.getApplicationContext(), R.color.coloe_RED));
+                                        textView.setTextColor(ContextCompat.getColor(LocationPuzzleActivity.this.getApplicationContext(), R.color.color_RED));
                                         sb.show();
                                     }
                                 }

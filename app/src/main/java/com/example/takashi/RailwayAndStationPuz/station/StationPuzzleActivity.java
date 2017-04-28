@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
@@ -31,7 +32,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.takashi.RailwayAndStationPuz.location.LocationPuzzleActivity;
 import com.example.takashi.RailwayAndStationPuz.piecegarally.PieceGarallyActivity;
 import com.example.takashi.RailwayAndStationPuz.R;
 import com.example.takashi.RailwayAndStationPuz.database.DBAdapter;
@@ -45,6 +45,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.geojson.GeoJsonLayer;
 import com.google.maps.android.geojson.GeoJsonLineStringStyle;
 
@@ -54,6 +56,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class StationPuzzleActivity extends AppCompatActivity implements
         AdapterView.OnItemClickListener,
@@ -74,6 +78,7 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     private TextView progressTitle;
     private ProgressBar progress;
     private MapView mMapView;
+    private GeoJsonLayer layer;
     private StationListAdapter stationsAdapter;
     private ListView stationListView;
     private AlertDialog mDialog;
@@ -82,6 +87,10 @@ public class StationPuzzleActivity extends AppCompatActivity implements
     private ImageView separatorMove;
     private FrameLayout mapFrame;
     private LinearLayout transparentView;
+
+    private final static long DISPLAY_ANSWERE_TIME = 5000;
+    private Timer mAnswerDisplayingTimer = null;
+    private Handler mHandler = new Handler();
 
     private int showAnswerCount = 0;
     private static final int showAnswerMax = 3;
@@ -279,20 +288,8 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         // 路線中心座標で位置設定
         this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom( new LatLng(lineCenterLat,lineCenterLng),(float)zl));
 
-        try{
-            // 路線図のGeoJsonファイル読込
-            GeoJsonLayer layer = new GeoJsonLayer(this.mMap, this.line.getRawResourceId(), this);
-            // 路線図の色を変更
-            GeoJsonLineStringStyle style = layer.getDefaultLineStringStyle();
-            style.setWidth(5.0f);
-            style.setColor(Color.BLUE);
-
-            layer.addLayerToMap();
-
-        } catch (IOException e) {
-            Log.e(TAG, "GeoJSON file could not be read");
-        } catch (JSONException e) {
-            Log.e(TAG, "GeoJSON file could not be converted to a JSONObject");
+        if(this.line.isLocationCompleted()){
+            setGeoJsonVisible();
         }
 
         // mapオブジェクトが生成された後にMarkerのOverlay初期表示を行うため、
@@ -303,6 +300,97 @@ public class StationPuzzleActivity extends AppCompatActivity implements
         this.stationListView.setOnItemClickListener(this);
         this.stationListView.setOnItemLongClickListener(this);
     }
+
+    // GeoJsonLayerの生成とColorの指定、Mapへの登録
+    private void retrieveFileFromResource() {
+        try {
+            // 路線図のGeoJsonファイル読込
+            layer = new GeoJsonLayer(mMap, this.line.getRawResourceId(), this);
+
+            // 路線図の色を変更
+            GeoJsonLineStringStyle style = layer.getDefaultLineStringStyle();
+            style.setWidth(5.0f);
+            style.setColor(Color.BLUE);
+
+        } catch (IOException e) {
+            Log.e(TAG, "GeoJSON file could not be read");
+        } catch (JSONException e) {
+            Log.e(TAG, "GeoJSON file could not be converted to a JSONObject");
+        }
+    }
+
+    private void setGeoJsonVisible(){
+        retrieveFileFromResource();
+        layer.addLayerToMap();
+    }
+
+    private void resetGeoJsonVisible(){
+        if(layer!=null){
+            layer.removeLayerFromMap();
+            layer = null;
+        }
+    }
+
+    // 回答表示の消去
+    private class displayTimerElapse extends TimerTask {
+        Station sta;
+        public displayTimerElapse(Station station){
+            this.sta = station;
+        }
+        /**
+         * The action to be performed by this timer task.
+         */
+        @Override
+        public void run() {
+            mHandler.post(new Runnable(){
+                /**
+                 * When an object implementing interface <code>Runnable</code> is used
+                 * to create a thread, starting the thread causes the object's
+                 * <code>run</code> method to be called in that separately executing
+                 * thread.
+                 * <p>
+                 * The general contract of the method <code>run</code> is that it may
+                 * take any action whatsoever.
+                 *
+                 * @see Thread#run()
+                 */
+                @Override
+                public void run() {
+                    // 路線の表示
+                    if(!StationPuzzleActivity.this.line.isLocationCompleted()){
+                        resetGeoJsonVisible();
+                    }
+                    displayTimerElapse.this.sta.removeMarker();
+                    StationPuzzleActivity.this.mAnswerDisplayingTimer = null;
+                }
+            });
+        }
+    }
+    // 回答の表示と消去タイマ起動
+    private void answerDisplay(){
+        if (mAnswerDisplayingTimer == null) {
+            // 路線の表示
+            if(!StationPuzzleActivity.this.line.isLocationCompleted()){
+                setGeoJsonVisible();
+            }
+            // 駅マーカーの表示
+            LatLng latlng = new LatLng(longClickSelectedStation.getStationLat(), longClickSelectedStation.getStationLng());
+            MarkerOptions options = new MarkerOptions().position(latlng).title(longClickSelectedStation.getRawName());
+            Marker marker = this.mMap.addMarker(options);
+            longClickSelectedStation.setMarker(marker);
+            // 消去タイマー起動
+            mAnswerDisplayingTimer = new Timer(true);
+            mAnswerDisplayingTimer.schedule(new StationPuzzleActivity.displayTimerElapse(longClickSelectedStation),DISPLAY_ANSWERE_TIME);
+        }
+        // 駅名のSnackbar表示
+        final Snackbar sb = Snackbar.make(StationPuzzleActivity.this.stationListView,
+                longClickSelectedStation.getRawName()+"("+longClickSelectedStation.getRawKana()+")",
+                Snackbar.LENGTH_SHORT);
+        sb.setActionTextColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.background1));
+        sb.getView().setBackgroundColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.color_10));
+        sb.show();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -537,23 +625,20 @@ public class StationPuzzleActivity extends AppCompatActivity implements
                                 answerClear();
                                 break;
                             case 1: // 回答を見る
-                                if( showAnswerCount < showAnswerMax ){
-                                    final Snackbar sb = Snackbar.make(StationPuzzleActivity.this.stationListView,
-                                            longClickSelectedStation.getRawName()+"("+longClickSelectedStation.getRawKana()+")",
-                                            Snackbar.LENGTH_SHORT);
-                                    sb.setActionTextColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.background1));
-                                    sb.getView().setBackgroundColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.color_10));
-                                    sb.show();
-                                    showAnswerCount++;
-                                }
-                                else{
-                                    final Snackbar sb = Snackbar.make(StationPuzzleActivity.this.stationListView,
-                                            "回数制限一杯!!　広告クリックを促す",
-                                            Snackbar.LENGTH_SHORT);
-                                    sb.getView().setBackgroundColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.color_10));
-                                    TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
-                                    textView.setTextColor(ContextCompat.getColor(StationPuzzleActivity.this.getApplicationContext(), R.color.coloe_RED));
-                                    sb.show();
+                                if( mAnswerDisplayingTimer == null){
+                                    if( showAnswerCount < showAnswerMax ) {
+                                        answerDisplay();
+                                        showAnswerCount++;
+                                    }
+                                    else{
+                                        final Snackbar sb = Snackbar.make(StationPuzzleActivity.this.stationListView,
+                                                "回数制限一杯!!　広告クリックを促す",
+                                                Snackbar.LENGTH_SHORT);
+                                        sb.getView().setBackgroundColor(ContextCompat.getColor(StationPuzzleActivity.this, R.color.color_10));
+                                        TextView textView = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
+                                        textView.setTextColor(ContextCompat.getColor(StationPuzzleActivity.this.getApplicationContext(), R.color.color_RED));
+                                        sb.show();
+                                    }
                                 }
                                 break;
                             case 2: // Webを検索する

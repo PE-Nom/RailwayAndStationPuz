@@ -2,23 +2,35 @@ package com.example.takashi.RailwayAndStationPuz.location;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.widget.TextView;
 
+import com.example.takashi.RailwayAndStationPuz.R;
 import com.example.takashi.RailwayAndStationPuz.database.Line;
+import com.example.takashi.RailwayAndStationPuz.piecegarally.PieceGarallyActivity;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by takashi on 2016/11/12.
@@ -494,8 +506,6 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
 
     Line line;
     GoogleMap map;
-    LatLng point1,point2;
-    Point screenPoint1,screenPoint2;
 
     public void setLine(Line line){
         this.line = line;
@@ -514,7 +524,53 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
                 coordinate1.latitude,coordinate1.longitude,coordinate2.latitude,coordinate2.longitude));
     }
 
+    private double[] computePositionError(){
+        RectF railwayImageRect = getCurrentImageRect();
+        // 路線ピースの表示中心座標
+        Point imageCenter = new Point(
+                (int)((railwayImageRect.left + railwayImageRect.right) / 2.0),
+                (int)((railwayImageRect.top + railwayImageRect.bottom) / 2.0)
+        );
+        // 路線ピース表示中心の緯度・経度現在値
+        LatLng pieceCenterCoordinate = map.getProjection().fromScreenLocation(imageCenter);
+        // 路線の中心緯度・経度
+        LatLng lineCenterCoordinate  = new LatLng(
+                (this.line.getCorrectTopLat()+this.line.getCorrectBottomLat())/2.0,
+                (this.line.getCorrectRightLng() + this.line.getCorrectLeftLng())/2.0
+        );
+        //　誤差表示
+        double error[] = new double[2];
+        error[0] = Math.abs(pieceCenterCoordinate.latitude-lineCenterCoordinate.latitude);
+        error[1] = Math.abs(pieceCenterCoordinate.longitude-lineCenterCoordinate.longitude);
+        return error;
+    }
+
+    private double computeScaleError(){
+        LatLng point1,point2;
+        Point screenPoint1,screenPoint2;
+
+        // 路線の表示スケール（px)
+        point1 = new LatLng(this.line.getCorrectTopLat(),this.line.getCorrectLeftLng());
+        point2 = new LatLng(this.line.getCorrectBottomLat(),this.line.getCorrectRightLng());
+        screenPoint1 = map.getProjection().toScreenLocation(point1);
+        screenPoint2 = map.getProjection().toScreenLocation(point2);
+        int lineScaleWidth = Math.abs(screenPoint1.x - screenPoint2.x);
+        int lineScaleHeight = Math.abs(screenPoint1.y - screenPoint2.y);
+        int lineScale = lineScaleWidth > lineScaleHeight ? lineScaleWidth : lineScaleHeight;
+        // ピースの表示スケール(px)
+        RectF railwayImageRect = getCurrentImageRect();
+        float pieceScaleHeight = Math.abs(railwayImageRect.top - railwayImageRect.bottom);
+        float pieceScaleWidth = Math.abs(railwayImageRect.right - railwayImageRect.left);
+        float pieceScale = pieceScaleHeight > pieceScaleWidth ? pieceScaleHeight : pieceScaleWidth;
+        // 表示スケールの比率
+        double error = pieceScale/(double)lineScale;
+        return(error);
+    }
+
     public int computeLocationError(){
+        LatLng point1,point2;
+        Point screenPoint1,screenPoint2;
+
         RectF railwayImageRect = getCurrentImageRect();
         point1 = new LatLng(this.line.getCorrectTopLat(),this.line.getCorrectLeftLng());
         point2 = new LatLng(this.line.getCorrectBottomLat(),this.line.getCorrectRightLng());
@@ -543,10 +599,10 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
     }
 
     // 正誤判定誤差(表示dpでの位置誤差）
-    public final static int ERR_RANGE_LEVEL0 = 5;
-    public final static int ERR_RANGE_LEVEL1 = 12;
-    public final static int ERR_RANGE_LEVEL2 = 25;
-    public final static int ERR_RANGE_LEVEL3 = 50;
+    public final static int ERR_RANGE_LEVEL0 = 2;
+    public final static int ERR_RANGE_LEVEL1 = 10;
+    public final static int ERR_RANGE_LEVEL2 = 20;
+    public final static int ERR_RANGE_LEVEL3 = 35;
 
     //　位置誤差のレベル番号（滅灯のデューティ設定用)
     private final static int ERR_LEVEL0 = 0;
@@ -586,6 +642,16 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
 
     @Override
     protected void onDraw(Canvas canvas) {
+        Paint paint = new Paint();
+        paint.setTextLocale(Locale.JAPANESE);
+        paint.setTypeface(Typeface.DEFAULT_BOLD);
+        paint.setStyle(Paint.Style.FILL);
+//        paint.setColor(Color.parseColor("#142d81"));
+        paint.setColor(ContextCompat.getColor(this.context, R.color.color_RED));
+        paint.setTextSize(20);
+
+//       final double positionError[] = computePositionError();
+        double scaleError = computeScaleError();
         int err = computeLocationError();
         if( err < ERR_RANGE_LEVEL1 ){
             super.setColorFilter(new ColorMatrixColorFilter(getColorMatrix(ERR_LEVEL1)));
@@ -600,6 +666,10 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
             super.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(NORMAL)));
             colorCount =0;
             lightingSw = true;
+        }
+        if(!this.line.isLocationCompleted()){
+            String positionErr = String.format("（位置ズレ,縮尺ズレ）= (%d,%.2f)",err,scaleError);
+            canvas.drawText(positionErr, 5, 30, paint);
         }
         super.onDraw(canvas);
     }
