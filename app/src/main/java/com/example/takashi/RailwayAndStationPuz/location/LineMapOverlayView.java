@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -648,7 +649,7 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
         paint.setStyle(Paint.Style.FILL);
 //        paint.setColor(Color.parseColor("#142d81"));
         paint.setColor(ContextCompat.getColor(this.context, R.color.color_RED));
-        paint.setTextSize(20);
+        paint.setTextSize(12*this.density); // 12sp*density
 
 //       final double positionError[] = computePositionError();
         double scaleError = computeScaleError();
@@ -669,7 +670,7 @@ public class LineMapOverlayView extends android.support.v7.widget.AppCompatImage
         }
         if(!this.line.isLocationCompleted()){
             String positionErr = String.format("（位置ズレ,縮尺ズレ）= (%d,%.2f)",err,scaleError);
-            canvas.drawText(positionErr, 5, 30, paint);
+            canvas.drawText(positionErr, 2*this.density, 15*this.density, paint);
         }
         super.onDraw(canvas);
     }
